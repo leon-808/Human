@@ -9,6 +9,6 @@ public class SController {
 	@GetMapping("seojaehyeon")
 	@ResponseBody
 	public String seo_page() {
-		return "¼­ÀçÇö ÆäÀÌÁö";
+		return "ì„œì¬í˜„ í˜ì´ì§€";
 	}
 }
