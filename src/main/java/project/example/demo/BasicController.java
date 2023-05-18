@@ -11,4 +11,9 @@ public class BasicController {
 	public String index_page() {
 		return "INDEX";
 	}
+	@GetMapping("/test")
+	@ResponseBody
+	public String test_page() {
+		return "¼­ÀçÇö";
+	}
 }
