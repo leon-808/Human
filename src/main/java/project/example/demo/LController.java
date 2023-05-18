@@ -12,9 +12,11 @@ public class LController {
 		return "이호성 페이지";
 	}
 	
-	@GetMapping("/conflict_hwangdayeon")
+
+	@GetMapping("/conflict_origin")
 	@ResponseBody
 	public String conflict_page() {
-		return "다중 충돌 황다연";
+		return "다중 충돌 테스트 이호성 푸쉬, 서재현 완료, 유상현 완료, 황다연 완료";
 	}
 }
+

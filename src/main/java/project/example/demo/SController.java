@@ -11,9 +11,11 @@ public class SController {
 	public String seo_page() {
 		return "서재현 페이지";
 	}
-	@GetMapping("/conflict_leehoseong")
+
+	@GetMapping("/conflict_seojaehyeon")
 	@ResponseBody
 	public String conflict_page() {
-		return "다중 충돌 이호성";
+		return "다중 충돌 서재현";
+
 	}
 }
