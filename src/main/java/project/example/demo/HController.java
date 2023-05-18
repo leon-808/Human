@@ -11,5 +11,11 @@ public class HController {
 	public String hwang_page() {
 		return "황다연 페이지";
 	}
+	
+	@GetMapping("/conflict_yusanghyeon4")
+	@ResponseBody
+	public String conflict_page() {
+		return "다중 충돌 유상현";
+	}
 
 }
