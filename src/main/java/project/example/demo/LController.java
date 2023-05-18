@@ -11,4 +11,10 @@ public class LController {
 	public String lee_page() {
 		return "이호성 페이지";
 	}
+	
+	@GetMapping("/conflict_seojaehyeon")
+	@ResponseBody
+	public String conflict_page() {
+		return "다중 충돌 서재현";
+	}
 }
