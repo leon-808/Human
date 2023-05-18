@@ -12,11 +12,18 @@ public class LController {
 		return "이호성 페이지";
 	}
 	
+<<<<<<< HEAD
 
 	@GetMapping("/conflict_origin")
 	@ResponseBody
 	public String conflict_page() {
 		return "다중 충돌 테스트";
+=======
+	@GetMapping("/conflict_origin")
+	@ResponseBody
+	public String conflict_page() {
+		return "다중 충돌 테스트 이호성 푸쉬, 서재현 완료";
+>>>>>>> 54ef53e057121d6d1960b510064db1f97824e7a0
 	}
 }
 
