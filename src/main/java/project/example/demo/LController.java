@@ -12,9 +12,11 @@ public class LController {
 		return "이호성 페이지";
 	}
 	
-	@GetMapping("/conflict_yusanghyeon3")
+
+	@GetMapping("/conflict_origin")
 	@ResponseBody
 	public String conflict_page() {
-		return "다중 충돌 유상현";
+		return "다중 충돌 테스트";
 	}
 }
+
