@@ -14,6 +14,6 @@ public class BasicController {
 	@GetMapping("/test")
 	@ResponseBody
 	public String test_page() {
-		return "유상현";
+		return "이호성, 서재현, 유상현";
 	}
 }
