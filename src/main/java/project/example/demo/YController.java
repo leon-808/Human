@@ -12,9 +12,9 @@ public class YController {
 		return "유상현 페이지";
 	}
 	
-	@GetMapping("/conflict_hwangdayeon")
+	@GetMapping("/conflict_yusanghyeon")
 	@ResponseBody
 	public String conflict_page() {
-		return "다중 충돌 황다연";
+		return "다중 충돌 유상현";
 	}
 }
