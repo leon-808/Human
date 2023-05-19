@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <title>아이디 찾기</title>
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
-<link href="/css/IdFind.css" rel="stylesheet">
+<link href="/css/member/IdFind.css" rel="stylesheet">
 <style>
 </style>
 </head>
@@ -24,5 +24,5 @@
 	</section>
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/js/IdFind.js"></script>
+<script src="/js/member/IdFind.js"></script>
 </html>

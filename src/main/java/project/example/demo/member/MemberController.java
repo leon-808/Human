@@ -1,4 +1,4 @@
-package project.example.demo.main;
+package project.example.demo.member;
 
 import java.security.SecureRandom;
 import java.util.Date;
@@ -19,17 +19,17 @@ public class MemberController {
 	
 	@GetMapping("/home")
 	public String home_page() {
-		return "home";
+		return "/member/home";
 	}
 	
 	@GetMapping("/login")
 	public String login_page() {
-		return "login";
+		return "/member/login";
 	}
 	
 	@GetMapping("/signup")
 	public String signup_page() {
-		return "signUp";
+		return "/member/signUp";
 	}
 	
 	
@@ -115,12 +115,12 @@ public class MemberController {
 	
 	@GetMapping("/IdFind")
 	public String idfind() {
-		return "IdFind";
+		return "/member/IdFind";
 	}
 	
 	@GetMapping("/PwFind")
 	public String pwfind() {
-		return "PwFind";
+		return "/member/PwFind";
 	}
 	
 	@PostMapping("/search_id")
