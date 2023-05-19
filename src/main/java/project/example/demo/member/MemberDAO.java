@@ -14,6 +14,6 @@ public interface MemberDAO {
 	void update_pw(String id,String name, String phone, String pw);
 	void submit_signup(String id, String pw, String gender, String birth,
 			String name, String phone);
+	int check_phone(String phone);
 
-	
 }

@@ -1,6 +1,7 @@
 $(document)
 .ready(clear_signup)
 .on("change", "#input_id", check_duplicateID)
+.on("change", "#input_phone", check_phone)
 .on("focusout", "#input_passwordCheck", check_samePWC)
 .on("click", "#button_submitSignup", submit_signup)
 
@@ -44,6 +45,31 @@ function check_duplicateID() {
 	})
 }
 
+function check_phone() {
+	phone = $("#input_phone").val();
+	$.ajax({
+		url: "/check_phone",
+		type: "post",
+		data: {
+			phone: phone
+		},
+		dataType: "text",
+		success: function(check) {
+			if (check == "true") {
+				$("#error_inputPhone").css("color", "green");
+				$("#error_inputPhone").text("사용 가능한 번호입니다.");
+				$("#error_inputPhone").show();
+			}
+			else {
+				$("#error_inputPhone").css("color", "red");
+				$("#error_inputPhone").text("이미 등록된 번호입니다.");
+				$("#error_inputPhone").show();
+			}
+
+		}
+	})
+}
+
 function submit_signup() {
 	id = $("#input_id").val();
 	pw =$("#input_password").val();
@@ -83,12 +109,16 @@ function submit_signup() {
 				alert("비밀번호가 일치하지 않습니다.");
 				return false;
 			}
+			if ($("#error_inputPhone").css("color") != "rgb(0, 128, 0)"){
+				alert("이미 등록된 번호입니다.");
+				return false;
+			}
 			
 		},
 		success: function(check) {
 			alert("회원가입이 완료되었습니다");
 			clear_signup();
-			document.location = "/login";
+			document.location = "/login"; 
 		}
 	})
 }
@@ -99,7 +129,7 @@ function check_samePWC() {
 	
 	if (pw == pwc) {
 		$("#error_passwordCheck").css("color", "green");
-		$("#error_passwordCheck").text("비밀번호가 일치함");
+		$("#error_passwordCheck").text("비밀번호가 일치합니다.");
 		$("#error_passwordCheck").show();
 	}
 	else {

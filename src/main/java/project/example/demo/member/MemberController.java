@@ -113,6 +113,20 @@ public class MemberController {
 		return check;
 	}
 	
+
+	@PostMapping("/check_phone")
+	@ResponseBody
+	public String check_phone(HttpServletRequest req) {
+		String check = "false";
+		
+		String phone = req.getParameter("phone");
+		
+		int flag = mdao.check_phone(phone);
+		if (flag == 0) check = "true";
+				
+		return check;
+	}
+
 	@GetMapping("/IdFind")
 	public String idfind() {
 		return "/member/IdFind";

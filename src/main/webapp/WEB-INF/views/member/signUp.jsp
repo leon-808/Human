@@ -48,7 +48,7 @@
 			<!-- PW2 -->
 			<div>
 				<h3>
-					<label>비밀번호 재확인</label>
+					<label>비밀번호 확인</label>
 				</h3>
 				<span class="box int_pass_check"> <input type="password"
 					id="input_passwordCheck" class="int" maxlength="20">
@@ -73,7 +73,7 @@
 				</h3>
 				<span class="box int_mobile"> <input type="tel" id="input_phone"
 					class="int" maxlength="12" placeholder="'-' 제외 번호만 입력">
-				</span> <span class="error_box"></span>
+				</span> <span class="error_box" id="error_inputPhone"></span>
 			</div>
 
 			<!-- GENDER -->
