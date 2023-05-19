@@ -1,0 +1,181 @@
+@charset "UTF-8";
+body{
+	overflow: hidden;
+}
+#map {
+	width: 100vw;
+	height: 100vh;
+}
+.simpleOverlay {
+	position:relative;
+	bottom:85px;
+	border-radius:6px;
+	border: 1px solid #ccc;
+	border-bottom:2px solid #ddd;
+	float:left;
+}
+.simpleOverlay:nth-of-type(n) {
+	border:0; 
+	box-shadow:0px 1px 2px #888;
+}
+.simpleOverlay a {
+	display:block;
+	text-decoration:none;
+	color:#000;
+	text-align:center;
+	border-radius:6px;
+	font-size:14px;
+	font-weight:bold;
+	overflow:hidden;
+	background: #d95050;
+	background: #d95050 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) 
+	no-repeat right 14px center;
+}
+.simpleOverlay .simpleOverlayTitle {
+	display:block;
+	text-align:center;
+	background:#fff;
+	margin-right:35px;
+	padding:10px 15px;
+	font-size:14px;
+	font-weight:bold;
+}
+.simpleOverlay:after {
+	content:'';
+	position:absolute;
+	margin-left:-12px;
+	left:50%;
+	bottom:-12px;
+	width:22px;
+	height:12px;
+	background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')
+}
+.controlDiv {
+	cursor: auto;
+	position: absolute;
+	z-index: 2;
+	top: 0px;
+	left: 0px;
+}
+.controlBox {
+	width: 32px;
+	border-radius: 3px;
+	box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 0px 0px;
+	position: absolute;
+	top: 29vh;
+	left: 97.3vw;
+}
+.controlButton {
+    float: left;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    user-select: none;
+    -webkit-user-drag: none;
+    border-top: none;
+    border-right: none;
+    border-bottom: 1px solid rgb(226, 226, 226);
+    border-left: none;
+    border-image: initial;
+    border-radius: 3px 3px 0px 0px;
+}
+#addLocationButton {
+    background: url(//t1.daumcdn.net/localimg/localimages/07/2018/pc/common/img_search.png) no-repeat;
+    background-position-x: -190px;
+    background-position-y: -450px;
+}
+.cursor {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 9999;
+	transform:translate(-50%, -90%);
+	pointer-events: none;
+}
+.alm_wrap {
+	position: absolute;
+	left: 0;
+	bottom: 40px;
+	width: 288px;
+	height: 132px;
+	margin-left: -144px;
+	text-align: left;
+	overflow: hidden;
+	font-size: 12px;
+	font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;
+	line-height: 1.5;
+}
+.alm_wrap * {
+	padding: 0;margin: 0;
+}
+.alm_wrap .alm_info {
+	width: 286px;
+	height: 120px;
+	border-radius: 5px;
+	border-bottom: 2px solid #ccc;
+	border-right: 1px solid #ccc;
+	overflow: hidden;
+	background: #fff;
+}
+.alm_wrap .alm_info:nth-child(1) {
+	border: 0;
+	box-shadow: 0px 1px 2px #888;
+}
+.alm_info .alm_title {
+	padding: 5px 0 0 10px;
+	height: 30px;
+	background: #eee;
+	border-bottom: 1px solid #ddd;
+	font-size: 18px;
+	font-weight: bold;
+}
+.alm_info .alm_close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	color: #888;
+	width: 17px;
+	height: 17px;
+	background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');
+}
+.alm_info .alm_close:hover {cursor: pointer;}
+.alm_info .alm_body {
+	position: relative;
+	overflow: hidden;
+}
+.alm_info .alm_desc {
+	position: relative;
+	margin: 13px 0 0 90px;
+	height: 75px;
+}
+.alm_desc .alm_doro {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.alm_desc .alm_jibun {
+	font-size: 11px;
+	color: #888;
+	margin-top: -2px;
+}
+.alm_info .alm_img {
+	position: absolute;
+	top: 6px;
+	left: 5px;
+	width: 73px;
+	height: 71px;
+	border: 1px solid #ddd;
+	color: #888;
+	overflow: hidden;
+}
+.alm_info:after {
+	content: '';
+	position: absolute;
+	margin-left: -12px;
+	left: 50%;bottom: 0;
+	width: 22px;
+	height: 12px;
+	background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')
+}
+.alm_info .link {color: #5085BB;}
