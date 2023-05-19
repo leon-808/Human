@@ -1,4 +1,4 @@
-package project.example.demo;
+package project.example.demo.dto;
 
 import lombok.Data;
 

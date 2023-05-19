@@ -1,4 +1,4 @@
-package project.example.demo;
+package project.example.demo.main;
 
 import java.security.SecureRandom;
 import java.util.Date;
