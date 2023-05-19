@@ -17,11 +17,6 @@ public class MemberController {
 	@Autowired
 	private MemberDAO mdao;
 	
-	@GetMapping("/home")
-	public String home_page() {
-		return "/member/home";
-	}
-	
 	@GetMapping("/login")
 	public String login_page() {
 		return "/member/login";
@@ -32,18 +27,14 @@ public class MemberController {
 		return "/member/signUp";
 	}
 	
+	@GetMapping("/IdFind")
+	public String idfind() {
+		return "/member/IdFind";
+	}
 	
-	@PostMapping("/check/loginStatus")
-	@ResponseBody
-	public String check_loginStatus(HttpServletRequest req) {
-		String check = "false";
-		
-		HttpSession session = req.getSession();
-		
-		if(session.getAttribute("id") != null)
-			check = "true";
-		
-		return check;
+	@GetMapping("/PwFind")
+	public String pwfind() {
+		return "/member/PwFind";
 	}
 	
 	@PostMapping("/submit/login")
@@ -125,16 +116,6 @@ public class MemberController {
 		if (flag == 0) check = "true";
 				
 		return check;
-	}
-
-	@GetMapping("/IdFind")
-	public String idfind() {
-		return "/member/IdFind";
-	}
-	
-	@GetMapping("/PwFind")
-	public String pwfind() {
-		return "/member/PwFind";
 	}
 	
 	@PostMapping("/search_id")
