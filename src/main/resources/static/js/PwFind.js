@@ -41,6 +41,7 @@ function findPW(){
 				//copy(result);
 				alert("임시 비밀번호가 발급되었습니다. '"+result+"' \n확인하시면 로그인페이지로 돌아갑니다. \n로그인 후 비밀번호를 변경하세요!");
 				clear_searchPW();
+				document.location = "/login"
 			}else{
 				$("#SearchPwMessage").css("color","black");
 				$("#SearchPwMessage").text("회원정보와 일치하는 ID가 없습니다.\n아이디나 이름, 전화번호를 다시 확인해주세요.");
