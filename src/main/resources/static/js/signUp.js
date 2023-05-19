@@ -88,7 +88,7 @@ function submit_signup() {
 		success: function(check) {
 			alert("회원가입이 완료되었습니다");
 			clear_signup();
-			/* document.location = "/login";  로그인 페이지 주소*/
+			document.location = "/login";
 		}
 	})
 }
