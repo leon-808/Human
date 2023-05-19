@@ -28,6 +28,7 @@ function findID(){
 			if(result!=""){
 				alert('찾으시는 아이디는 "'+result+'" 입니다.\n 확인하시면 로그인 페이지로 돌아갑니다.');
 				clear_searchID();
+				document.location = "/login"
 			}
 			else{
 				$("#SearchIDMessage").css("color","black");

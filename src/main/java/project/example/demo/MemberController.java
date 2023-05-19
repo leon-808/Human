@@ -1,5 +1,8 @@
 package project.example.demo;
 
+import java.security.SecureRandom;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,15 +32,6 @@ public class MemberController {
 		return "signUp";
 	}
 	
-	@GetMapping("/IdFind")
-	public String IdFind_page() {
-		return "IdFind";
-	}
-	
-	@GetMapping("/PwFind")
-	public String PwFind_page() {
-		return "PwFind";
-	}
 	
 	@PostMapping("/check/loginStatus")
 	@ResponseBody
@@ -117,5 +111,67 @@ public class MemberController {
 		if (flag == 0) check = "true";
 				
 		return check;
+	}
+	
+	@GetMapping("/IdFind")
+	public String idfind() {
+		return "IdFind";
+	}
+	
+	@GetMapping("/PwFind")
+	public String pwfind() {
+		return "PwFind";
+	}
+	
+	@PostMapping("/search_id")
+	@ResponseBody
+	public String search_id(HttpServletRequest req) {
+		String result = "";
+		
+		String name = req.getParameter("name");
+		String phone = req.getParameter("phone");
+				
+		result = mdao.search_id(name,phone);
+		
+		return result;
+	}
+	
+	@PostMapping("/search_pw")
+	@ResponseBody
+	public String search_pw(HttpServletRequest req) {
+		String result = "";
+		
+		String temporary = getTemporalPw(7);
+		
+		String id = req.getParameter("id");
+		String name = req.getParameter("name");
+		String phone = req.getParameter("phone");
+		
+		int flag = mdao.search_pw(id, name, phone);
+		System.out.println(flag);
+		
+		if(flag !=0) {
+			mdao.update_pw(id, name, phone, temporary);
+			result = mdao.get_temporalPW(id, name, phone);
+		}
+		
+		return result;
+	}
+	
+	public String getTemporalPw(int size) {
+		char[] charSet = new char[] {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+		'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+				
+		StringBuffer sb = new StringBuffer();
+		SecureRandom sr = new SecureRandom();
+		sr.setSeed(new Date().getTime());
+		int index = 0;
+		
+		for (int i = 0; i < size; i++) {
+			index = sr.nextInt(charSet.length);
+			sb.append(charSet[index]);
+		}
+		
+		return sb.toString();
 	}
 }
