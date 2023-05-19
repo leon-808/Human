@@ -19,21 +19,23 @@
 
 		<!-- content-->
 		<div id="content">
-		<h1>회원정보</h1>
+		<h1>
+		<label>회원 정보</label>
+		</h1>
 
 			<!-- ID -->
-			<div class="info_div" id="info_first">
+			<div id ="info_first">
 				<h3>
 					<label>아이디</label>
 				</h3>
-				<span class="box int_id"><input type="text" id="input_id"
+				<span class="box int_id"> <input type="text" id="input_id"
 					class="int" maxlength="20">
 
 				</span> <span class="error_box" id="error_inputID"></span>
 			</div>
 
 			<!-- PW1 -->
-			<div class="info_div">
+			<div>
 				<h3>
 					<label>비밀번호</label>
 				</h3>
@@ -44,9 +46,9 @@
 			</div>
 
 			<!-- PW2 -->
-			<div class="info_div">
+			<div>
 				<h3>
-					<label>비밀번호 확인</label>
+					<label>비밀번호 재확인</label>
 				</h3>
 				<span class="box int_pass_check"> <input type="password"
 					id="input_passwordCheck" class="int" maxlength="20">
@@ -55,7 +57,7 @@
 			</div>
 
 			<!-- NAME -->
-			<div class="info_div">
+			<div>
 				<h3>
 					<label>이름</label>
 				</h3>
@@ -65,7 +67,7 @@
 			</div>
 
 			<!-- MOBILE -->
-			<div class="info_div">
+			<div>
 				<h3>
 					<label>휴대전화</label>
 				</h3>
@@ -75,7 +77,7 @@
 			</div>
 
 			<!-- GENDER -->
-			<div class="info_div">
+			<div>
 				<h3>
 					<label>성별</label>
 				</h3>
@@ -87,7 +89,7 @@
 			</div>
 
 			<!-- BIRTH -->
-			<div class="info_div">
+			<div>
 				<h3>
 					<label>생년월일</label>
 				</h3>
