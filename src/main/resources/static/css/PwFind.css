@@ -14,7 +14,7 @@ input[type="text"],
 input[type="number"] {
   width: 30%;
   height:10%;
-  padding: 1%;
+  padding: 1.2%;
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
