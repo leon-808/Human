@@ -1,0 +1,57 @@
+body {
+    padding: 40px;
+}
+.text-center {
+    text-align: center;
+}
+.section {
+    margin-bottom: 20px;
+}
+.article{
+	text-align:center;
+	
+}
+h1 {
+    margin-bottom: 20px;
+}
+.form-control {
+    margin-bottom: 10px;
+}
+#SearchIDMessage {
+    margin-bottom: 15px;
+}
+.container {
+	margin-top: 100px;
+	
+}
+form {
+  max-width: 300px;
+  margin: 0 auto;
+  text-align:center;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 30%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+button {
+  display: block;
+  width: 30%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+pre {
+  margin-top: 10px;
+}
