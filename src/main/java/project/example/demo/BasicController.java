@@ -11,4 +11,5 @@ public class BasicController {
 	public String index_page() {
 		return "INDEX";
 	}
+	
 }
