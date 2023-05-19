@@ -1,20 +1,29 @@
 $(document)
-.ready(check_loginStatus)
+.ready(isLogin)
 .on("click","#btnLogin", submit_login)
 .on("click","#singup", goto_signup)
 .on("click","#IdFind", goto_IdFind)
 .on("click","#PwFind", goto_PwFind)
 
-
-function check_loginStatus(){
+function isLogin() {
 	$.ajax({
-		url: "/check/loginStatus",
+		url: "/isLogin",
 		type: "post",
 		dataType: "text",
-		success: function(check){
-			if(check == "true") document.location = "/home"
+		success: function(isLogin) {
+			if (isLogin == "true") {} // 로그인 기능과 연동하면 함수를 여기로 옮겨야 함 createAddLocationButton();
+			createAddLocationButton();	
 		}
 	})
+}
+
+function createAddLocationButton() {
+	addLocationButton = `<div class="controlDiv">
+						 	<div class="controlBox">
+						 		<button id="addLocationButton" class="controlButton cursorButton"></button>
+						 	</div>
+						 </div>`
+	$("#map").append(addLocationButton);
 }
 
 function submit_login(){
@@ -38,7 +47,7 @@ function submit_login(){
 		success: function(check) {
 			if (check == "true") {
 				clear_login();
-				document.location = "/home";
+				document.location = "/main";
 			}
 			else if (check == "wrong") {
 				alert("비밀번호가 틀렸습니다");
