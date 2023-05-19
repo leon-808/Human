@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <title>회원가입</title>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<link rel="stylesheet" href="/css/signUp.css">
+<link rel="stylesheet" href="/css/member/signUp.css">
 
 </head>
 <body>
@@ -110,6 +110,6 @@
 
 	</div>
 	<!-- wrapper -->
-	<script src="/js/signUp.js"></script>
+	<script src="/js/member/signUp.js"></script>
 </body>
 </html>

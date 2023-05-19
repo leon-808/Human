@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="project.example.demo.MemberDAO">
+<mapper namespace="project.example.demo.member.MemberDAO">
 	
 	<select id="check_duplicateID" resultType="_int">
 		select count(id)

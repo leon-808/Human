@@ -5,8 +5,10 @@
 <head>
 <meta charset="UTF-8">
 <title>비밀번호 찾기</title>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/member/PwFind.css" rel="stylesheet">
 </head>
-<body>
+<body class="text-center">
 	<section>
 		<div>
 		<h1>비밀번호 찾기</h1>
@@ -21,5 +23,5 @@
 	</section>
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/js/PwFind.js"></script>
+<script src="/js/member/PwFind.js"></script>
 </html>
