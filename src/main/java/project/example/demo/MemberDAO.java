@@ -10,4 +10,5 @@ public interface MemberDAO {
 			String name, String phone);
 
 	int check_duplicateID(String id);
+	int check_phone(String phone);
 }
