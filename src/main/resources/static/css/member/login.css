@@ -1,10 +1,37 @@
 @charset "UTF-8";
-/*
-div{
-	background-color: antiquewhite;
-    border: 1px solid burlywood;
+.body {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
-*/
-.main{
-	margin:15% 0 0 0;
+.loginbox {
+	width: 25vw;
+}
+.wrapperSI {
+	display: flex;
+	align-items: center;
+}
+.loginspan {
+	width: 50px;
+}
+.form-control {
+	width: 20vw;
+	margin: 0 0 0 10px;
+}
+.loginLabel {
+	position: relative;
+}
+#btnLogin {
+	width: 100%;
+}
+.wrapperA {
+	margin: 10px 0 0 0;
+	text-align: center;
+}
+.aText {
+	margin: 0 20px 0 20px;
+	font-size: 13px;
 }

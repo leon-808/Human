@@ -155,7 +155,6 @@ body{
     width: 350px;
     height: 150px;
     background-color: #258fff;
-    /* #83dd65 */
 }
 .header {
     position: relative;
@@ -283,6 +282,7 @@ body{
 }
 .middle_sidebar {
 	position: relative;
+	z-index: 30;
 }
 .baseBox {
     display: none;
@@ -301,76 +301,6 @@ body{
     border-top: 1px solid #eee;
     line-height: 16px;
     clear: both;
-}
-.alm_info .link {color: #5085BB;}
-
-.toggleSwitch.off {        /*끄기 버튼*/
-  width: 70px;
-  height: 30px;
-  margin: 3px;
-  text-align: center;
-  border-radius: 10px;
-  background-color: #fff;
-  cursor: pointer;
-  font-size:15px;
-  font-weight: bold;
-  border: 2px solid #ffaa55;
-  color: #ffaa55;
-}
-.toggleSwitch.often,
-.toggleSwitch.rarely {      /*자주가는,많이가는 버튼*/
-  width: 160px;
-  height: 30px;
-  margin: 5px;
-  text-align: center;
-  border-radius: 10px;
-  background-color: #fff;
-  cursor: pointer;
-  font-size:15px;
-  font-weight: bold;
-  border: 2px solid #55aaff;
-  color: #55aaff;
-}
-.toggleSwitch2{
-  width: 100px;
-  height: 30px;
-  margin: 5px;
-  text-align: center;
-  border-radius: 10px;
-  background-color: #fff;
-  cursor: pointer;
-  font-size:14px;
-  font-weight: bold;
-  border: 2px solid #68d98a;
-  color: #68d98a;	
-}
-.toggleSwitch2.clean.active,
-.toggleSwitch2.alone.active,
-.toggleSwitch2.delicious.active,
-.toggleSwitch2.kind.active,
-.toggleSwitch2.together.active,
-.toggleSwitch2.lot.active,
-.toggleSwitch2.parking.active,
-.toggleSwitch2.focus.active, 
-.toggleSwitch2.cost.active, 
-.toggleSwitch2.fast.active,
-.toggleSwitch2.talk.active,
-.toggleSwitch2.portion.active,
-.toggleSwitch2.pack.active,
-.toggleSwitch2.photoplace.active,
-.toggleSwitch2.satisfy.active  {
-  color:#ffffff;
-  background: #68d98a;
-}
-
-.toggleSwitch.often.active,
-.toggleSwitch.rarely.active {
-	color:#ffffff;
-  background: #55aaff;
-}
-.toggleSwitch.off.active {
-	color:#ffffff;
-  background: #ffaa55;
 }
 .tit_recent {
     display: block;
@@ -396,7 +326,6 @@ body{
 }
 .middle_sidebar {
     position: relative;
-    z-index: 30;
     width: 350px;
     height: calc(-150px + 100vh);
 }
@@ -404,7 +333,6 @@ body{
 	margin: 10px 0 20px 0;
 }
 .sf_title {
-	display: inline-block;
 	font-weight: 800;
 	font-size: 1.2rem;
 	margin: 0 0 0 10px;
@@ -421,24 +349,82 @@ body{
 .fc_img {
 	margin: 0 0 0 3px;
 }
-.tagContainer {
-	display: flex;
-	justify-content: space-between;
-}
-.tagContainer>span {
-	flex-basis: 33.33%;
-	display: flex;
-	justify-content: center;
-}
-.tagSpan {
+.toggleSwitch.off { 
+	width: 70px;
+	height: 25px;
+	text-align: center;
+	margin: 0 0 0 10px;
+	border-radius: 10px;
+	background-color: #fff;
+	cursor: pointer;
+	font-size:15px;
 	font-weight: bold;
+	border: 2px solid #ffaa55;
+	color: #ffaa55;
 }
-.toggleSwitch2_container {
+.toggleSwitch.off.active {
+	color:#ffffff;
+	background: #ffaa55;
+}
+.toggleSwitch.often,
+.toggleSwitch.rare {
+	width: 150px;
+	height: 25px;
+	text-align: center;
+	margin: 0 0 0 13px;
+	border-radius: 10px;
+	background-color: #fff;
+	cursor: pointer;
+	font-size:14px;
+	font-weight: bold;
+	border: 2px solid #55aaff;
+	color: #55aaff;
+}
+.toggleSwitch.often.active,
+.toggleSwitch.rare.active {
+	color:#ffffff;
+	background: #55aaff;
+}
+.tag_row {
 	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
+	flex-direction: row;
+	margin: 10px 0 0 35px;
 }
-.toggleSwitch2 {
-    width: calc(33.33% - 10px); 
-    margin-bottom: 10px; 
+.tag_column {
+	display: flex;
+	flex-direction: column;
+}
+.tag_category {
+	margin: 0 0 10px 20px;
+}
+.toggleSwitch2 {        
+  width: 80px;
+  height: 25px;
+  margin: 5px;
+  text-align: center;
+  border-radius: 10px;
+  background-color: #fff;
+  cursor: pointer;
+  font-size:14px;
+  font-weight: bold;
+  border: 2px solid #68d98a;
+  color: #68d98a;	
+}
+.toggleSwitch2.clean.active,
+.toggleSwitch2.alone.active,
+.toggleSwitch2.delicious.active,
+.toggleSwitch2.kind.active,
+.toggleSwitch2.together.active,
+.toggleSwitch2.lot.active,
+.toggleSwitch2.parking.active,
+.toggleSwitch2.focus.active, 
+.toggleSwitch2.cost.active, 
+.toggleSwitch2.fast.active,
+.toggleSwitch2.talk.active,
+.toggleSwitch2.portion.active,
+.toggleSwitch2.pack.active,
+.toggleSwitch2.photoplace.active,
+.toggleSwitch2.satisfy.active  {      
+  color:#ffffff;
+  background: #68d98a;
 }

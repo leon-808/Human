@@ -9,7 +9,6 @@ import project.example.demo.dto.MemberDTO;
 public interface MemberDAO {
 	String get_id(String id,String pw);
 	String search_id(String name, String phone);
-	String get_temporalPW(String id,String name, String phone);
 	
 	int check_duplicateID(String id);
 	int search_pw(String id, String name, String phone);
@@ -18,8 +17,10 @@ public interface MemberDAO {
 	void submit_signup(String id, String pw, String gender, String birth,
 			String name, String phone);
 	int check_phone(String phone);
+
 	ArrayList<MemberDTO> get_signupInfo(String id);
 	void update_signup(String id, String pw, String name, String gender, String birth, String phone);
 	
 
 }
+

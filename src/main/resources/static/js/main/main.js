@@ -14,6 +14,12 @@ $(document)
 	})
 })
 .on("click", "#addLocationButton", clickAddLocationButton)
+.on("click", ".toggleSwitch", function(){
+	$(this).toggleClass("active");
+})
+.on("click", ".toggleSwitch2", function(){
+	$(this).toggleClass("active");
+});
 
 .on("click", ".toggleSwitch",function(){
 	$(this).toggleClass("active");

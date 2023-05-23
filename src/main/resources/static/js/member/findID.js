@@ -6,7 +6,7 @@ function findID(){
 	findP = $("#inputFindPhone").val();
 	
 	$.ajax({
-		url: "/search_id",
+		url: "/search/id",
 		type: "post",
 		data:{name:findN, phone:findP},
 		dataType:"text",
