@@ -12,9 +12,12 @@ $(document)
 })
 .on("click", ".cursorButton", clickCursorButton)
 .on("click", "#addLocationButton", clickAddLocationButton)
-
-
-
+.on("click", ".toggleSwitch",function(){
+	$(this).toggleClass("active");
+})
+.on("click", ".toggleSwitch2",function(){
+	$(this).toggleClass("active");
+});
 function isLogin() {
 	$.ajax({
 		url: "/isLogin",

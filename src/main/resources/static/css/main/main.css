@@ -179,3 +179,93 @@ body{
 	background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')
 }
 .alm_info .link {color: #5085BB;}
+
+.toggleSwitch {  /*카테고리 버튼*/
+  width: 80px;
+  height: 30px;
+  margin: 3px;
+  text-align: center;
+  border-radius: 10px;
+  background-color: #fff;
+  cursor: pointer;
+  font-size:15px;
+  font-weight: bold;
+  border: 2px solid #68d98a;
+  color: #68d98a;
+}
+.toggleSwitch.off {        /*끄기 버튼*/
+  width: 70px;
+  height: 30px;
+  margin: 3px;
+  text-align: center;
+  border-radius: 10px;
+  background-color: #fff;
+  cursor: pointer;
+  font-size:15px;
+  font-weight: bold;
+  border: 2px solid #ffaa55;
+  color: #ffaa55;
+}
+.toggleSwitch.often,
+.toggleSwitch.rarely {      /*자주가는,많이가는 버튼*/
+  width: 160px;
+  height: 30px;
+  margin: 3px;
+  text-align: center;
+  border-radius: 10px;
+  background-color: #fff;
+  cursor: pointer;
+  font-size:15px;
+  font-weight: bold;
+  border: 2px solid #55aaff;
+  color: #55aaff;
+}
+.toggleSwitch2{
+  width: 100px;
+  height: 30px;
+  margin: 5px;
+  text-align: center;
+  border-radius: 10px;
+  background-color: #fff;
+  cursor: pointer;
+  font-size:14px;
+  font-weight: bold;
+  border: 2px solid #68d98a;
+  color: #68d98a;	
+}
+.toggleSwitch.korean.active,
+.toggleSwitch.chinese.active,
+.toggleSwitch.chicken.active,
+.toggleSwitch.pizza.active,
+.toggleSwitch.pork.active,
+.toggleSwitch.cafe.active,
+.toggleSwitch.western.active,
+.toggleSwitch.japanese.active,
+.toggleSwitch2.clean.active,
+.toggleSwitch2.alone.active,
+.toggleSwitch2.delicious.active,
+.toggleSwitch2.kind.active,
+.toggleSwitch2.together.active,
+.toggleSwitch2.lot.active,
+.toggleSwitch2.parking.active,
+.toggleSwitch2.focus.active, 
+.toggleSwitch2.cost.active, 
+.toggleSwitch2.fast.active,
+.toggleSwitch2.talk.active,
+.toggleSwitch2.portion.active,
+.toggleSwitch2.pack.active,
+.toggleSwitch2.photoplace.active,
+.toggleSwitch2.satisfy.active  {
+  color:#ffffff;
+  background: #68d98a;
+}
+
+.toggleSwitch.often.active,
+.toggleSwitch.rarely.active {
+	color:#ffffff;
+  background: #55aaff;
+}
+.toggleSwitch.off.active {
+	color:#ffffff;
+  background: #ffaa55;
+}

@@ -27,6 +27,11 @@ public class MemberController {
 		return "/member/signUp";
 	}
 	
+	@GetMapping("/signupdate")
+	public String signupdate_page() {
+		return "/member/signUpdate";
+	}
+	
 	@GetMapping("/IdFind")
 	public String idfind() {
 		return "/member/IdFind";
