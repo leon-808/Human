@@ -2,8 +2,16 @@
 body{
 	overflow: hidden;
 }
+.mapView {
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    left: 350px;
+    right: 0;
+    z-index: 0;
+}
 #map {
-	width: 100vw;
+	width: calc(100vw - 350px);
 	height: 100vh;
 }
 .simpleOverlay {
@@ -31,7 +39,7 @@ body{
 	background: #d95050 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) 
 	no-repeat right 14px center;
 }
-.simpleOverlay .simpleOverlayTitle {
+.simpleOverlay .simpleOverlayheader_title {
 	display:block;
 	text-align:center;
 	background:#fff;
@@ -54,8 +62,11 @@ body{
 	cursor: auto;
 	position: absolute;
 	z-index: 2;
-	top: 0px;
-	left: 0px;
+	top: 10px;
+	left: -350px;
+}
+.controlDiv * {
+	left: -350px;
 }
 .controlBox {
 	width: 32px;
@@ -93,89 +104,248 @@ body{
 	transform:translate(-50%, -90%);
 	pointer-events: none;
 }
-.alm_wrap {
-	position: absolute;
-	left: 0;
-	bottom: 40px;
-	width: 288px;
-	height: 132px;
-	margin-left: -144px;
-	text-align: left;
-	overflow: hidden;
-	font-size: 12px;
-	font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;
-	line-height: 1.5;
+.alm_info {
+	position: fixed;
+	height: calc(100vh - 60px);
+	top: 30px;
+	bottom: 30px;
+	background-color: rgb(255, 255, 255);
+	padding: 0;
+	margin: 0;
 }
-.alm_wrap * {
-	padding: 0;margin: 0;
-}
-.alm_wrap .alm_info {
-	width: 286px;
-	height: 120px;
-	border-radius: 5px;
-	border-bottom: 2px solid #ccc;
-	border-right: 1px solid #ccc;
-	overflow: hidden;
-	background: #fff;
-}
-.alm_wrap .alm_info:nth-child(1) {
-	border: 0;
-	box-shadow: 0px 1px 2px #888;
-}
-.alm_info .alm_title {
+.alm_title {
 	padding: 5px 0 0 10px;
-	height: 30px;
+	height: 40px;
 	background: #eee;
 	border-bottom: 1px solid #ddd;
+	line-height: 30px;
 	font-size: 18px;
 	font-weight: bold;
 }
-.alm_info .alm_close {
+.alm_close {
 	position: absolute;
-	top: 10px;
+	top: 12px;
 	right: 10px;
 	color: #888;
 	width: 17px;
 	height: 17px;
 	background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');
 }
-.alm_info .alm_close:hover {cursor: pointer;}
-.alm_info .alm_body {
+.alm_body {
+	margin: 10px 10px 10px 10px;
+}
+.alm_body > div {
+	width: 100%;
+	margin: 20px 0 20px 0;
+}
+.alm_input {
 	position: relative;
-	overflow: hidden;
+    width: 100%;
 }
-.alm_info .alm_desc {
+.alm_suggest {
+	position: absolute;
+	left: 0px;
+	bottom: 0px;
+	width: 100%;
+	margin: 0 0 10px 0; 	
+}
+.top_sidebar {
+    position: relative;
+    z-index: 30;
+    width: 350px;
+    height: 150px;
+    background-color: #258fff;
+}
+.header {
+    position: relative;
+    height: 94px;
+    padding: 20px 20px 2px;
+    color: #fff;
+}
+.header .header_title {
+    width: 95px;
+    margin: 0;
+}
+.header .header_title .a_title {
+    display: block;
+    overflow: hidden;
+    width: 100%;
+    height: 22px;
+    font-size: 0;
+    line-height: 0;
+    background: url(//t1.daumcdn.net/localimg/localimages/07/2018/pc/title/kakaomap_logo.png) no-repeat 0 0;
+    text-indent: -9999px;
+}
+.screen_out {
+    overflow: hidden;
+    position: absolute;
+    width: 0;
+    height: 0;
+    line-height: 0;
+    text-indent: -9999px;
+}
+.box_searchbar {
+    position: relative;
+    width: 100%;
+    height: 35px;
+    margin: 20px 0 20px 0;
+    border-radius: 3px;
+    background-color: #fff;
+    -webkit-box-shadow: 0 2px 1px 0 rgba(0,0,0,.15);
+    -moz-box-shadow: 0 2px 1px 0 rgba(0,0,0,.15);
+    box-shadow: 0 2px 1px 0 rgba(0,0,0,.15);
+}
+.tf_keyword {
+    float: left;
+    width: 277px;
+    height: 26px;
+    padding: 8px 0 0 10px;
+    border: 0 none;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 19px;
+    background-color: transparent;
+    outline: 0;
+}
+.search_button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 25px;
+    height: 25px;
+    border: 0 none;
+    text-indent: -9999px;
+    cursor: pointer;
+    background-image: url("/img/main/SearchButton.png");
+    background-size: 25px;
+}
+.search_button:hover {
+    background-image: url("/img/main/SearchButton.gif")
+}
+.choice_currentmap {
+    position: absolute;
+    top: 22px;
+    right: 19px;
+    --bs-btn-padding-x: 0.50rem;
+    --bs-btn-padding-y: 0.25rem;
+    --bs-btn-font-size: 0.5rem;
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #198754;
+    --bs-btn-border-color: #198754;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #157347;
+    --bs-btn-hover-border-color: #146c43;
+    --bs-btn-focus-shadow-rgb: 60,153,110;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #146c43;
+    --bs-btn-active-border-color: #13653f;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #198754;
+    --bs-btn-disabled-border-color: #198754;
+}
+.lab_currentmap {
+    display: block;
+    overflow: hidden;
+    margin-top: -1px;
+    padding-left: 20px;
+    font-size: 12px;
+    line-height: 15px;
+    cursor: pointer;
+}
+.ico_currentmap {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 1px;
+    width: 14px;
+    height: 14px;
+    background: url(//t1.daumcdn.net/localimg/localimages/07/2018/pc/search/ico_checkbox_190708.png) no-repeat 0 0;
+    pointer-events: none;
+}
+.suggestBox {
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    padding-top: 3px;
+    border-radius: 0 0 3px 3px;
+    background-color: #fff;
+    font-size: 12px;
+    line-height: 17px;
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,.15);
+    -moz-box-shadow: 0 2px 2px 0 rgba(0,0,0,.15);
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.15);
+}
+.middle_sidebar {
 	position: relative;
-	margin: 13px 0 0 90px;
-	height: 75px;
 }
-.alm_desc .alm_doro {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+.baseBox {
+    display: none;
+    width: 100%;
+    border-top: 1px solid #eee;
 }
-.alm_desc .alm_jibun {
-	font-size: 11px;
-	color: #888;
-	margin-top: -2px;
+.favorite_find {
+    padding: 5px 0;
+    border-top: 1px solid #eee;
+    clear: both;
 }
-.alm_info .alm_img {
-	position: absolute;
-	top: 6px;
-	left: 5px;
-	width: 73px;
-	height: 71px;
-	border: 1px solid #ddd;
-	color: #888;
-	overflow: hidden;
+.HIDDEN {
+    display: none!important;
 }
-.alm_info:after {
-	content: '';
-	position: absolute;
-	margin-left: -12px;
-	left: 50%;bottom: 0;
-	width: 22px;
-	height: 12px;
-	background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')
+.search_recent {
+    border-top: 1px solid #eee;
+    line-height: 16px;
+    clear: both;
 }
-.alm_info .link {color: #5085BB;}
+.tit_recent {
+    display: block;
+    height: 16px;
+    padding: 14px 16px 0;
+    font-size: 12px;
+    line-height: 14px;
+    color: #888;
+    letter-spacing: -1px;
+}
+.header_subarea {
+    position: relative;
+    top: -10px;
+    left: -10px;
+}
+.header_subarea > button {
+	--bs-btn-padding-y: 0.2rem;
+	margin: 0 0 0 10px;
+}
+.tooltip-inner {
+	width: 130px;
+	font-size: 0.3rem;
+}
+.middle_sidebar {
+    position: relative;
+    z-index: 30;
+    width: 350px;
+    height: calc(-150px + 100vh);
+}
+.sf_filter {
+	margin: 10px 0 20px 0;
+}
+.sf_title {
+	font-weight: 800;
+	font-size: 1.2rem;
+	margin: 0 0 0 10px;
+}
+.sf_fcr {
+	margin: 15px 0 0 20px; 
+	display: flex; 
+	flex-flow: row wrap;
+	width: 300px;
+}
+.each_fcr {
+	margin: 0 20px 0 20px;
+}
+.fc_img {
+	margin: 0 0 0 3px;
+}
