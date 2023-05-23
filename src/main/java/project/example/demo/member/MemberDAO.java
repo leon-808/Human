@@ -1,6 +1,9 @@
 package project.example.demo.member;
+import java.util.ArrayList;
 
 import org.apache.ibatis.annotations.Mapper;
+
+import project.example.demo.dto.MemberDTO;
 
 @Mapper
 public interface MemberDAO {
@@ -15,5 +18,8 @@ public interface MemberDAO {
 	void submit_signup(String id, String pw, String gender, String birth,
 			String name, String phone);
 	int check_phone(String phone);
+	ArrayList<MemberDTO> get_signupInfo(String id);
+	void update_signup(String id, String pw, String name, String gender, String birth, String phone);
+	
 
 }

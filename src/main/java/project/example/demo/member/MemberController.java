@@ -1,8 +1,11 @@
 package project.example.demo.member;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Date;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import project.example.demo.dto.MemberDTO;
 
 @Controller
 public class MemberController {
@@ -173,5 +177,48 @@ public class MemberController {
 		}
 		
 		return sb.toString();
+	}
+	@PostMapping("/get_signupInfo")
+	@ResponseBody
+	public String get_signupInfo(HttpServletRequest req) {
+		HttpSession session = req.getSession();
+		JSONArray ja = new JSONArray();
+				
+		if (session.getAttribute("id") != null) {
+			String id = session.getAttribute("id").toString();
+		
+			ArrayList<MemberDTO> mdto = mdao.get_signupInfo(id);
+			
+			for (int i = 0; i < mdto.size(); i++) {
+				JSONObject jo = new JSONObject();
+				jo.put("id", mdto.get(i).getId());
+				jo.put("pw", mdto.get(i).getPw());
+				jo.put("name", mdto.get(i).getName());
+				jo.put("gender", mdto.get(i).getGender());
+				jo.put("birth", mdto.get(i).getBirth());
+				jo.put("phone", mdto.get(i).getPhone());
+				ja.put(jo);
+			}
+		}
+		
+		return ja.toString();
+	}
+	@PostMapping("/update_signup")
+	@ResponseBody
+	public String update_signup(HttpServletRequest req) {
+		String check = "true";
+		
+		String id = req.getParameter("id");
+		String pw = req.getParameter("pw");
+		String name = req.getParameter("name");
+		String gender = req.getParameter("gender");
+		String birth = req.getParameter("birth");
+	
+		String phone = req.getParameter("phone");
+		
+		
+		mdao.update_signup(id, pw, name, gender, birth, phone);
+		
+		return check;
 	}
 }

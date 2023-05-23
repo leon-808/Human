@@ -29,9 +29,9 @@
 					<label>아이디</label>
 				</h3>
 				<span class="box int_id"> <input type="text" id="input_id"
-					class="int" maxlength="20">
+					class="int" maxlength="20" readonly>
 
-				</span> <span class="error_box" id="error_inputID"></span>
+				</span> <span class="info_msg">ID는 수정 불가능 합니다.</span>
 			</div>
 
 			<!-- PW1 -->
@@ -113,6 +113,6 @@
 
 	</div>
 	<!-- wrapper -->
-	<script src="/js/member/signUp.js"></script>
+	<script src="/js/member/signUpdate.js"></script>
 </body>
 </html>

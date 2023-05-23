@@ -167,3 +167,7 @@ select {
     font-family: Dotum,'돋움',Helvetica,sans-serif;
     float: right;
 }
+.info_msg{
+	font-weight: bold;
+	color: red;
+}
