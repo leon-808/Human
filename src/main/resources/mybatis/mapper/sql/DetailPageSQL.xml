@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="project.example.demo.DetailPage.DetailPageDAO">
+	<select id="getRDetail" resultType="project.example.demo.dto.RestaurantDTO">
+		select *
+		from restaurant
+		where primecode=#{param1}
+	</select>
+</mapper>
