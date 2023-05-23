@@ -35,12 +35,12 @@ public class MemberController {
 	
 	@GetMapping("/login")
 	public String login_page(HttpServletRequest req) {
-		return redirectMain(req);
+		return redirectMain(req,"member/login");
 	}
 	
 	@GetMapping("/signup")
 	public String signup_page(HttpServletRequest req) {
-		return redirectMain(req);
+		return redirectMain(req,"member/signUp");
 	}
 	
 
@@ -51,12 +51,12 @@ public class MemberController {
 	
 	@GetMapping("/find/id")
 	public String idfind(HttpServletRequest req) {
-		return redirectMain(req);
+		return redirectMain(req,"member/findID");
 	}
 	
 	@GetMapping("/find/pw")
 	public String pwfind(HttpServletRequest req) {
-		return redirectMain(req);
+		return redirectMain(req,"member/findPW");
 	}
 	
 	@PostMapping("/submit/login")
@@ -172,11 +172,11 @@ public class MemberController {
 		return result;
 	}
 	
-	public String redirectMain(HttpServletRequest req) {
+	public String redirectMain(HttpServletRequest req, String url) {
 		HttpSession session = req.getSession();
 		if (session.getAttribute("id") != null) return "redirect:/main"; 
 		// 환영 페이지 만들어지면 리다이렉트 링크 수정해야함
-		else return "/member/login";
+		else return url;
 	}
 	
 	public String getTemporalPw(int size) {
@@ -230,7 +230,6 @@ public class MemberController {
 		String name = req.getParameter("name");
 		String gender = req.getParameter("gender");
 		String birth = req.getParameter("birth");
-	
 		String phone = req.getParameter("phone");
 		
 		
