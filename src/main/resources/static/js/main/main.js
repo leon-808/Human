@@ -14,6 +14,12 @@ $(document)
 	})
 })
 .on("click", "#addLocationButton", clickAddLocationButton)
+.on("click", ".toggleSwitch", function(){
+	$(this).toggleClass("active");
+})
+.on("click", ".toggleSwitch2", function(){
+	$(this).toggleClass("active");
+});
 
 $(".each_fcr").hover(function() {
 	$(this).css("background-image", "url('/img/main/FC_HoverRectangle.png')");
@@ -34,6 +40,7 @@ $("input[name='fc']").change(function() {
 		}
 	})
 })
+
 
 
 function isLogin() {

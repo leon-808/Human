@@ -3,10 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<link rel="stylesheet" href="/css/basic.css">
-<link href="/css/bootstrap/bootstrap.min.css" rel="stylesheet" 
-integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+<jsp:include page="/WEB-INF/views/metaLink.jsp"/>
 <link rel="stylesheet" href="/css/main/main.css">
 <link rel="stylesheet" href="/css/main/dd.css">
 <title>메인 페이지</title>
@@ -94,11 +91,43 @@ integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG
     			</div>
     		</div>
     	</div>
-    	<div>
-    		<h3 class="sf_title">사용자 음식 선호도</h3>
+    	<div class="sf_filter">
+    		<div style="display: flex;">
+	    		<h3 class="sf_title">사용자 선호도 정렬</h3>
+	    		<label class="toggleSwitch off"><span>끄기</span></label>
+	    	</div>
+	    	<div style="line-height: 40%"><br><br></div>
+    		<label class="toggleSwitch often"><span>자주 가는 맛집순</span></label>
+    		<label class="toggleSwitch rare"><span>많이 가지 않은 맛집순</span></label>
     	</div>
-    	<div>
+    	<div class="sf_filter">
     		<h3 class="sf_title">맛집 태그</h3>
+    		<div class="tag_row">
+	    		<div class="tag_column">
+		    		<span class="tag_category">편의성</span>
+					<label class="toggleSwitch2 clean"><span>청결</span></label> 
+					<label class="toggleSwitch2 kind"><span>친절</span></label> 
+					<label class="toggleSwitch2 parking"><span>주차</span></label> 
+					<label class="toggleSwitch2 fast"><span>조리</span></label>
+					<label class="toggleSwitch2 pack"><span>포장</span></label>
+				</div>
+				<div class="tag_column">
+					<span class="tag_category">분위기</span>
+					<label class="toggleSwitch2 alone"><span>혼밥</span></label> 
+					<label class="toggleSwitch2 together"><span>단체</span></label>
+					<label class="toggleSwitch2 focus"><span>집중</span></label>
+					<label class="toggleSwitch2 talk"><span>대화</span></label>
+					<label class="toggleSwitch2 photoplace"><span>사진</span></label>
+				</div>
+				<div class="tag_column">
+					<span class="tag_category" style="margin-left: 10px;">맛과 가격</span>
+					<label class="toggleSwitch2 delicious"><span>맛</span></label> 
+					<label class="toggleSwitch2 lot"><span>양</span></label> 
+					<label class="toggleSwitch2 cost"><span>가성비</span></label> 
+					<label class="toggleSwitch2 portion"><span>알참</span></label>
+					<label class="toggleSwitch2 satisfy"><span>만족</span></label>
+				</div>
+			</div>
     	</div>
     </div>
     <div class="mapView">
@@ -107,11 +136,8 @@ integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG
 	<div class="cursor">
 		<img src="" id="cursorImg">
 	</div>
+<jsp:include page="/WEB-INF/views/script.jsp"/>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=	329e5620a47418538719e0a8fbdae4ce"></script>
-<script src="https://code.jquery.com/jquery-latest.js"></script>
-<script src="/js/bootstrap/bootstrap.bundle.min.js" 
-integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-  </body>
 <script src="/js/main/main.js"></script>
 <script src="/js/main/dd.min.js"></script>
 </body>
