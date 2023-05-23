@@ -303,19 +303,6 @@ body{
 }
 .alm_info .link {color: #5085BB;}
 
-.toggleSwitch {  /*카테고리 버튼*/
-  width: 80px;
-  height: 30px;
-  margin: 3px;
-  text-align: center;
-  border-radius: 10px;
-  background-color: #fff;
-  cursor: pointer;
-  font-size:15px;
-  font-weight: bold;
-  border: 2px solid #68d98a;
-  color: #68d98a;
-}
 .toggleSwitch.off {        /*끄기 버튼*/
   width: 70px;
   height: 30px;
@@ -333,7 +320,7 @@ body{
 .toggleSwitch.rarely {      /*자주가는,많이가는 버튼*/
   width: 160px;
   height: 30px;
-  margin: 3px;
+  margin: 5px;
   text-align: center;
   border-radius: 10px;
   background-color: #fff;
@@ -356,14 +343,6 @@ body{
   border: 2px solid #68d98a;
   color: #68d98a;	
 }
-.toggleSwitch.korean.active,
-.toggleSwitch.chinese.active,
-.toggleSwitch.chicken.active,
-.toggleSwitch.pizza.active,
-.toggleSwitch.pork.active,
-.toggleSwitch.cafe.active,
-.toggleSwitch.western.active,
-.toggleSwitch.japanese.active,
 .toggleSwitch2.clean.active,
 .toggleSwitch2.alone.active,
 .toggleSwitch2.delicious.active,
@@ -424,6 +403,7 @@ body{
 	margin: 10px 0 20px 0;
 }
 .sf_title {
+	display: inline-block;
 	font-weight: 800;
 	font-size: 1.2rem;
 	margin: 0 0 0 10px;
@@ -439,4 +419,16 @@ body{
 }
 .fc_img {
 	margin: 0 0 0 3px;
+}
+.tagContainer {
+	display: flex;
+	justify-content: space-between;
+}
+.tagContainer>span {
+	flex-basis: 33.33%;
+	display: flex;
+	justify-content: center;
+}
+.tagSpan {
+	font-weight: bold;
 }
