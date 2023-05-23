@@ -114,6 +114,7 @@
 					class="tagSpan foodCost">3.음식/가격</span>
 			</div>
 			<br>
+			<div class="toggleSwitch2_container">
 			<label class="toggleSwitch2 clean"> <span>매장 청결</span>
 			</label> <label class="toggleSwitch2 alone"> <span>혼밥</span>
 			</label> <label class="toggleSwitch2 delicious"> <span>맛있음</span>
@@ -130,6 +131,7 @@
 			</label> <label class="toggleSwitch2 photoplace"> <span>사진</span>
 			</label> <label class="toggleSwitch2 satisfy"> <span>돈값함</span>
 			</label>
+			</div>
 		</div>
 	</div>
     <div class="mapView">
