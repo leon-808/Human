@@ -1,11 +1,10 @@
-userPhone = "";
-
 $(document)
 .ready(clear_signup)
 .ready(get_signupInfo)
 .on('click','#button_submitSignUpdate',update_signup)
 .on('click','#button_submitCancel',Cancel_update)
 .on('change','#input_phone',check_phone)
+.on('change','#input_phone',check_myPhone)
 
 function update_signup() {
 	id = $("#input_id").val();
@@ -89,14 +88,23 @@ function get_signupInfo() {
 	})
 }
 function check_phone() {
-	phone = $("#input_phone").val();
+	phone = $(this).val().replace(/[^0-9]/g, "");
+	$(this).val(phone);
+	
 	$.ajax({
-		url: "/check_phone",
+		url: "/check/phone",
 		type: "post",
 		data: {
 			phone: phone
 		},
 		dataType: "text",
+		beforeSend: function() {
+			if (phone == "") {
+				$("#error_inputPhone").text("전화번호는 필수값입니다");
+				$("#error_inputPhone").show();
+				return false;
+			}
+		},
 		success: function(check) {
 			if (check == "true") {
 				$("#error_inputPhone").css("color", "green");
@@ -104,15 +112,9 @@ function check_phone() {
 				$("#error_inputPhone").show();
 			}
 			else {
-				if (userPhone == phone) {
-					$("#error_inputPhone").css("color", "green");
-					$("#error_inputPhone").text("기존에 사용하던 번호입니다.");
-					$("#error_inputPhone").show();
-				} else {
-					$("#error_inputPhone").css("color", "red");
-					$("#error_inputPhone").text("이미 등록된 번호입니다.");
-					$("#error_inputPhone").show();
-				}
+				$("#error_inputPhone").css("color", "red");
+				$("#error_inputPhone").text("이미 등록된 번호입니다.");
+				$("#error_inputPhone").show();
 			}
 
 		}
