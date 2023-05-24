@@ -213,4 +213,50 @@ public class MemberController {
 		}
 		return sb.toString();
 	}
+	
+	public SingleMessageSentResponse sendTemporalPw(String phone, String temporary) {
+		Message message = new Message();
+		message.setFrom("01074123949");
+		message.setTo(phone);
+		message.setText(String.format("""
+				[맛집] 임시 비밀번호는 %1$s 입니다
+				로그인 후 비밀번호를 변경해주세요
+				""", temporary));
+		SingleMessageSentResponse response = 
+				this.messageService.sendOne(new SingleMessageSendingRequest(message));
+		return response;
+	}
+	
+	@PostMapping("/my/name")
+	@ResponseBody
+	public String get_mypageName(HttpServletRequest req) {
+		String name = "";
+		
+		HttpSession session = req.getSession();
+		
+		if (session.getAttribute("name") != null)
+		name = session.getAttribute("name").toString();
+		
+		return name; 
+	}
+	
+	//아작스 파일 업로드
+	@PostMapping("/uploadImage")
+	public void uploadImage(MultipartFile[] uploadFile) {
+		// 이미지 파일 저장 위치
+		String uploadFolder = "C:\\storage";
+		for(MultipartFile multipartFile : uploadFile) {
+			log.info("---------------------------------");
+			log.info("Upload File Name : "+multipartFile.getOriginalFilename());
+			log.info("Upload File Size : "+multipartFile.getSize());
+			
+			File savefile = new File(uploadFolder, multipartFile.getOriginalFilename());
+			try {
+				multipartFile.transferTo(savefile);
+			}catch(Exception e) {
+				log.error(e.getMessage());
+			}
+		}
+		
+	}
 }
