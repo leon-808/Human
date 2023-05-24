@@ -1,0 +1,9 @@
+@charset "UTF-8";
+.title1{
+	margin:50px 50px 50px 50px;
+}
+
+nav{
+	display:flex;
+	justify-content:center;
+}

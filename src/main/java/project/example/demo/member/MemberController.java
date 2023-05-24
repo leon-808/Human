@@ -1,13 +1,17 @@
 package project.example.demo.member;
 
+import java.io.File;
 import java.security.SecureRandom;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -16,6 +20,8 @@ import jakarta.servlet.http.HttpSession;
 public class MemberController {
 	@Autowired
 	private MemberDAO mdao;
+	
+	private final Logger log = LoggerFactory.getLogger(getClass());
 	
 	@GetMapping("/login")
 	public String login_page() {
@@ -37,6 +43,11 @@ public class MemberController {
 		return "/member/PwFind";
 	}
 	
+	@GetMapping("/add/restaurant")
+	public String addRestaurant_page() {
+		return "/member/addRestaurant";
+	}
+	
 	@PostMapping("/submit/login")
 	@ResponseBody
 	public String submit_login(HttpServletRequest req) {
@@ -47,11 +58,13 @@ public class MemberController {
 		String id = req.getParameter("id");
 		String pw = req.getParameter("pw");
 		String get_id = mdao.get_id(id, pw);
+		String get_name = mdao.get_name(id, pw);
 		int flag = mdao.check_duplicateID(id);
 		
 		if (flag != 0) {
 			if (get_id != null) {
 				session.setAttribute("id", get_id);
+				session.setAttribute("name", get_name);
 				session.setMaxInactiveInterval(600);
 				check = "true";
 			}
@@ -168,5 +181,38 @@ public class MemberController {
 		}
 		
 		return sb.toString();
+	}
+	
+	@PostMapping("/my/name")
+	@ResponseBody
+	public String get_mypageName(HttpServletRequest req) {
+		String name = "";
+		
+		HttpSession session = req.getSession();
+		
+		if (session.getAttribute("name") != null)
+		name = session.getAttribute("name").toString();
+		
+		return name; 
+	}
+	
+	//아작스 파일 업로드
+	@PostMapping("/uploadImage")
+	public void uploadImage(MultipartFile[] uploadFile) {
+		// 이미지 파일 저장 위치
+		String uploadFolder = "C:\\storage";
+		for(MultipartFile multipartFile : uploadFile) {
+			log.info("---------------------------------");
+			log.info("Upload File Name : "+multipartFile.getOriginalFilename());
+			log.info("Upload File Size : "+multipartFile.getSize());
+			
+			File savefile = new File(uploadFolder, multipartFile.getOriginalFilename());
+			try {
+				multipartFile.transferTo(savefile);
+			}catch(Exception e) {
+				log.error(e.getMessage());
+			}
+		}
+		
 	}
 }

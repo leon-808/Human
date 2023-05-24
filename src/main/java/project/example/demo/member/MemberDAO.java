@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface MemberDAO {
 	String get_id(String id,String pw);
+	String get_name(String id,String pw);
 	String search_id(String name, String phone);
 	String get_temporalPW(String id,String name, String phone);
 	

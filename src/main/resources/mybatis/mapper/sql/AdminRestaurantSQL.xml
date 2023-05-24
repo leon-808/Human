@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="project.example.demo.admin.AdminRestaurantDAO">
+	<insert id="submit_addRestaurant">
+		insert into admin_restaurant 
+		values
+		(#{param1},#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8})
+		<!-- (lat,lng,primecode,r_name,document,owner,category,address) -->
+	</insert>
+</mapper>
