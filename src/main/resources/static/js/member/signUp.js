@@ -1,15 +1,15 @@
 $(document)
 .ready(clear_signup)
-.on("change", "#input_id", check_duplicateID)
-.on("change", "#input_phone", check_phone)
-.on("focusout", "#input_passwordCheck", check_samePWC)
+.on("propertychange change paste input", "#input_id", check_duplicateID)
+.on("propertychange change paste input", "#input_phone", check_phone)
+.on("propertychange change paste input", "#input_passwordCheck", check_samePWC)
 .on("click", "#button_submitSignup", submit_signup)
 
 
 function check_duplicateID() {
 	id = $("#input_id").val();
 	$.ajax({
-		url: "/check_duplicateID",
+		url: "/check/duplicateID",
 		type: "post",
 		data: {
 			id: id
@@ -46,14 +46,23 @@ function check_duplicateID() {
 }
 
 function check_phone() {
-	phone = $("#input_phone").val();
+	phone = $(this).val().replace(/[^0-9]/g, "");
+	$(this).val(phone);
+	
 	$.ajax({
-		url: "/check_phone",
+		url: "/check/phone",
 		type: "post",
 		data: {
 			phone: phone
 		},
 		dataType: "text",
+		beforeSend: function() {
+			if (phone == "") {
+				$("#error_inputPhone").text("전화번호는 필수값입니다");
+				$("#error_inputPhone").show();
+				return false;
+			}
+		},
 		success: function(check) {
 			if (check == "true") {
 				$("#error_inputPhone").css("color", "green");
@@ -139,11 +148,5 @@ function check_samePWC() {
 	}
 }
 function clear_signup() {
-	$("#id").val("");
-	$("#pswd1").val("");
-	$("#pswd2").val("");
-	$("#name").val("");
-	$("#mobile").val("");
-	$("input[name=gender]").prop("checked", false);
-	$("#birth").val("");
+	$("#content").find("input").val("");
 }

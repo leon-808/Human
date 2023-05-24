@@ -1,30 +1,8 @@
 $(document)
-.ready(isLogin)
 .on("click","#btnLogin", submit_login)
-.on("click","#singup", goto_signup)
+.on("click","#signup", goto_signup)
 .on("click","#IdFind", goto_IdFind)
 .on("click","#PwFind", goto_PwFind)
-
-function isLogin() {
-	$.ajax({
-		url: "/isLogin",
-		type: "post",
-		dataType: "text",
-		success: function(isLogin) {
-			if (isLogin == "true") {} // 로그인 기능과 연동하면 함수를 여기로 옮겨야 함 createAddLocationButton();
-			createAddLocationButton();	
-		}
-	})
-}
-
-function createAddLocationButton() {
-	addLocationButton = `<div class="controlDiv">
-						 	<div class="controlBox">
-						 		<button id="addLocationButton" class="controlButton cursorButton"></button>
-						 	</div>
-						 </div>`
-	$("#map").append(addLocationButton);
-}
 
 function submit_login(){
 	id = $("#input_loginID").val();
@@ -47,7 +25,8 @@ function submit_login(){
 		success: function(check) {
 			if (check == "true") {
 				clear_login();
-				document.location = "/main";
+				// 나중에 환영 페이지 만들어지면 주소 수정할것
+				document.location = "/";
 			}
 			else if (check == "wrong") {
 				alert("비밀번호가 틀렸습니다");
@@ -66,11 +45,11 @@ function goto_signup(){
 }
 
 function goto_IdFind(){
-	document.location = "/IdFind"
+	document.location = "/find/id"
 }
 
 function goto_PwFind(){
-	document.location = "/PwFind"
+	document.location = "/find/pw"
 }
 
 function clear_login() {

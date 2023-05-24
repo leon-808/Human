@@ -15,32 +15,47 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import net.nurigo.sdk.NurigoApp;
+import net.nurigo.sdk.message.model.Message;
+import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
+import net.nurigo.sdk.message.service.DefaultMessageService;
 
 @Controller
 public class MemberController {
+	final DefaultMessageService messageService;
+	
+	public MemberController() {
+		this.messageService = NurigoApp.INSTANCE.initialize
+				("NCSY0E54KZK025CT", "PGICSLP8GA8KX8L9VNJXQV9HJZ29E7ET", "https://api.coolsms.co.kr");
+	}
+	
 	@Autowired
 	private MemberDAO mdao;
 	
 	private final Logger log = LoggerFactory.getLogger(getClass());
 	
 	@GetMapping("/login")
-	public String login_page() {
-		return "/member/login";
+	
+	public String login_page(HttpServletRequest req) {
+		return redirectMain(req);
 	}
 	
 	@GetMapping("/signup")
-	public String signup_page() {
-		return "/member/signUp";
+
+	public String signup_page(HttpServletRequest req) {
+		return redirectMain(req);
 	}
 	
-	@GetMapping("/IdFind")
-	public String idfind() {
-		return "/member/IdFind";
+
+	@GetMapping("/find/id")
+	public String idfind(HttpServletRequest req) {
+		return redirectMain(req);
 	}
 	
-	@GetMapping("/PwFind")
-	public String pwfind() {
-		return "/member/PwFind";
+	@GetMapping("/find/pw")
+	public String pwfind(HttpServletRequest req) {
+		return redirectMain(req);
 	}
 	
 	@GetMapping("/add/restaurant")
@@ -54,14 +69,16 @@ public class MemberController {
 		String check = "false";
 		
 		HttpSession session = req.getSession(); 
-		
+	
 		String id = req.getParameter("id");
 		String pw = req.getParameter("pw");
-		String get_id = mdao.get_id(id, pw);
+		
+		
 		String get_name = mdao.get_name(id, pw);
 		int flag = mdao.check_duplicateID(id);
 		
 		if (flag != 0) {
+			String get_id = mdao.get_id(id, pw);
 			if (get_id != null) {
 				session.setAttribute("id", get_id);
 				session.setAttribute("name", get_name);
@@ -86,8 +103,7 @@ public class MemberController {
 		String birth = req.getParameter("birth");
 		String phone = req.getParameter("phone");
 
-		System.out.println(id+"/"+pw+"/"+name+"/"+gender+"/"+birth+"/"+phone);
-
+		
 		mdao.submit_signup(id, pw, gender, birth, name, phone);
 		
 		return check;
@@ -104,7 +120,8 @@ public class MemberController {
 		return check;
 	}
 	
-	@PostMapping("/check_duplicateID")
+	
+	@PostMapping("/check/duplicateID")
 	@ResponseBody
 	public String check_duplicateID(HttpServletRequest req) {
 		String check = "false";
@@ -118,7 +135,8 @@ public class MemberController {
 	}
 	
 
-	@PostMapping("/check_phone")
+	
+	@PostMapping("/check/phone")
 	@ResponseBody
 	public String check_phone(HttpServletRequest req) {
 		String check = "false";
@@ -131,7 +149,8 @@ public class MemberController {
 		return check;
 	}
 	
-	@PostMapping("/search_id")
+	
+	@PostMapping("/search/id")
 	@ResponseBody
 	public String search_id(HttpServletRequest req) {
 		String result = "";
@@ -144,26 +163,39 @@ public class MemberController {
 		return result;
 	}
 	
-	@PostMapping("/search_pw")
+	
+	@PostMapping("/search/pw")
 	@ResponseBody
 	public String search_pw(HttpServletRequest req) {
-		String result = "";
 		
-		String temporary = getTemporalPw(7);
+		String result = "false";
+		
+		
+		String temporary = getTemporalPw(8);
 		
 		String id = req.getParameter("id");
 		String name = req.getParameter("name");
 		String phone = req.getParameter("phone");
 		
 		int flag = mdao.search_pw(id, name, phone);
-		System.out.println(flag);
 		
-		if(flag !=0) {
+		
+		
+		if (flag != 0) {
 			mdao.update_pw(id, name, phone, temporary);
-			result = mdao.get_temporalPW(id, name, phone);
+			
+			sendTemporalPw(phone, temporary);
+			result = "true";
 		}
-		
+	
 		return result;
+	}
+	
+	public String redirectMain(HttpServletRequest req) {
+		HttpSession session = req.getSession();
+		if (session.getAttribute("id") != null) return "redirect:/main"; 
+		// 환영 페이지 만들어지면 리다이렉트 링크 수정해야함
+		else return "/member/login";
 	}
 	
 	public String getTemporalPw(int size) {
@@ -179,40 +211,6 @@ public class MemberController {
 			index = sr.nextInt(charSet.length);
 			sb.append(charSet[index]);
 		}
-		
 		return sb.toString();
-	}
-	
-	@PostMapping("/my/name")
-	@ResponseBody
-	public String get_mypageName(HttpServletRequest req) {
-		String name = "";
-		
-		HttpSession session = req.getSession();
-		
-		if (session.getAttribute("name") != null)
-		name = session.getAttribute("name").toString();
-		
-		return name; 
-	}
-	
-	//아작스 파일 업로드
-	@PostMapping("/uploadImage")
-	public void uploadImage(MultipartFile[] uploadFile) {
-		// 이미지 파일 저장 위치
-		String uploadFolder = "C:\\storage";
-		for(MultipartFile multipartFile : uploadFile) {
-			log.info("---------------------------------");
-			log.info("Upload File Name : "+multipartFile.getOriginalFilename());
-			log.info("Upload File Size : "+multipartFile.getSize());
-			
-			File savefile = new File(uploadFolder, multipartFile.getOriginalFilename());
-			try {
-				multipartFile.transferTo(savefile);
-			}catch(Exception e) {
-				log.error(e.getMessage());
-			}
-		}
-		
 	}
 }

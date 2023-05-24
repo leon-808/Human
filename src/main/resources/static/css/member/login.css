@@ -1,4 +1,5 @@
 @charset "UTF-8";
+<<<<<<< .mine
 .main{
 	width: 100vw;
 	height: 100vh;
@@ -6,3 +7,70 @@
 	vertical-align: center;
 	align-items: center;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=======
+.body {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+.loginbox {
+	width: 25vw;
+}
+.wrapperSI {
+	display: flex;
+	align-items: center;
+}
+.loginspan {
+	width: 50px;
+}
+.form-control {
+	width: 20vw;
+	margin: 0 0 0 10px;
+}
+.loginLabel {
+	position: relative;
+}
+#btnLogin {
+	width: 100%;
+}
+.wrapperA {
+	margin: 10px 0 0 0;
+	text-align: center;
+}
+.aText {
+	margin: 0 20px 0 20px;
+	font-size: 13px;
+}
+>>>>>>> .theirs

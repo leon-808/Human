@@ -1,3 +1,6 @@
+const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
 $(document)
 .ready(isLogin)
 .ready(geoPosition)
@@ -10,8 +13,33 @@ $(document)
 		top: mouseY + "px"
 	})
 })
-.on("click", ".cursorButton", clickCursorButton)
 .on("click", "#addLocationButton", clickAddLocationButton)
+.on("click", ".toggleSwitch", function(){
+	$(this).toggleClass("active");
+})
+.on("click", ".toggleSwitch2", function(){
+	$(this).toggleClass("active");
+});
+
+$(".each_fcr").hover(function() {
+	$(this).css("background-image", "url('/img/main/FC_HoverRectangle.png')");
+	$(this).css("background-position", "center");
+}, function() {
+	$(this).css("background-image", "none");
+})
+
+$("input[name='fc']").change(function() {
+	$("input[name='fc']").each(function() {
+		let id = $(this).attr("id");
+		let quote = "'" + id + "'";
+		if ($(this).prop("checked")) {
+			$(`label[for='${id}']`).children("img").attr("src", id + "Act.png");
+		}
+		else {
+			$(`label[for='${id}']`).children("img").attr("src", id + ".png");
+		}
+	})
+})
 
 
 
@@ -37,15 +65,16 @@ function createAddLocationButton() {
 }
 
 
-let mapOption, map, lat, lng = 0;
-let imageSrc = "/img/main/HumanMarker.png",
-	imageSize = new kakao.maps.Size(40, 40),
-	imageOption = {offset: new kakao.maps.Point(20, 20)},
-	markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
-	markerPosition, clickMarker, selfMarker, selfContent, selfOverlay = 0;
+let mapOption, map, lat, lng, selfOverlay = 0;
 let zoomControl = new kakao.maps.ZoomControl();
 
 function geoPosition() {
+	let imageSrc = "/img/main/HumanMarker.png",
+	imageSize = new kakao.maps.Size(30, 30),
+	imageOption = {offset: new kakao.maps.Point(20, 20)},
+	markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
+	selfMarker, selfContent = 0;
+	
 	if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(
 			function(position) {
@@ -97,44 +126,69 @@ function makeMap(lat, lng) {
 
 function closeOverlay() {
 	selfOverlay.setMap(null);
+	addLocationOverlay.setMap(null);
 }
 
 
 
-function clickCursorButton() {
-	if ($(".cursor").css("display") == "none") {
-		$(".cursor").css("display", "inline-block")
-	}
-	else $(".cursor").css("display", "none")
-}
-
-let addLocationMarker = new kakao.maps.Marker(),
+let addLocationMarker = new kakao.maps.Marker({
+	clickable: true
+}),
+addLocationOverlay = new kakao.maps.CustomOverlay({
+	clickable: true
+}),
 addLocationFlag = 0;
 
-function clickAddLocationButton() {
-	if ($(this).css("background-position-y") == "-450px") {
+function addLocationEvent(mouseEvent) {
+	let imageSrc = "/img/main/EditMapMarker.png",
+	imageSize = new kakao.maps.Size(25, 25),
+	imageOption = {offset: new kakao.maps.Point(20, 20)},
+	markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+	addLocationMarker.setImage(markerImage);
+	
+	let latLng = mouseEvent.latLng;
+	addLocationMarker.setPosition(latLng);
+	addLocationMarker.setMap(map);
+	
+	$("#addLocationButton").css("background-position-y", "-450px");
+	$("#cursorImg").attr("src", "");
+	
+	check_duplicateLocation();
+	
+	kakao.maps.event.removeListener(map, "click", addLocationEvent);
+}
+
+function popUpAddLocationOverlay() {
+	addLocationOverlay.setMap(map);
+}
+
+function clickAddLocationButton() {	
+	if ($(this).css("background-position-y") == "-450px" &&
+		$("#cursorImg").attr("src") == "") {
+			
 		$(this).css("background-position-y", "-350px");
-				
-		kakao.maps.event.addListener(map, "click", function(mouseEvent) {
-			let latLng = mouseEvent.latLng;
-			addLocationMarker.setPosition(latLng);
-			check_duplicateLocation();
-		})
+		$("#cursorImg").attr("src", "/img/main/AddLocationCursor.gif");
+		$(".cursor").css("display", "inline-block");
+		
+		kakao.maps.event.addListener(map, "click", addLocationEvent);
+		kakao.maps.event.addListener(addLocationMarker, "click", popUpAddLocationOverlay);
 		map.setLevel(1);
 		addLocationFlag = 1;
-		addLocationMarker.setMap(map);
+		addLocationMarker.setMap(null);
+	 	addLocationOverlay.setMap(null);
 	}
 	else {
 		$(this).css("background-position-y", "-450px");
+		$("#cursorImg").attr("src", "");
+		$(".cursor").css("display", "none");
+		
+		kakao.maps.event.removeListener(map, "click", addLocationEvent);
+		kakao.maps.event.removeListener(addLocationMarker, "click", popUpAddLocationOverlay);
 		map.setLevel(2);
 		addLocationFlag = 0;
 		addLocationMarker.setMap(null);
+		addLocationOverlay.setMap(null);
 	}
-	
-	if ($("#cursorImg").attr("src") == "") {
-		$("#cursorImg").attr("src", "/img/main/AddLocationCursor.gif");
-	}
-	else $("#cursorImg").attr("src", "");
 }
 
 function check_duplicateLocation() {
@@ -171,29 +225,33 @@ function check_duplicateLocation() {
 				else {
 					// 상세페이지가 만들어지면 링크 수정해야함
 					let emptyContent = 
-					`<div class="alm_wrap">
-					 	<div class="alm_info">
-					 		<div class="alm_title">
-					 			신규 음식점 제안
-					 			<div class="alm_close" onclick="closeOverlay()" title="닫기"></div>
-					 		</div>
-						 	<div class="alm_body">
-						 		<div class="alm_desc">
-						 			<div>상호명: <input id="r_name"></div>
-						 			<div>카테고리: <input id="category"></div>
-						 		</div>
-						 	</div>
-						 </div>
+					`<div class="alm_info">
+				 		<div class="alm_title">
+				 			신규 음식점 제안
+				 			<div class="alm_close" onclick="closeOverlay()" title="닫기"></div>
+				 		</div>
+					 	<div class="alm_body">
+				 			<div><input id="r_name" class="alm_input" placeholder="상호명"></div>
+				 			<div style="text-align: center">
+				 				<select id="category" class="alm_select" is="ms-dropdown">
+				 					<option value="">카테고리를 선택하세요</option>
+				 					<option value="한식" data-image="/img/main/KoreanFood.png">한식</option>
+				 					<option value="중식" data-image="/img/main/ChinaFood.png">중식</option>
+				 					<option value="일식" data-image="/img/main/JapanFood.png">일식</option>
+				 					<option value="양식" data-image="/img/main/WesternFood.png">양식</option>
+				 					<option value="피자" data-image="/img/main/Pizza.png">피자</option>
+				 					<option value="치킨" data-image="/img/main/Chicken.png">치킨</option>
+				 					<option value="족발" data-image="/img/main/Jokbal.png">족발</option>
+				 					<option value="카페" data-image="/img/main/Cafe.png">카페</option>
+				 				</select>
+				 			</div>
+				 			<div><button class="alm_suggest btn btn-primary">제안하기</button></div>
+					 	</div>
 					 </div>`;
-					let emptyOverlay = new kakao.maps.CustomOverlay({
-						content: emptyContent,
-						map: map,
-						position: addLocationMarker.getPosition()
-					})
-					
-					kakao.maps.event.addListener(addLocationMarker, "click", function() {
-						emptyOverlay.setMap(map);
-					})
+					 
+					 addLocationOverlay.setContent(emptyContent);
+					 addLocationOverlay.setPosition(addLocationMarker.getPosition());
+					 addLocationOverlay.setMap(map);
 				}
 			}
 		})

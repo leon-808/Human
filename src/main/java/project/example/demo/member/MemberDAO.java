@@ -7,7 +7,6 @@ public interface MemberDAO {
 	String get_id(String id,String pw);
 	String get_name(String id,String pw);
 	String search_id(String name, String phone);
-	String get_temporalPW(String id,String name, String phone);
 	
 	int check_duplicateID(String id);
 	int search_pw(String id, String name, String phone);
@@ -16,5 +15,4 @@ public interface MemberDAO {
 	void submit_signup(String id, String pw, String gender, String birth,
 			String name, String phone);
 	int check_phone(String phone);
-
 }

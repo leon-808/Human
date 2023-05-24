@@ -41,14 +41,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where id = #{param1} and name = #{param2} and phone = #{param3}
 	</select>
 	
-	<select id="get_temporalPW" resultType="string">
-		select pw
-		from member
-		where id = #{param1}
-		and name = #{param2}
-		and phone = #{param3}
-	</select>
-	
 	<insert id="submit_signup">
 		insert into member
 		values (#{param1},#{param2},#{param3},
