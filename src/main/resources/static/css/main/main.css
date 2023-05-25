@@ -4,14 +4,14 @@ body{
 }
 .mapView {
     position: absolute;
-    bottom: 0;
     top: 0;
-    left: 350px;
     right: 0;
+    bottom: 0;
+    left: 0;
     z-index: 0;
 }
 #map {
-	width: calc(100vw - 350px);
+	width: 100vw;
 	height: 100vh;
 }
 .simpleOverlay {
@@ -49,7 +49,6 @@ body{
 	position: absolute;
 	z-index: 2;
 	top: 10px;
-	left: -350px;
 }
 .controlDiv * {
 	left: -350px;
@@ -76,6 +75,11 @@ body{
     border-image: initial;
     border-radius: 3px 3px 0px 0px;
 }
+#currentLocationButton {
+    background: url(//t1.daumcdn.net/localimg/localimages/07/2018/pc/common/img_search.png) no-repeat;
+    background-position-x: -150px;
+    background-position-y: -450px;
+}
 #addLocationButton {
     background: url(//t1.daumcdn.net/localimg/localimages/07/2018/pc/common/img_search.png) no-repeat;
     background-position-x: -190px;
@@ -99,8 +103,7 @@ body{
 .alm_title {
 	padding: 5px 0 0 10px;
 	height: 40px;
-	background: #eee;
-	border-bottom: 1px solid #ddd;
+	background: #ddd;
 	line-height: 30px;
 	font-size: 18px;
 	font-weight: bold;
@@ -260,10 +263,6 @@ body{
     -moz-box-shadow: 0 2px 2px 0 rgba(0,0,0,.15);
     box-shadow: 0 2px 2px 0 rgba(0,0,0,.15);
 }
-.middle_sidebar {
-	position: relative;
-	z-index: 30;
-}
 .baseBox {
     display: none;
     width: 100%;
@@ -304,13 +303,26 @@ body{
 	width: 130px;
 	font-size: 0.3rem;
 }
+.middle_sideMessage {
+    position: relative;
+    display: block;
+    width: 350px;
+    height: calc(-150px + 100vh);
+}
+.sideMessage {
+	margin: 10px;
+	font-size: 15px; 
+	font-weight: bold;
+}
 .middle_sidebar {
     position: relative;
     width: 350px;
     height: calc(-150px + 100vh);
+    z-index: 30;
 }
 .sf_filter {
 	margin: 10px 0 20px 0;
+	display: none;
 }
 .sf_title {
 	font-weight: 800;
@@ -425,8 +437,7 @@ body{
 .dt_title {
 	padding: 5px 50px 0 10px;
 	height: 40px;
-	background: #eee;
-	border-bottom: 1px solid #ddd;
+	background: #ddd;
 	line-height: 30px;
 	font-size: 18px;
 	font-weight: bold;
@@ -438,4 +449,26 @@ body{
 	width: 90%;
 	padding: 2px;
 	margin: 0 0 10px 0; 	
+}
+.toggle_sidebar {
+    overflow: hidden;
+    position: absolute;
+    top: 50%;
+    left: 350px;
+    width: 22px;
+    height: 54px;
+    z-index: 30;
+    font-size: 0;
+    line-height: 0;
+    background: url(//t1.daumcdn.net/localimg/localimages/07/2018/pc/shadow/img_navi.png) no-repeat 0 0;
+    text-indent: -9999px;
+    cursor: pointer;
+}
+.tsb_open {
+	display: none;
+	left: 0px;
+	background: url(//t1.daumcdn.net/localimg/localimages/07/2018/pc/shadow/img_navi.png) no-repeat 0 -60px;
+}
+.offcanvas {
+	max-width: 350px;
 }
