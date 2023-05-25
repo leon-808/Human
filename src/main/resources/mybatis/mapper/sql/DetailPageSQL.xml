@@ -11,9 +11,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="getReview" resultType="project.example.demo.dto.ReviewDTO">
+		select *
+		from review
+		where RV_PRIMECODE=#{param1}
 	</select>
 	<insert id="reviewInsert">
-		insert into review(RV_PRIMECODE,rv_id,rv_photo,tags,rv_detail)
-		values(#{param1},#{param2},#{param3},#{param4},#{param5})
+	    insert into review(RV_PRIMECODE, rv_id, rv_photo, tags, rv_detail)
+	    values(#{param1}, #{param2}, #{param3}, ${param4}, #{param5})
 	</insert>
 </mapper>

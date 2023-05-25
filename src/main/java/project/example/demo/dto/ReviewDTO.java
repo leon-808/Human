@@ -1,5 +1,8 @@
 package project.example.demo.dto;
 
+import lombok.Data;
+
+@Data
 public class ReviewDTO {
 	String RV_PRIMECODE;
 	String rv_id;

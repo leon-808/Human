@@ -41,8 +41,8 @@
 		<pre>후기를 남겨주세요</pre>
 		<div>
 			<label class="test_obj" >
-				<input type="checkbox" value="매장청결" id="tags" name="tags">
-				<span># 매장청결</span>
+				<input type="checkbox" value="청결" id="tags" name="tags">
+				<span># 청결</span>
 			</label>
 			<label class="test_obj">
 				<input type="checkbox" value="친절" id="tags" name="tags">
@@ -53,12 +53,12 @@
 				<span># 주차</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="음식조리빠름" id="tags" name="tags">
-				<span># 음식조리빠름</span>
+				<input type="checkbox" value="조리" id="tags" name="tags">
+				<span># 조리</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="포장가능" id="tags" name="tags">
-				<span># 포장가능</span><br>
+				<input type="checkbox" value="포장" id="tags" name="tags">
+				<span># 포장</span><br>
 			</label>
 			<label class="test_obj">
 				<input type="checkbox" value="혼밥" id="tags" name="tags">
@@ -81,24 +81,24 @@
 				<span># 사진</span><br>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="맛있음" id="tags" name="tags">
-				<span># 맛있음</span>
+				<input type="checkbox" value="맛" id="tags" name="tags">
+				<span># 맛</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="양많음" id="tags" name="tags">
-				<span># 양많음</span>
+				<input type="checkbox" value="양" id="tags" name="tags">
+				<span># 양</span>
 			</label>
 			<label class="test_obj">
 				<input type="checkbox" value="가성비" id="tags" name="tags">
 				<span># 가성비</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="구성이알참" id="tags" name="tags">
-				<span># 구성이알참</span>
+				<input type="checkbox" value="알참" id="tags" name="tags">
+				<span># 알참</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="돈값함" id="tags" name="tags">
-				<span># 돈값함</span>
+				<input type="checkbox" value="만족" id="tags" name="tags">
+				<span># 만족</span>
 			</label>			
 		</div>
 		<input type="text" id="name" readonly><br>
@@ -133,6 +133,15 @@
 		</table>
 	</div>
 	
+	<!-- 모달 -->
+	<div id="reviewModal" class="modal">
+	  <div class="modal-content">
+	    <span class="close" onclick="closeModal()">&times;</span>
+	   <h2>리뷰 수정</h2>
+	   	<textarea id="reviewContent"></textarea>
+	   <input type="button" value="저장" onclick="saveReview()">
+	  </div>
+	</div>
 </section>
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

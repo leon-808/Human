@@ -2,6 +2,7 @@ package project.example.demo.DetailPage;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,22 +17,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import project.example.demo.dto.RestaurantDTO;
+import project.example.demo.dto.ReviewDTO;
 
 @Controller
 public class DetailPageController{
 	@Autowired
 	private DetailPageDAO ddao;
 	
-	
-	
 	@GetMapping("/restaurant/detail/{primecode}")
 	public String rdetail(@PathVariable("primecode") String rPrimecode,Model model,HttpServletRequest req) {
-		ArrayList<RestaurantDTO> rdao = ddao.getRDetail(rPrimecode);
-		
-        if (!rdao.isEmpty()) {
-            RestaurantDTO restaurant = rdao.get(0);
-            model.addAttribute("restaurant", restaurant);
-        }
+        
         return "DetailPage";
 	}
 
@@ -71,19 +66,43 @@ public class DetailPageController{
 			String rv_id = req.getParameter("id");
 			String rv_photo = req.getParameter("photo");
 
-			String[] tags = req.getParameterValues("tags");
-			String str = "";
-			if (tags != null) {
-		        str = String.join(",", tags);
-	        }	
+			String[] tagsString = req.getParameterValues("tags[]");
+			String tags = Arrays.toString(tagsString);			
+			tags = "'"+tags.substring(1, tags.length() - 1)+"'";
+			
 			String rv_detail = req.getParameter("detail");
-			ddao.reviewInsert(rv_primcode,rv_id,rv_photo,str,rv_detail);
+			ddao.reviewInsert(rv_primcode,rv_id,rv_photo,tags,rv_detail);
+			
 			
 		}catch(Exception e) {
 			retval="fail";
-			e.printStackTrace();
 		}
 		System.out.println(retval);
 		return retval;
+	}
+	
+	@PostMapping("/review/get/{primecode}")
+	@ResponseBody
+	public String reviewGet(@PathVariable("primecode") String rPrimecode,HttpServletRequest req) {
+		String reviewdata;
+		
+		ArrayList<ReviewDTO> vdao = ddao.getReview(rPrimecode);
+		JSONArray ja = new JSONArray();
+		for(int i=0;i<vdao.size();i++) {
+			JSONObject jo = new JSONObject();
+			
+			jo.put("rvprimecode", vdao.get(i).getRV_PRIMECODE());
+			jo.put("rvid", vdao.get(i).getRv_id());
+			jo.put("rvvisit", vdao.get(i).getRv_visit());
+			jo.put("rvphoto", vdao.get(i).getRv_photo());
+			jo.put("tags", vdao.get(i).getTags());
+			jo.put("rvdetail", vdao.get(i).getRv_detail());
+			jo.put("rvowner", vdao.get(i).getRv_owner());
+			
+			ja.put(jo);
+		}		
+		
+		reviewdata = ja.toString();
+		return reviewdata;
 	}
 }
