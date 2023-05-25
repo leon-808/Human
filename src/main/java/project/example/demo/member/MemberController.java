@@ -31,22 +31,22 @@ public class MemberController {
 	
 	@GetMapping("/login")
 	public String login_page(HttpServletRequest req) {
-		return redirectMain(req);
+		return redirectMain(req, "/member/login");
 	}
-	
+		
 	@GetMapping("/signup")
 	public String signup_page(HttpServletRequest req) {
-		return redirectMain(req);
+		return redirectMain(req, "/member/signUp");
 	}
 	
 	@GetMapping("/find/id")
 	public String idfind(HttpServletRequest req) {
-		return redirectMain(req);
+		return redirectMain(req, "/member/findID");
 	}
 	
 	@GetMapping("/find/pw")
 	public String pwfind(HttpServletRequest req) {
-		return redirectMain(req);
+		return redirectMain(req, "/member/findPW");
 	}
 	
 	@PostMapping("/submit/login")
@@ -73,7 +73,7 @@ public class MemberController {
 		
 		return check;
 	}
-	@PostMapping("/submit_signup")
+	@PostMapping("/submit/signup")
 	@ResponseBody
 	public String submit_signup(HttpServletRequest req) {
 		String check = "true";
@@ -84,7 +84,7 @@ public class MemberController {
 		String gender = req.getParameter("gender");
 		String birth = req.getParameter("birth");
 		String phone = req.getParameter("phone");
-
+		
 		mdao.submit_signup(id, pw, gender, birth, name, phone);
 		
 		return check;
@@ -162,11 +162,10 @@ public class MemberController {
 		return result;
 	}
 	
-	public String redirectMain(HttpServletRequest req) {
+	public String redirectMain(HttpServletRequest req, String url) {
 		HttpSession session = req.getSession();
-		if (session.getAttribute("id") != null) return "redirect:/main"; 
-		// 환영 페이지 만들어지면 리다이렉트 링크 수정해야함
-		else return "/member/login";
+		if (session.getAttribute("id") != null) return "redirect:/main";
+		else return url;
 	}
 	
 	public String getTemporalPw(int size) {
