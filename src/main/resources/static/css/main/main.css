@@ -173,7 +173,7 @@ body{
     height: 22px;
     font-size: 0;
     line-height: 0;
-    background: url(//t1.daumcdn.net/localimg/localimages/07/2018/pc/title/kakaomap_logo.png) no-repeat 0 0;
+    /*background: url(//t1.daumcdn.net/localimg/localimages/07/2018/pc/title/kakaomap_logo.png) no-repeat 0 0;*/
     text-indent: -9999px;
 }
 .screen_out {
@@ -427,4 +427,15 @@ body{
 .toggleSwitch2.satisfy.active  {      
   color:#ffffff;
   background: #68d98a;
+}
+.comment {
+	font-weight: 800;
+	font-size: 14px;
+	margin: 20px;
+}
+.profil {
+    position: relative;
+    height: 100%;
+    padding: 20px 20px 2px;
+    color: #fff;
 }
