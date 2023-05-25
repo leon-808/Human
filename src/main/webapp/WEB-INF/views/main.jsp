@@ -22,7 +22,7 @@
 			    <button id="search_button">검색</button>
 			</div>
 	        <div class="header_subarea">
-			 	<button type="button" class="btn btn-success">마이페이지</button>	
+			 	<button type="button" class="btn btn-success" id="btn-myPage">마이페이지</button>	
 			  	<button type="button" id="challenge" class="btn btn-danger" data-bs-toggle="tooltip" 
 			  	data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>
 			</div>

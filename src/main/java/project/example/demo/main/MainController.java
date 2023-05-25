@@ -32,6 +32,11 @@ public class MainController {
 		return "main";
 	}
 	
+	@GetMapping("/mainmy")
+	public String mainmy_page() {
+		return "mainMy";
+	}
+	
 	@PostMapping("/check/duplicateLocation")
 	@ResponseBody
 	public String check_duplicateLocation(HttpServletRequest req) {

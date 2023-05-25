@@ -4,7 +4,6 @@ $(document)
 .on('click','#button_submitSignUpdate',update_signup)
 .on('click','#button_submitCancel',Cancel_update)
 .on('change','#input_phone',check_phone)
-.on('change','#input_phone',check_myPhone)
 
 function update_signup() {
 	id = $("#input_id").val();

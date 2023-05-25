@@ -21,6 +21,8 @@ $(document)
 .on("click", "#off_category", offCategory)
 .on("click", "#off_orderby", offOrderby)
 .on("click", ".alm_suggest", suggestALM)
+.on("click", "#btn-myPage", showMyData)
+.on("click", "#btn-GO-signUpdate", signUpdate)
 //.on("click", ".dt_suggest", suggestDT)
 
 
@@ -76,6 +78,7 @@ function isLogin() {
 		success: function(isLogin) {
 			if (isLogin == "true") { // 로그인 기능과 연동하면 함수를 여기로 옮겨야 함 createAddLocationButton();
 				createButtons();
+				get_userInfo();
 			}	
 		}
 	})
@@ -545,4 +548,26 @@ function offOrderby() {
 		let id = $(this).attr("id");
 		$(`label[for='${id}']`).removeClass("active");
 	})
+}
+
+function showMyData() {
+	document.location = "/mainmy";
+}
+function get_userInfo() {
+	$.ajax({
+		url: "/get_userInfo",
+		type: "post",
+		dataType: "json",
+		success: function(data) {
+			if (data.length != 0) {
+				for (i = 0; i < data.length; i++) {
+					$("#profil_user_name").text(data[i]["name"]);
+				}
+			}
+
+		}
+	})
+}
+function signUpdate() {
+	document.location = "/signupdate";
 }

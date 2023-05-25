@@ -220,6 +220,31 @@ public class MemberController {
 		
 		return ja.toString();
 	}
+	@PostMapping("/get_userInfo")
+	@ResponseBody
+	public String get_userInfo(HttpServletRequest req) {
+		HttpSession session = req.getSession();
+		JSONArray ja = new JSONArray();
+				
+		if (session.getAttribute("id") != null) {
+			String id = session.getAttribute("id").toString();
+		
+			ArrayList<MemberDTO> mdto = mdao.get_signupInfo(id);
+			
+			for (int i = 0; i < mdto.size(); i++) {
+				JSONObject jo = new JSONObject();
+				jo.put("id", mdto.get(i).getId());
+				jo.put("pw", mdto.get(i).getPw());
+				jo.put("name", mdto.get(i).getName());
+				jo.put("gender", mdto.get(i).getGender());
+				jo.put("birth", mdto.get(i).getBirth());
+				jo.put("phone", mdto.get(i).getPhone());
+				ja.put(jo);
+			}
+		}
+		
+		return ja.toString();
+	}
 	@PostMapping("/update_signup")
 	@ResponseBody
 	public String update_signup(HttpServletRequest req) {
