@@ -1,13 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lnag="ko">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>회원가입</title>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<jsp:include page="/WEB-INF/views/metaLink.jsp"/>
 <link rel="stylesheet" href="/css/member/signUp.css">
-
+<title>회원가입</title>
 </head>
 <body>
 	<!-- header -->
@@ -71,8 +69,8 @@
 				<h3>
 					<label>휴대전화</label>
 				</h3>
-				<span class="box int_mobile"> <input type="tel" id="input_phone"
-					class="int" maxlength="12" placeholder="'-' 제외 번호만 입력">
+				<span class="box int_mobile">
+					<input type="tel" id="input_phone" class="int" maxlength="12" placeholder="'-' 제외 번호만 입력">
 				</span> <span class="error_box" id="error_inputPhone"></span>
 			</div>
 
@@ -81,11 +79,13 @@
 				<h3>
 					<label>성별</label>
 				</h3>
-				<span class="box gender_code"> <input type="radio"
-					id="input_signupGender" name="gender" value="남"> <label>남</label>
-					<input type="radio" id="input_signupGender" name="gender" value="여">
-					<label>여</label>
-				</span> <span class="error_box">필수 정보입니다.</span>
+				<span class="box gender_code"> 
+					<input type="radio" id="gender_male" name="gender" value="남">
+					<label for="gender_male" style="margin-right: 20px;">남</label>
+					<input type="radio" id="gender_female" name="gender" value="여">
+					<label for="gender_female">여</label>
+				</span>
+				<span class="error_box">필수 정보입니다.</span>
 			</div>
 
 			<!-- BIRTH -->
@@ -94,7 +94,7 @@
 					<label>생년월일</label>
 				</h3>
 				<span class="box"> <input type="text" id="input_birth" class="int"
-					maxlength="8" placeholder="ex)20010514">
+					maxlength="8" placeholder="ex) 20010514">
 				</span> <span class="error_box"></span>
 			</div>
 
@@ -110,6 +110,7 @@
 
 	</div>
 	<!-- wrapper -->
-	<script src="/js/member/signUp.js"></script>
+<jsp:include page="/WEB-INF/views/script.jsp"/>
+<script src="/js/member/signUp.js"></script>
 </body>
 </html>
