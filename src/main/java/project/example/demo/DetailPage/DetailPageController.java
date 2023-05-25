@@ -53,6 +53,7 @@ public class DetailPageController{
 			jo.put("address", rdao.get(i).getAddress());
 			jo.put("rphone", rdao.get(i).getR_phone());
 			jo.put("menu", rdao.get(i).getMenu());
+			jo.put("rphoto", rdao.get(i).getR_photo());
 			
 			ja.put(jo);
 		}
@@ -60,5 +61,29 @@ public class DetailPageController{
 		response = ja.toString();
 		return response;
 	}
-	
+	//리뷰쪽
+	@PostMapping("/review/insert")
+	@ResponseBody
+	public String getReviewInsert(HttpServletRequest req) {
+		String retval="ok";
+		try {
+			String rv_primcode = req.getParameter("primecode");
+			String rv_id = req.getParameter("id");
+			String rv_photo = req.getParameter("photo");
+
+			String[] tags = req.getParameterValues("tags");
+			String str = "";
+			if (tags != null) {
+		        str = String.join(",", tags);
+	        }	
+			String rv_detail = req.getParameter("detail");
+			ddao.reviewInsert(rv_primcode,rv_id,rv_photo,str,rv_detail);
+			
+		}catch(Exception e) {
+			retval="fail";
+			e.printStackTrace();
+		}
+		System.out.println(retval);
+		return retval;
+	}
 }

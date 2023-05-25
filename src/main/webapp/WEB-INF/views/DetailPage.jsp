@@ -41,63 +41,63 @@
 		<pre>후기를 남겨주세요</pre>
 		<div>
 			<label class="test_obj" >
-				<input type="checkbox" value="매장청결" id="tags">
+				<input type="checkbox" value="매장청결" id="tags" name="tags">
 				<span># 매장청결</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="친절" id="tags">
+				<input type="checkbox" value="친절" id="tags" name="tags">
 				<span># 친절</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="주차" id="tags">
+				<input type="checkbox" value="주차" id="tags" name="tags">
 				<span># 주차</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="음식조리빠름" id="tags">
+				<input type="checkbox" value="음식조리빠름" id="tags" name="tags">
 				<span># 음식조리빠름</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="포장가능" id="tags">
+				<input type="checkbox" value="포장가능" id="tags" name="tags">
 				<span># 포장가능</span><br>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="혼밥" id="tags">
+				<input type="checkbox" value="혼밥" id="tags" name="tags">
 				<span># 혼밥</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="단체" id="tags">
+				<input type="checkbox" value="단체" id="tags" name="tags">
 				<span># 단체</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="집중" id="tags">
+				<input type="checkbox" value="집중" id="tags" name="tags">
 				<span># 집중</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="대화" id="tags">
+				<input type="checkbox" value="대화" id="tags" name="tags">
 				<span># 대화</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="사진" id="tags">
+				<input type="checkbox" value="사진" id="tags" name="tags">
 				<span># 사진</span><br>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="맛있음" id="tags">
+				<input type="checkbox" value="맛있음" id="tags" name="tags">
 				<span># 맛있음</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="양많음" id="tags">
+				<input type="checkbox" value="양많음" id="tags" name="tags">
 				<span># 양많음</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="가성비" id="tags">
+				<input type="checkbox" value="가성비" id="tags" name="tags">
 				<span># 가성비</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="구성이알참" id="tags">
+				<input type="checkbox" value="구성이알참" id="tags" name="tags">
 				<span># 구성이알참</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="돈값함" id="tags">
+				<input type="checkbox" value="돈값함" id="tags" name="tags">
 				<span># 돈값함</span>
 			</label>			
 		</div>

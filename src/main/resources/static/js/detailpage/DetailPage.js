@@ -1,26 +1,11 @@
 $(document)
 .ready(function() {
     loadFoodDetails();
+    uploadimage();
     
-    const fileInput = document.getElementById("fileUpload");
-
-	const handleFiles = (e) => {
-  	const selectedFile = [...fileInput.files];
-	const fileReader = new FileReader();
-	
-	fileReader.readAsDataURL(selectedFile[0]);	
-	
-		fileReader.onload = function () {
-	  		document.getElementById("previewImg").src = fileReader.result;
-		};
-	
-	};
-	
-	fileInput.addEventListener("change", handleFiles);
-	$('input[tpye=radio]').prop('checked', false);
 })
 .on('click','#btnSubmit',reviewInsert)
-
+.on('')
 
 
 function loadFoodDetails() {
@@ -32,7 +17,7 @@ function loadFoodDetails() {
         success: function(response) {
             var restaurant = response[0];
 
-            $('#rImg').attr('src', restaurant.imageUrl);
+            $('#rImg').attr('src', restaurant.rphoto);
             $('#rName').val(restaurant.rname);
             $('#rCategory').val(restaurant.category);
             $('#rReviewN').val(restaurant.reviewCount);
@@ -56,8 +41,44 @@ function loadFoodDetails() {
     });
 }
 
+function uploadimage(){
+	const fileInput = document.getElementById("fileUpload");
+
+	const handleFiles = (e) => {
+  	const selectedFile = [...fileInput.files];
+	const fileReader = new FileReader();
+	
+	fileReader.readAsDataURL(selectedFile[0]);	
+	
+		fileReader.onload = function () {
+	  		document.getElementById("previewImg").src = fileReader.result;
+		};
+	
+	};
+	
+	fileInput.addEventListener("change", handleFiles);
+	$('input[tpye=radio]').prop('checked', false);
+}
+
+function reviewCheckId(){
+	$.ajax({
+		url:"/review/checkid",
+		type:"post",
+		dataType:"text",
+		success:function(logininfo){
+			if(logininfo !=""){
+				$("#name").val(logininfo);
+			}
+		}
+	})
+}
+
 function reviewInsert(){
 	var primecode =window.location.pathname.split('/').pop();
+	var selectedTags = $('input[type="checkbox"]:checked').map(function(){
+		return this.value;
+	}).get();
+	
 	$.ajax({
 		url:"/review/insert",
 		type:"post",
@@ -66,7 +87,7 @@ function reviewInsert(){
 			primecode:primecode,
 			id:$('#name').val(),
 			photo:$('#fileUpload').val(),
-			tags:$('#tags').val(),
+			tags:selectedTags,
 			detail:$('#myreview').val(),
 		},
 		beforeSend:function(){
@@ -82,19 +103,10 @@ function reviewInsert(){
 			}*/
 		},
 		success:function(data){
-			$('#myreview').val('')
-		}
-	})
-}
-
-function reviewCheckId(){
-	$.ajax({
-		url:"/review/checkid",
-		type:"post",
-		dataType:"text",
-		success:function(logininfo){
-			if(logininfo !=""){
-				$("#name").val(logininfo);
+			if(data=="ok"){
+				
+			}else{
+				alert("리뷰 등록 실패");
 			}
 		}
 	})
