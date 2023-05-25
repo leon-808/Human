@@ -37,7 +37,7 @@ public class MemberController {
 	public String login_page(HttpServletRequest req) {
 		return redirectMain(req,"member/login");
 	}
-	
+		
 	@GetMapping("/signup")
 	public String signup_page(HttpServletRequest req) {
 		return redirectMain(req,"member/signUp");
@@ -83,7 +83,7 @@ public class MemberController {
 		
 		return check;
 	}
-	@PostMapping("/submit_signup")
+	@PostMapping("/submit/signup")
 	@ResponseBody
 	public String submit_signup(HttpServletRequest req) {
 		String check = "true";
@@ -94,7 +94,7 @@ public class MemberController {
 		String gender = req.getParameter("gender");
 		String birth = req.getParameter("birth");
 		String phone = req.getParameter("phone");
-
+		
 		mdao.submit_signup(id, pw, gender, birth, name, phone);
 		
 		return check;

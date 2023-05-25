@@ -26,7 +26,7 @@ function submit_login(){
 			if (check == "true") {
 				clear_login();
 				// 나중에 환영 페이지 만들어지면 주소 수정할것
-				document.location = "/";
+				document.location = "/main";
 			}
 			else if (check == "wrong") {
 				alert("비밀번호가 틀렸습니다");
