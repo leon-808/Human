@@ -36,10 +36,10 @@
 	width: 100%;
 }
 .wrapperA {
-	margin: 10px 0 0 0;
+	margin: 10px 0 0 10px;
 	text-align: center;
 }
 .aText {
-	margin: 0 20px 0 20px;
+	margin: 0 0 0 20px;
 	font-size: 13px;
 }

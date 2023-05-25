@@ -88,7 +88,7 @@ function submit_signup() {
 	birth = $("#input_birth").val();
 	
 	$.ajax({
-		url: "/submit_signup",
+		url: "/submit/signup",
 		type: "post",
 		data: {
 			id: id,

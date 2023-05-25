@@ -29,4 +29,13 @@ public class BasicController {
 		if (session.getAttribute("id") != null) isLogin = "true";
 		return isLogin;
 	}
+	
+	@PostMapping("/logout")
+	@ResponseBody
+	public String logout_page(HttpServletRequest req) {
+		String flag = "logout";
+		HttpSession session = req.getSession();
+		session.invalidate();
+		return flag;
+	}
 }
