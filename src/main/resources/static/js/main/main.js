@@ -21,6 +21,8 @@ $(document)
 	$(this).toggleClass("active");
 });
 
+
+
 $(".each_fcr").hover(function() {
 	$(this).css("background-image", "url('/img/main/FC_HoverRectangle.png')");
 	$(this).css("background-position", "center");

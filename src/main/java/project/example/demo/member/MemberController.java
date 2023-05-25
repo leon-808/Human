@@ -2,10 +2,13 @@ package project.example.demo.member;
 
 import java.io.File;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import project.example.demo.dto.MemberDTO;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
@@ -38,24 +42,30 @@ public class MemberController {
 	@GetMapping("/login")
 	
 	public String login_page(HttpServletRequest req) {
-		return redirectMain(req);
+		return redirectMain(req,"member/login");
 	}
 	
 	@GetMapping("/signup")
 
 	public String signup_page(HttpServletRequest req) {
-		return redirectMain(req);
+		return redirectMain(req,"member/signUp");
+	}
+	
+
+	@GetMapping("/signupdate")
+	public String signupdate_page() {
+		return "/member/signUpdate";
 	}
 	
 
 	@GetMapping("/find/id")
 	public String idfind(HttpServletRequest req) {
-		return redirectMain(req);
+		return redirectMain(req,"member/findID");
 	}
 	
 	@GetMapping("/find/pw")
 	public String pwfind(HttpServletRequest req) {
-		return redirectMain(req);
+		return redirectMain(req,"member/findPW");
 	}
 	
 	@GetMapping("/add/restaurant")
@@ -191,11 +201,11 @@ public class MemberController {
 		return result;
 	}
 	
-	public String redirectMain(HttpServletRequest req) {
+	public String redirectMain(HttpServletRequest req, String url) {
 		HttpSession session = req.getSession();
 		if (session.getAttribute("id") != null) return "redirect:/main"; 
 		// 환영 페이지 만들어지면 리다이렉트 링크 수정해야함
-		else return "/member/login";
+		else return url;
 	}
 	
 	public String getTemporalPw(int size) {
@@ -212,6 +222,49 @@ public class MemberController {
 			sb.append(charSet[index]);
 		}
 		return sb.toString();
+	}
+
+	@PostMapping("/get_signupInfo")
+	@ResponseBody
+	public String get_signupInfo(HttpServletRequest req) {
+		HttpSession session = req.getSession();
+		JSONArray ja = new JSONArray();
+				
+		if (session.getAttribute("id") != null) {
+			String id = session.getAttribute("id").toString();
+		
+			ArrayList<MemberDTO> mdto = mdao.get_signupInfo(id);
+			
+			for (int i = 0; i < mdto.size(); i++) {
+				JSONObject jo = new JSONObject();
+				jo.put("id", mdto.get(i).getId());
+				jo.put("pw", mdto.get(i).getPw());
+				jo.put("name", mdto.get(i).getName());
+				jo.put("gender", mdto.get(i).getGender());
+				jo.put("birth", mdto.get(i).getBirth());
+				jo.put("phone", mdto.get(i).getPhone());
+				ja.put(jo);
+			}
+		}
+		
+		return ja.toString();
+	}
+	@PostMapping("/update_signup")
+	@ResponseBody
+	public String update_signup(HttpServletRequest req) {
+		String check = "true";
+		
+		String id = req.getParameter("id");
+		String pw = req.getParameter("pw");
+		String name = req.getParameter("name");
+		String gender = req.getParameter("gender");
+		String birth = req.getParameter("birth");
+		String phone = req.getParameter("phone");
+		
+		
+		mdao.update_signup(id, pw, name, gender, birth, phone);
+		
+		return check;
 	}
 	
 	public SingleMessageSentResponse sendTemporalPw(String phone, String temporary) {
@@ -260,3 +313,4 @@ public class MemberController {
 		
 	}
 }
+
