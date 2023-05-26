@@ -1,8 +1,15 @@
 $(document)
-.on("click","#btnLogin", submit_login)
-.on("click","#signup", goto_signup)
-.on("click","#IdFind", goto_IdFind)
-.on("click","#PwFind", goto_PwFind)
+.on("click", "#btnLogin", submit_login)
+.on("click", "#signup", goto_signup)
+.on("click", "#IdFind", goto_IdFind)
+.on("click", "#PwFind", goto_PwFind)
+.on("keyup", "#input_loginID, #input_loginPW", function(e) {
+	if (e.keyCode == 13) {
+		submit_login();
+	}
+	return false;
+})
+
 
 function submit_login(){
 	id = $("#input_loginID").val();

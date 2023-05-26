@@ -169,6 +169,9 @@
 				<div class="controlDiv">
 	 				<div class="controlBox">
 	 					<button id="currentLocationButton" class="controlButton"></button>
+	 					<div id="clearMarkerButton" class="controlButton">
+	 						<span class="eraserIcon"></span>
+	 					</div>
 				 	</div>
 				 </div>
 			</div>
