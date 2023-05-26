@@ -26,25 +26,25 @@ import project.example.demo.dto.RestaurantDTO;
 public class MainController {
 	@Autowired
 	MainDAO mdao;
-	
+
 	@GetMapping("/main")
 	public String main_page() {
 		return "main";
 	}
-	
+
 	@PostMapping("/check/duplicateLocation")
 	@ResponseBody
 	public String check_duplicateLocation(HttpServletRequest req) {
 		double lat = Double.parseDouble(req.getParameter("lat"));
 		double lng = Double.parseDouble(req.getParameter("lng"));
-		
+
 		double differ = 0.00001;
 		double latRange1 = lat - differ, latRange2 = lat + differ,
-		lngRange1 = lng - differ, lngRange2 = lat + differ;
-		
+				lngRange1 = lng - differ, lngRange2 = lat + differ;
+
 		JSONArray ja = new JSONArray();
 		ArrayList<RestaurantDTO> rdto = mdao.check_duplicateLocation(latRange1, latRange2, lngRange1, lngRange2);
-		
+
 		for (RestaurantDTO r : rdto) {
 			JSONObject jo = new JSONObject();
 			jo.put("lat", r.getLat());
@@ -56,48 +56,48 @@ public class MainController {
 			jo.put("address", r.getAddress());
 			jo.put("r_phone", r.getR_phone());
 			jo.put("r_photo", r.getR_photo());
-			
+
 			ja.put(jo);
 		}
 		return ja.toString();
 	}
-	
+
 	@PostMapping("/suggest/alm")
 	@ResponseBody
-	public String suggest_alm (HttpServletRequest req,
-							@RequestPart(value = "restaurant") RestaurantDTO rdto,
-							@RequestPart(value = "bnd") MultipartFile[] bnd) {
+	public String suggest_alm(HttpServletRequest req,
+			@RequestPart(value = "restaurant") RestaurantDTO rdto,
+			@RequestPart(value = "bnd") MultipartFile[] bnd) {
 		String message = "proceed";
-		
+
 		double lat = rdto.getLat();
 		double lng = rdto.getLng();
 		String primecode = rdto.getPrimecode();
 		String r_name = rdto.getR_name();
 		String category = rdto.getCategory();
 		String address = rdto.getAddress();
-		
+
 		HttpSession session = req.getSession();
 		String owner = String.valueOf(session.getAttribute("id"));
 		String idString = String.valueOf(session.getAttribute("id")) + " ";
-		
+
 		LocalDate today = LocalDate.now();
 		DateTimeFormatter fd = DateTimeFormatter.ofPattern(" yyyy-MM-DD ");
 		String todayString = today.format(fd);
 		LocalTime now = LocalTime.now();
 		DateTimeFormatter fn = DateTimeFormatter.ofPattern("HH-mm-ss ");
 		String timeString = now.format(fn);
-				
-		String location = "C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\webapp\\WEB-INF\\files";
+
+		String location = "C:\\Users\\admin\\Documents\\SeoJaeHyeon\\MapProject\\Project\\src\\main\\webapp\\WEB-INF\\files";
 		String filename = r_name + " " + idString + todayString + timeString + bnd[0].getOriginalFilename();
 		File savefile = new File(location, filename);
 		try {
 			bnd[0].transferTo(savefile);
+		} catch (Exception e) {
 		}
-		catch (Exception e) {}
 		String localURL = location + "\\" + filename;
-		
+
 		mdao.restaurant_approval_request(lat, lng, primecode, r_name, owner, category, address, localURL);
-		
+
 		return message;
 	}
 }

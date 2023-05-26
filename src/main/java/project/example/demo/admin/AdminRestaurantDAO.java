@@ -1,8 +1,16 @@
 package project.example.demo.admin;
 
+import java.util.ArrayList;
+
 import org.apache.ibatis.annotations.Mapper;
+
+import project.example.demo.dto.AdminRestaurantDTO;
 
 @Mapper
 public interface AdminRestaurantDAO {
-	int get_count();
+	ArrayList<AdminRestaurantDTO> adminRestaurantList();
+
+	void insertRestaurant(String primecode);
+
+	void deleteRestaurant(String primecode);
 }
