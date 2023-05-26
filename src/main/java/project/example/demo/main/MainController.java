@@ -61,8 +61,28 @@ public class MainController {
 		}
 		return ja.toString();
 	}
-
+	
 	@PostMapping("/suggest/alm")
+	@PostMapping("/suggest/alm/user")
+	@ResponseBody
+	public String suggest_alm (@RequestPart(value = "restaurant") RestaurantDTO rdto) {
+		String message = "proceed";
+		
+		double lat = rdto.getLat();
+		double lng = rdto.getLng();
+		String primecode = null;
+		String r_name = rdto.getR_name();
+		String category = rdto.getCategory();
+		String address = rdto.getAddress();
+		String owner = null;
+		String localURL = null;
+		
+		mdao.restaurant_approval_request(lat, lng, primecode, r_name, owner, category, address, localURL);
+		
+		return message;
+	}
+	
+	@PostMapping("/suggest/alm/ceo")
 	@ResponseBody
 	public String suggest_alm(HttpServletRequest req,
 			@RequestPart(value = "restaurant") RestaurantDTO rdto,
@@ -88,6 +108,9 @@ public class MainController {
 		String timeString = now.format(fn);
 
 		String location = "C:\\Users\\admin\\Documents\\SeoJaeHyeon\\MapProject\\Project\\src\\main\\webapp\\WEB-INF\\files";
+		
+		String location = "C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\webapp\\WEB-INF\\files";
+		
 		String filename = r_name + " " + idString + todayString + timeString + bnd[0].getOriginalFilename();
 		File savefile = new File(location, filename);
 		try {
