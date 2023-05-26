@@ -13,10 +13,53 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="getReview" resultType="project.example.demo.dto.ReviewDTO">
 		select *
 		from review
-		where RV_PRIMECODE=#{param1}
+		where rv_primecode=#{param1}
+		order by rv_time
 	</select>
 	<insert id="reviewInsert">
-	    insert into review(RV_PRIMECODE, rv_id, rv_photo, tags, rv_detail)
-	    values(#{param1}, #{param2}, #{param3}, ${param4}, #{param5})
+	    insert into review(rv_primecode, rv_id, rv_photo, rv_visit,tags, rv_detail, rv_time)
+	    values(#{param1}, #{param2}, #{param3}, ${param4}, #{param5},#{param6}, to_char(sysdate,'YYYY-MM-DD HH:mi:ss'))
 	</insert>
+	<update id="reviewUpdate">
+		update review 
+		set rv_photo=#{param3},
+		tags=#{param4},
+		rv_detail=#{param5}
+		where rv_primecode=#{param1} and rv_id=#{param2}
+	</update>
+	<delete id="reviewDelete">
+		delete
+		from review
+		where rv_primecode=#{param1}
+		and rv_id=#{param2}
+	</delete>
+	<select id="getMyReview" resultType="project.example.demo.dto.ReviewDTO">
+		select *
+		from review
+		where rv_primecode=#{param1}
+		and rv_id=#{param2}
+		order by rv_time
+	</select>
+	<select id="getMyRUpSel" resultType="project.example.demo.dto.ReviewDTO">
+		select *
+		from review
+		where rv_primecode=#{param1}
+		and rv_id=#{param2}
+	</select>
+	<select id="reviewAllCount" resultType="int">
+		select count(*)
+		from review
+		where rv_primecode=#{param1}
+	</select>
+	<select id="checkReview" resultType="int">
+		select count(*)
+		from review
+		where rv_primecode=#{param1}
+		and rv_id=#{param2}
+	</select>
+	<select id="tagTop" resultType="project.example.demo.dto.ReviewDTO">
+		select tags
+		from review
+		where rv_primecode=#{param1}
+	</select>
 </mapper>

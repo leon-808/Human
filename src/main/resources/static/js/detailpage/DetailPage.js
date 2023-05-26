@@ -3,10 +3,22 @@ $(document)
     loadFoodDetails();
     uploadimage();
     reviewGet();
+    myreviewGet();
+    checkReview();
+    tagTop();
 })
 .on('click','#btnSubmit',reviewInsert)
-.on('')
-
+.on('click','#btnreviewup',reviewUpdate)
+.on('click','.btnEditReview',myModalOpen)
+.on('click','.btnReviewDelete',reviewDelete)
+.on('click','#review_table tr',function(){
+	var id=$(this).find('td:eq(0)').text();
+	openModal(id);
+})
+.on('click','input[name="tagsD"]',function(e){
+	e.preventDefault();
+	return false;
+})
 
 function loadFoodDetails() {
 	var primecode =window.location.pathname.split('/').pop();
@@ -60,18 +72,31 @@ function uploadimage(){
 	$('input[tpye=radio]').prop('checked', false);
 }
 
-function reviewCheckId(){
-	$.ajax({
-		url:"/review/checkid",
-		type:"post",
-		dataType:"text",
-		success:function(logininfo){
-			if(logininfo !=""){
-				$("#name").val(logininfo);
-			}
-		}
-	})
+function uploadimage1(){
+	const fileInput = document.getElementById("fileUploadD");
+
+	const handleFiles = (e) => {
+  	const selectedFile = [...fileInput.files];
+	const fileReader = new FileReader();
+	
+	fileReader.readAsDataURL(selectedFile[0]);	
+	
+		fileReader.onload = function () {
+	  		document.getElementById("previewImgD").src = fileReader.result;
+		};
+	
+	};
+	
+	fileInput.addEventListener("change", handleFiles);
+	$('input[tpye=radio]').prop('checked', false);
 }
+
+function reviewClear(){              
+	$('#fileUpload').val('');  // 파일 업로드 필드 초기화
+    $('input[name="tags"]').prop('checked', false);  // 태그 체크박스 초기화
+    $('#myreview').val('');
+}
+
 
 function reviewInsert(){
 	var primecode =window.location.pathname.split('/').pop();
@@ -87,6 +112,7 @@ function reviewInsert(){
 		data:{
 			primecode:primecode,
 			id:$('#name').val(),
+			visit:1,
 			photo:$('#fileUpload').val(),
 			tags:checkboxValues,
 			detail:$('#myreview').val(),
@@ -104,7 +130,8 @@ function reviewInsert(){
 		},
 		success:function(data){
 			if(data=="ok"){
-				
+				reviewClear();
+				location.reload();
 			}else{
 				alert("리뷰 등록 실패");
 			}
@@ -114,8 +141,9 @@ function reviewInsert(){
 
 function reviewGet(){
 	var primecode =window.location.pathname.split('/').pop();
+	
 	$.ajax({
-		url:'/review/get/'+primecode,
+		url:'/review/get',
 		type:'post',
 		data:{
 			primecode:primecode
@@ -126,45 +154,247 @@ function reviewGet(){
 				let str='<tr>';
 				str +='<td>'+reviewdata[i]['rvid']+'</td>';
 				str +='<td>'+reviewdata[i]['rvdetail']+'</td>';
-				str += '<td><button onclick="openModal(' + reviewdata[i]['rvid'] + ')">수정</button></td>';
-			    str += '<td><button onclick="deleteReview(' + reviewdata[i]['rvid'] + ')">삭제</button></td>';
+				
+				var time=reviewdata[i]['rvtime'];
+				
+				str +='<td>' + time + '</td>';
 			    str += '</tr>';
+			   
 				$('#review_table').append(str);
+				
+
+			}
+			if (reviewdata.length > 0) {
+			  var reviewcount = reviewdata[0]['reviewcount'];
+			  $('#rReviewN').val(reviewcount);
+		    } else {			
+			 	  $('#rReviewN').val('아직 후기가 없습니다.');
+			}
+			 
+		}
+		
+	})
+}
+
+function myreviewGet(){
+	var primecode =window.location.pathname.split('/').pop();
+	var id=$('#name').val();
+	
+	if (!id) {
+        // id 값이 없을 경우 처리
+        console.log('id 값이 없습니다.');
+        return false;
+    }
+	
+	$.ajax({
+		url:'/review/getMy',
+		type:'post',
+		data:{
+			primecode:primecode,
+			id:id
+		},
+		dataType:'json',
+		success:function(reviewdata){
+            for(let i=0;i<reviewdata.length;i++){
+				let str='<tr>';
+				str +='<td>'+reviewdata[i]['rvid']+'</td>';
+				str +='<td>'+reviewdata[i]['rvdetail']+'</td>';
+				str += '<td><button class="btnEditReview" data-review-id="' + reviewdata[i]['rvid'] + '">수정</button></td>';
+			    str += '<td><button class="btnReviewDelete" data-review-id="'+ reviewdata[i]['rvid'] + ')">삭제</button></td>';
+			    str += '</tr>';
+			    $('#review_myTable').append(str);
+			}
+		}
+	})
+	
+}
+
+function openModal(id){
+	var primecode =window.location.pathname.split('/').pop();
+	
+	$.ajax({
+	    url: '/review/getReview',
+	    type: 'post',
+	    data:{
+			primecode:primecode,
+			id:id
+		},
+	    dataType: 'json',
+	    success: function (review) {
+            $('#reviewAllModal').dialog({
+                title: '리뷰',
+                modal: true,
+                width: 700,
+                
+            });
+            $('#myreviewD').val(review[0]['rvdetail']);
+            $('#fileUploadD').val(review[0]['rvphoto']);
+                        
+            var tags = review[0]['tags'].split(",").map(function(tag) {
+			  return tag.trim();
+			});         
+			           
+            $('input[name="tagsD"]').each(function(){
+				var checkboxValue=$(this).val().trim();				
+				if(tags.includes(checkboxValue.trim())){
+					$(this).prop('checked', true);
+				}else{
+					$(this).prop('checked',false);
+				}
+			});
+        }
+    });
+}
+
+function myModalOpen(){
+	var primecode =window.location.pathname.split('/').pop();
+	
+	$.ajax({
+	    url: '/review/getMyReview',
+	    type: 'post',
+	    data:{
+			primecode:primecode
+		},
+	    dataType: 'json',
+	    success: function (review) {
+            // Open the modal
+            $('#reviewModal').dialog({
+                title: '리뷰 수정',
+                modal: true,
+                width: 700,
+                
+            });
+            $('#myreviewU').val(review[0]['rvdetail']);
+            $('#previewImg1').val(review[0]['rvphoto']);
+            
+            var tags = review[0]['tags'].split(",").map(function(tag) {
+			  return tag.trim();
+			});         
+			           
+            $('input[name="tagsU"]').each(function(){
+				var checkboxValue=$(this).val().trim();
+				if(tags.includes(checkboxValue.trim())){
+					$(this).prop('checked', true);
+				}else{
+					$(this).prop('checked',false);
+				}
+			});
+        }
+    });
+}
+
+function reviewUpdate(){
+	var primecode =window.location.pathname.split('/').pop();
+	var checkboxValues=[];
+	
+	$('input[name="tagsU"]:checked').each(function(){
+		checkboxValues.push($(this).val());
+	})
+	
+	$.ajax({
+		url:'/review/update',
+		type:'post',
+		dataType:'text',
+		data:{
+			primecode:primecode,
+			id:$('#nameU').val(),
+			photo:$('#fileUpload1').val(),
+			tags:checkboxValues,
+			detail:$('#myreviewU').val(),
+		},
+		beforeSend:function(){
+			var content = $('#myreviewU').val();
+			
+			if(content ==''){
+				alert('내용을 입력하세요');
+				return false;
+			}else if(checkboxValues==''){
+				alert('태그를 하나라도 입력하세요');
+				return false;
+			}
+		},
+		success:function(data){
+			if(data=="ok"){
+				$('#reviewModal').dialog("close");
+				location.reload();
+			}else{
+				alert("리뷰 업데이트 실패");
+			}
+		}
+	})
+	
+}
+
+function reviewDelete(){
+	var primecode =window.location.pathname.split('/').pop();
+	
+	$.ajax({
+		url:'/review/delete',
+		type:'post',
+		dataType:'text',
+		data:{
+			primecode:primecode,
+			id:$('#name').val()
+		},
+		beforSend:function(){
+			
+		},
+		success:function(data){
+			if(data=="ok"){
+				
+				alert("삭제되셨습니다.")
+				location.reload();
+			}else{
+				alert("delete 실패");
 			}
 		}
 	})
 }
 
-// 모달 열기
-function openModal(reviewId) {
-  var modal = document.getElementById("reviewModal");
-  modal.style.display = "block";
-
-  // 리뷰 내용 로드
-  var reviewDetail = getReviewDetail(reviewId);
-  document.getElementById("reviewContent").value = reviewDetail;
+function checkReview(){
+	var primecode =window.location.pathname.split('/').pop();
+	var id=$('#name').val();
+	
+	$.ajax({
+		url:"/check/review",
+		type:"post",
+		data:{
+			primecode:primecode,
+			id:id
+		},
+		dataType:"text",
+		success:function(check){
+			console.log(check);
+			if(check == "리뷰 없음"){
+				$('#review').show();
+				$('#logincheckReviw').hide();
+			}else if(check == "비회원"){
+				$("#review").hide();
+				$('#logincheckReviw').show();
+			}else {
+				$("#review").hide();
+				$('#logincheckReviw').hide();
+			}
+		}
+	})	
 }
 
-// 리뷰 상세 내용 가져오기
-function getReviewDetail(reviewId) {
-  // 리뷰 상세 내용을 가져오는 로직을 구현하세요.
-  // 예시로 임시로 리뷰 상세 내용을 반환하는 코드를 작성했습니다.
-  return "리뷰 " + reviewId + "의 상세 내용";
-}
-
-// 모달 닫기
-function closeModal() {
-  var modal = document.getElementById("reviewModal");
-  modal.style.display = "none";
-}
-
-// 리뷰 저장
-function saveReview() {
-  var reviewContent = document.getElementById("reviewContent").value;
-  
-  // 리뷰 저장 로직을 구현하세요.
-  // 예시로 임시로 리뷰 저장 성공을 알리는 코드를 작성했습니다.
-  console.log("리뷰 저장: " + reviewContent);
-  
-  closeModal(); // 모달 닫기
+function tagTop(){
+	var primecode =window.location.pathname.split('/').pop();
+	
+	$.ajax({
+		url:"/tag/top",
+		type:"post",
+		data:{
+			primecode:primecode
+		},
+		dataType:"json",
+		success:function(tagtop){
+			$('#teaTop1').val();
+			$('#teaTop2').val();
+			$('#teaTop3').val();
+			$('#teaTop4').val();
+			$('#teaTop5').val();
+		}
+	})
 }

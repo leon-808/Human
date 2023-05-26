@@ -7,6 +7,7 @@
 <title>상세페이지</title>
 </head>
 <link href="/css/detailpage/DetailPage.css" rel="stylesheet">
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <body>
 <section>
 	<div id="restaurantImg" class="restaurantImg">
@@ -14,7 +15,7 @@
 	</div>
 	<div id="restaurantName" class="restaurantName">
 		<pre><input type="text" id="rName" class="inputRDetail" size="10" text=right readonly><input type='text' id='rCategory' class='inputDetail' size="5" readonly></pre>
-		<pre>리뷰<input type="number" id="rReviewN" class="inputRDetail" size="5" readonly></pre>
+		<pre>후기 : <input type="text" id="rReviewN" class="inputRDetail" size="15" readonly></pre>
 	</div>
 	<div id="restaurantDetail">
 		<pre>상세정보</pre>
@@ -30,12 +31,23 @@
 		<pre>메뉴</pre>
 		<pre><textarea id="rMenu" readonly></textarea></pre>
 	</div>
+	<div>
+		<button id="infoUpdate">정보 수정 제안하기</button>
+	</div>
 	<div id="restaurantTage">
 		<pre>이런점이 좋았어요</pre>
-		<pre><input type="text" id="rTage" readonly></pre>
+		<input type="text" id="teaTop1" readonly><br>
+		<input type="text" id="teaTop2" readonly><br>
+		<input type="text" id="teaTop3" readonly><br>
+		<input type="text" id="teaTop4" readonly><br>
+		<input type="text" id="teaTop5" readonly><br>
 	</div>
 	<div id='reviewPhoto'>
 		<pre>사진</pre>
+	</div>
+	<div id="logincheckReviw">
+		<pre>후기를 남겨주세요</pre>
+		<pre>로그인이 필요합니다.</pre>
 	</div>
 	<div id='review'>
 		<pre>후기를 남겨주세요</pre>
@@ -101,7 +113,7 @@
 				<span># 만족</span>
 			</label>			
 		</div>
-		<input type="text" id="name" readonly><br>
+		<input type="text" id="name" value="<%= session.getAttribute("id") %>" readonly><br>
 		<textarea id="myreview" placeholder="음식점에 대한 솔직한 리뷰를 작성해주세요.&#13;&#10;서로 배려하는 마음을 담아 작성해주세요."></textarea>
 		<br><label for="fileUpload" class="custom-file-upload">
 			<i class="fa fa-cloud-upload"></i> 
@@ -125,24 +137,163 @@
 	</div><br><br>
 
 	<div class="review-info">
-		<table id="review_table">
+		<table id="review_table" >
 			<tr>
-				<th>리뷰 목록</th>
-			</tr>	
+				<th>리뷰 목록</th><td><input type="hidden" id="rrrtimes"></td>
+			</tr>
 			<tr><td style="height: 25px;"></td></tr>
+			
 		</table>
 	</div>
 	
 	<!-- 모달 -->
-	<div id="reviewModal" class="modal">
-	  <div class="modal-content">
-	    <span class="close" onclick="closeModal()">&times;</span>
-	   <h2>리뷰 수정</h2>
-	   	<textarea id="reviewContent"></textarea>
-	   <input type="button" value="저장" onclick="saveReview()">
-	  </div>
+	<div id="reviewModal" style="display: none;">
+		<div>
+			<label class="test_obj" >
+				<input type="checkbox" value="청결" id="tags" name="tagsU">
+				<span># 청결</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="친절" id="tags" name="tagsU">
+				<span># 친절</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="주차" id="tags" name="tagsU">
+				<span># 주차</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="조리" id="tags" name="tagsU">
+				<span># 조리</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="포장" id="tags" name="tagsU">
+				<span># 포장</span><br>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="혼밥" id="tags" name="tagsU">
+				<span># 혼밥</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="단체" id="tags" name="tagsU">
+				<span># 단체</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="집중" id="tags" name="tagsU">
+				<span># 집중</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="대화" id="tags" name="tagsU">
+				<span># 대화</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="사진" id="tags" name="tagsU">
+				<span># 사진</span><br>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="맛" id="tags" name="tagsU">
+				<span># 맛</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="양" id="tags" name="tagsU">
+				<span># 양</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="가성비" id="tags" name="tagsU">
+				<span># 가성비</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="알참" id="tags" name="tagsU">
+				<span># 알참</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="만족" id="tags" name="tagsU">
+				<span># 만족</span>
+			</label>			
+		</div>
+		<input type="hidden" id="nameU" value="<%= session.getAttribute("id") %>"readonly><br>
+		<textarea id="myreviewU"></textarea>
+		<br><label for="fileUpload1" class="custom-file-upload">
+			<i class="fa fa-cloud-upload"></i> 
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-images" viewBox="0 0 16 16">
+			  <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+			  <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1h-10z"/>
+			</svg><br>
+			</label>
+			<input type="file" id="fileUpload1" multiple accept="image/*">
+		<img id="previewImg1" width="100"><br><br>
+		<input type="button" id=btnreviewup value="리뷰수정">
+	</div>
+	
+	<!-- 모달 -->
+	<div id="reviewAllModal" style="display: none;" >
+		<div>
+			<label class="test_obj" >
+				<input type="checkbox" value="청결" id="tags" name="tagsD" readonly>
+				<span># 청결</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="친절" id="tags" name="tagsD" readonly>
+				<span># 친절</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="주차" id="tags" name="tagsD" readonly>
+				<span># 주차</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="조리" id="tags" name="tagsD" readonly>
+				<span># 조리</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="포장" id="tags" name="tagsD" readonly>
+				<span># 포장</span><br>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="혼밥" id="tags" name="tagsD" readonly>
+				<span># 혼밥</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="단체" id="tags" name="tagsD" readonly>
+				<span># 단체</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="집중" id="tags" name="tagsD" readonly>
+				<span># 집중</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="대화" id="tags" name="tagsD" readonly>
+				<span># 대화</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="사진" id="tags" name="tagsD" readonly>
+				<span># 사진</span><br>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="맛" id="tags" name="tagsD" readonly>
+				<span># 맛</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="양" id="tags" name="tagsD" readonly>
+				<span># 양</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="가성비" id="tags" name="tagsD" readonly>
+				<span># 가성비</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="알참" id="tags" name="tagsD" readonly>
+				<span># 알참</span>
+			</label>
+			<label class="test_obj">
+				<input type="checkbox" value="만족" id="tags" name="tagsD" readonly>
+				<span># 만족</span>
+			</label>			
+		</div>
+		<textarea id="myreviewD" readonly></textarea>
+		<br>
+		<img id="previewImgD" width="100"><br><br>
 	</div>
 </section>
+
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
