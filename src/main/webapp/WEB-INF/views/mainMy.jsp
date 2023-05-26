@@ -21,7 +21,7 @@
 					<button id="btn-GO-signUpdate"></button>
 					<br>
 					<br>
-					<button type="button" class="btn-userSetting grade">일반 고객</button>
+					<button type="button" class="btn-userGrade">일반 고객</button>
 					<span class="profil userInfo">리뷰<a></a></span>
 				</div>
 

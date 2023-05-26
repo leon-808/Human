@@ -1,9 +1,9 @@
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
-
 $(document)
 .ready(isLogin)
 .ready(geoPosition)
+.ready(checkTag)
 .mousemove(function(e) {
 	let mouseX = e.pageX;
 	let mouseY = e.pageY;
@@ -34,7 +34,7 @@ $(document)
 .on("click", "#btn-reviewSetting", showReviewSetting)
 .on("click", "#btn-storeSetting", showStoreSetting)
 .on("click", "#btn-backMain", gotoMain)
-
+.on("click", "#btn-saveMyTag", saveTag)
 
 
 
@@ -738,3 +738,46 @@ function showStoreSetting(){
 function gotoMain() {
 	document.location = "/main";
 }
+function saveTag() {
+	checkedValues = [];
+	orderby=$("input:radio[name='orderby']:checked").val();
+	localStorage.setItem("orderby", orderby);
+	$("input:checkbox[name='tags']").each(function() {
+		if ($(this).prop("checked") == true) {
+			checkedValues.push($(this).val());
+		}
+	})
+	localStorage.setItem("tags", JSON.stringify(checkedValues));
+  alert("설정 태그가 저장되었습니다.");
+  
+}
+
+function checkTag() {
+	var orderby = localStorage.getItem("orderby");
+
+	if (orderby !== "" || null) {
+		$("input[type='radio'][value='" + orderby + "']").prop("checked", true);
+		var checkedRadio = $("input[type='radio']:checked");
+
+		if (checkedRadio.length > 0) {
+			var checkedRadioId = checkedRadio.attr("id");
+			$(`label[for='${checkedRadioId}']`).addClass("active");
+		}
+		var storedValues = localStorage.getItem("tags");
+
+		if (storedValues) {
+			checkedValues = JSON.parse(storedValues);
+
+			// 체크박스 체크하기
+			$("input:checkbox[name='tags']").each(function() {
+				var value = $(this).val();
+				if (checkedValues.includes(value)) {
+					$(this).prop("checked", true);
+					$(`label[for='${this.id}']`).addClass("active");
+				}
+			});
+		}
+	}
+}
+	
+	
