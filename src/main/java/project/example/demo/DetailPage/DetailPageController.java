@@ -96,7 +96,6 @@ public class DetailPageController{
 	public String reviewGet(@RequestParam("primecode") String rPrimecode,HttpServletRequest req) {
 		String reviewdata;
 		Integer reviewCount = ddao.reviewAllCount(rPrimecode);
-		System.out.println(reviewCount);
 		
 		ArrayList<ReviewDTO> vdao = ddao.getReview(rPrimecode);
 		JSONArray ja = new JSONArray();

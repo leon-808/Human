@@ -14,8 +14,8 @@
 		<img id="rImg">
 	</div>
 	<div id="restaurantName" class="restaurantName">
-		<pre><input type="text" id="rName" class="inputRDetail" size="10" text=right readonly><input type='text' id='rCategory' class='inputDetail' size="5" readonly></pre>
-		<pre>후기 : <input type="text" id="rReviewN" class="inputRDetail" size="15" readonly></pre>
+		<pre><input type="text" id="rName" class="inputRDetail" size="10" readonly><input type='text' id='rCategory' class='inputDetail' size="5" readonly></pre>
+		<pre>후기 : <input type="text" id="rReviewN" class="inputRDetail" readonly></pre>
 	</div>
 	<div id="restaurantDetail">
 		<pre>상세정보</pre>
@@ -145,12 +145,12 @@
 			</tr>	
 			<tr><td style="height: 25px;"></td></tr>
 		</table>
-	</div><br><br>
+	</div>
 
 	<div class="review-info">
 		<table id="review_table" >
 			<tr>
-				<th>리뷰 목록</th><td><input type="hidden" id="rrrtimes"></td>
+				<th>리뷰 목록</th>
 			</tr>
 			<tr><td style="height: 25px;"></td></tr>
 			

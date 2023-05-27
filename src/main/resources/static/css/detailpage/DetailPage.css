@@ -51,6 +51,7 @@ input:focus{
 
 .restaurantName input {
   background-color: transparent;
+  text-align:center;
   font-weight: bold;
   border:none;
 }
@@ -133,6 +134,20 @@ input:focus{
 	border:none;
 	background-color:#e0e0e0;
 	resize:none;
+}
+
+#logincheckReviw{
+	margin-bottom: 2%;
+  border: 1px solid #FFFFFF;
+  padding: 10px;
+  background-color:#FFFFFF;
+}
+
+.review-info{
+	margin-bottom: 2%;
+  border: 1px solid #FFFFFF;
+  padding: 10px;
+  background-color:#FFFFFF;
 }
 
 .custom-file-upload {
