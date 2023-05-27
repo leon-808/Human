@@ -58,7 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		and rv_id=#{param2}
 	</select>
 	<select id="tagTop" resultType="project.example.demo.dto.ReviewDTO">
-		select tags
+		select *
 		from review
 		where rv_primecode=#{param1}
 	</select>

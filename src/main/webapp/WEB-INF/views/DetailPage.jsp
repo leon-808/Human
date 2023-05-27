@@ -32,15 +32,26 @@
 		<pre><textarea id="rMenu" readonly></textarea></pre>
 	</div>
 	<div>
-		<button id="infoUpdate">정보 수정 제안하기</button>
+		<a id="infoUpdate">정보 수정 제안하기</a>
 	</div>
 	<div id="restaurantTage">
 		<pre>이런점이 좋았어요</pre>
-		<input type="text" id="teaTop1" readonly><br>
-		<input type="text" id="teaTop2" readonly><br>
-		<input type="text" id="teaTop3" readonly><br>
-		<input type="text" id="teaTop4" readonly><br>
-		<input type="text" id="teaTop5" readonly><br>
+		<input type="text" id="tagTop1" readonly><br>
+		<input type="text" id="tagTop2" readonly><br>
+		<input type="text" id="tagTop3" readonly><br>
+		<input type="text" id="tagTop4" readonly><br>
+		<input type="text" id="tagTop5" readonly><br>
+		<input type="text" id="tagTop6" readonly><br>
+		<input type="text" id="tagTop7" readonly><br>
+		<input type="text" id="tagTop8" readonly><br>
+		<input type="text" id="tagTop9" readonly><br>
+		<input type="text" id="tagTop10" readonly><br>
+		<input type="text" id="tagTop11" readonly><br>
+		<input type="text" id="tagTop12" readonly><br>
+		<input type="text" id="tagTop13" readonly><br>
+		<input type="text" id="tagTop14" readonly><br>
+		<input type="text" id="tagTop15" readonly><br>
+		
 	</div>
 	<div id='reviewPhoto'>
 		<pre>사진</pre>

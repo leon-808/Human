@@ -139,7 +139,7 @@ function reviewInsert(){
 	})
 }
 
-function reviewGet(){
+/*function reviewGet(){
 	var primecode =window.location.pathname.split('/').pop();
 	
 	$.ajax({
@@ -173,6 +173,122 @@ function reviewGet(){
 			 
 		}
 		
+	})
+}*/
+
+function reviewGet() {
+    var primecode = window.location.pathname.split('/').pop();
+
+    $.ajax({
+        url: '/review/get',
+        type: 'post',
+        data: {
+            primecode: primecode
+        },
+        dataType: 'json',
+        success: function(reviewdata) {
+			updateReviewCount();
+            var reviewTable = $('#review_table');
+            reviewTable.empty(); // 데이터를 추가하기 전에 테이블을 비워줍니다.
+
+            var reviewsPerPage = 5; // 페이지 당 표시되는 후기 수
+            var totalPages = Math.ceil(reviewdata.length / reviewsPerPage); // 총 페이지 수를 계산합니다.
+
+            var currentPage = 1; // 초기 페이지를 설정합니다.
+            displayReviews(currentPage); // 초기 페이지에 해당하는 후기를 표시합니다.
+
+            // 주어진 페이지에 해당하는 후기를 표시하는 함수입니다.
+            function displayReviews(page) {
+                reviewTable.empty(); // 데이터를 추가하기 전에 테이블을 비워줍니다.
+
+                var startIndex = (page - 1) * reviewsPerPage;
+                var endIndex = startIndex + reviewsPerPage;
+                var pageReviews = reviewdata.slice(startIndex, endIndex);
+
+                for (let i = 0; i < pageReviews.length; i++) {
+                    let str = '<tr>';
+                    str += '<td>' + pageReviews[i]['rvid'] + '</td>';
+                    str += '<td>' + pageReviews[i]['rvdetail'] + '</td>';
+
+                    var time = pageReviews[i]['rvtime'];
+
+                    str += '<td>' + time + '</td>';
+                    str += '</tr>';
+
+                    reviewTable.append(str);
+                }
+            }
+
+            // 페이지별로 버튼을 생성합니다.
+            var buttonsContainer = $('<div>', { class: 'buttons-container' });
+
+            for (let i = 1; i <= totalPages; i++) {
+                var pageBtn = $('<button>', {
+                    text: i,
+                    class: 'page-btn',
+                    disabled: currentPage === i
+                }).click(function() {
+                    currentPage = i;
+                    displayReviews(currentPage);
+                    updateButtons();
+                });
+
+                buttonsContainer.append(pageBtn);
+            }
+
+            // 이전 버튼을 생성합니다.
+            var previousBtn = $('<button>', {
+                text: '이전',
+                class: 'page-btn',
+                disabled: currentPage === 1
+            }).click(function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayReviews(currentPage);
+                    updateButtons();
+                }
+            });
+
+            // 다음 버튼을 생성합니다.
+            var nextBtn = $('<button>', {
+                text: '다음',
+                class: 'page-btn',
+                disabled: currentPage === totalPages
+            }).click(function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayReviews(currentPage);
+                    updateButtons();
+                }
+            });
+
+            buttonsContainer.prepend(previousBtn);
+            buttonsContainer.append(nextBtn);
+
+            // 버튼 컨테이너를 후기 테이블 뒤에 추가합니다.
+            reviewTable.after(buttonsContainer);
+
+            // 버튼 상태를 업데이트하는 함수입니다.
+            function updateButtons() {
+                buttonsContainer.find('button').each(function() {
+                    var button = $(this);
+                    var page = parseInt(button.text());
+
+                    button.prop('disabled', page === currentPage);
+                });
+            }
+
+            // 후기 개수를 업데이트하는 함수입니다.
+            function updateReviewCount() {
+                if (reviewdata.length > 0) {
+					var reviewcount = reviewdata[0]['reviewcount'];
+				$('#rReviewN').val(reviewcount);
+			    } else {
+				$('#rReviewN').val('아직 후기가 없습니다.');
+			    }
+			}
+   			
+	}
 	})
 }
 
@@ -389,12 +505,100 @@ function tagTop(){
 			primecode:primecode
 		},
 		dataType:"json",
-		success:function(tagtop){
-			$('#teaTop1').val();
-			$('#teaTop2').val();
-			$('#teaTop3').val();
-			$('#teaTop4').val();
-			$('#teaTop5').val();
+		success:function(tagtop){			
+			var categoryCounts = {
+                	 cleanlinessC : 0,
+	                 kindnessC : 0,
+	                 parkingC : 0,
+	                 cookingC : 0,
+	                 packagingC : 0,
+	                 aloneC : 0,
+	                 groupC : 0,
+	                 focusC : 0,
+	                 conversationC : 0,
+	                 photoC : 0,
+	                 tasteC : 0,
+	                 quantityC : 0,
+	                 costC : 0,
+	                 niceC : 0,
+	                 satisfaction : 0
+            };  
+			
+            for (let i = 0; i < tagtop.length; i++) {
+                var value = tagtop[i].tags;                
+                var values = value.split(',').map(tag => tag.trim());
+                
+                for (let j = 0; j < values.length; j++) {
+				   if(values[j] == "청결"){
+					   categoryCounts.cleanlinessC++;					   
+				   }else if(values[j] == "친절"){
+					   categoryCounts.kindnessC++;
+				   }else if(values[j] == "주차"){
+					   categoryCounts.parkingC++;
+				   }else if(values[j] == "조리"){
+					   categoryCounts.cookingC++;
+				   }else if(values[j] == "포장"){
+					   categoryCounts.packagingC++;
+				   }else if(values[j] == "혼밥"){
+					   categoryCounts.aloneC++;
+				   }else if(values[j] == "단체"){
+					   categoryCounts.groupC++;
+				   }else if(values[j] == "집중"){
+					   categoryCounts.focusC++;
+				   }else if(values[j] == "대화"){
+					   categoryCounts.conversationC++;
+				   }else if(values[j] == "사진"){
+					   categoryCounts.photoC++;
+				   }else if(values[j] == "맛"){
+					   categoryCounts.tasteC++;
+				   }else if(values[j] == "양"){
+					   categoryCounts.quantityC++;
+				   }else if(values[j] == "가성비"){
+					   categoryCounts.costC++;
+				   }else if(values[j] == "알참"){
+					   categoryCounts.niceC++;
+				   }else if(values[j] == "만족"){
+					   categoryCounts.satisfaction++;
+				   }
+					
+				}
+			}
+			var categoryRanking = [];
+			
+			for (var category in categoryCounts) {
+			    if (categoryCounts.hasOwnProperty(category)) {
+			        categoryRanking.push({
+			            category: category,
+			            count: categoryCounts[category]
+			        });
+			    }
+			}
+			
+			categoryRanking.sort(function(a, b) {
+			    return b.count - a.count;
+			});
+			
+			for ( i = 0; i < categoryRanking.length; i++) {
+			    console.log('순위 ' + (i + 1) + ': ' + categoryRanking[i].category + ' (' + categoryRanking[i].count + ')');
+		
+			}
+			$('#tagTop1').val(categoryRanking[0].category+"(" +categoryRanking[0].count+')');
+			$('#tagTop2').val(categoryRanking[1].category);		
+			$('#tagTop3').val(categoryRanking[2].category);		
+			$('#tagTop4').val(categoryRanking[3].category);		
+			$('#tagTop5').val(categoryRanking[4].category);		
+			$('#tagTop6').val(categoryRanking[5].category);		
+			$('#tagTop7').val(categoryRanking[6].category);		
+			$('#tagTop8').val(categoryRanking[7].category);		
+			$('#tagTop9').val(categoryRanking[8].category);		
+			$('#tagTop10').val(categoryRanking[9].category);		
+			$('#tagTop11').val(categoryRanking[10].category);		
+			$('#tagTop12').val(categoryRanking[11].category);		
+			$('#tagTop13').val(categoryRanking[12].category);		
+			$('#tagTop14').val(categoryRanking[13].category);		
+			$('#tagTop15').val(categoryRanking[14].category);		
+					
 		}
+        
 	})
 }
