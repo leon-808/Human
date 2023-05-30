@@ -139,7 +139,47 @@ function geoPosition() {
 	markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
 	selfMarker, selfContent = 0;
 	
-	if (navigator.geolocation) {
+	lat = 36.81044107630051,
+	lng = 127.14647463417765;
+	selfLat = lat; selfLng = lng;
+	makeMap(lat, lng);
+	
+	map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+				
+	selfMarker = new kakao.maps.Marker({
+		position: new kakao.maps.LatLng(lat, lng),
+		image: markerImage,
+		clickable: true
+	})
+	selfMarker.setMap(map);
+	
+	selfContent = `
+		<div class="simpleOverlay">
+	  		<span class="simpleOverlayTitle" onclick="closeOverlay()">내 위치</span>
+	  	</div>`;
+	selfOverlay = new kakao.maps.CustomOverlay({
+		map: map,
+		position: selfMarker.getPosition(),
+		content: selfContent,
+		xAnchor: 0.6,
+		yAnchor: -0.2
+	});
+	
+	kakao.maps.event.addListener(selfMarker, "click", function() {
+		selfOverlay.setMap(map);
+	});
+	selfOverlay.setMap(null);
+	
+	kakao.maps.event.addListener(map, "rightclick", function(e) {
+		if ($("#cursorImg").attr("src") == "/img/main/AddLocationCursor.gif") {
+			$("#addLocationButton").trigger("click");
+		}
+		return false;
+	})
+	
+	isAdminSearch();
+	
+	/*if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(
 			function(position) {
 				lat = position.coords.latitude; 
@@ -187,7 +227,7 @@ function geoPosition() {
 		lng = 127.14647463417765;
 		makeMap(lat, lng);
 		isAdminSearch();
-	}
+	}*/
 }
 
 function makeMap(lat, lng) {
