@@ -277,7 +277,6 @@ public class MemberController {
 		String gender = req.getParameter("gender");
 		String birth = req.getParameter("birth");
 		String phone = req.getParameter("phone");
-
 		mdao.update_signup(id, pw, name, gender, birth, phone);
 
 		return check;

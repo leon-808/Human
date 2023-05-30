@@ -1,8 +1,6 @@
 $(document)
-.ready(clear_signup)
 .ready(get_signupInfo)
 .on('click','#button_submitSignUpdate',update_signup)
-.on('click','#button_submitCancel',Cancel_update)
 .on('change','#input_phone',check_phone)
 .on('click','#button_submitCancel',cancel_update)
 .on('propertychange change paste input','#input_phone',check_phone)
@@ -24,7 +22,7 @@ function get_signupInfo() {
 				$("#input_phone").val(data[0]["phone"]);
 				userPhone = data[0]["phone"];
 				if (data[0]["gender"] == "남") $("#input_genderM").prop("checked", true);
-				else $("input_genderF").prop("checked", true);
+				else $("#input_genderF").prop("checked", true);
 				$("#input_birth").val(data[0]["birth"]);
 				$("#error_inputPhone").css("color", "green");
 				$("#error_inputPhone").text("사용 가능한 번호입니다.");
@@ -45,7 +43,11 @@ function update_signup() {
 	pwc = $("#input_passwordCheck").val();
 	userName = $("#input_name").val();
 	phone = $("#input_phone").val();
-	gender = $("input[name=gender]:checked").val();
+	gender = $("input:radio[name='gender']:checked").val();
+	console.log($("#input_genderM").val());
+	console.log($("#input_genderF").val());
+	console.log($("input:radio[name='gender']:checked").val());
+	console.log("성별="+gender);
 	birth = $("#input_birth").val();
 	
 	$.ajax({

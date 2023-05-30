@@ -32,18 +32,17 @@ public class MainController {
 	public String main_page() {
 		return "main";
 	}
-	
-	@GetMapping("/mainmy")
-	public String mainmy_page() {
-		return "mainMy";
-	}
-	
 		
 	@GetMapping("/main/search/{query}")
 	public String detail(@PathVariable("query") String query) {
 		return "main";
 	}
 
+	@GetMapping("/mainmy")
+	public String mainmy_page() {
+		return "mainMy";
+	}
+	
 	@PostMapping("/check/duplicateLocation")
 	@ResponseBody
 	public String check_duplicateLocation(HttpServletRequest req) {
