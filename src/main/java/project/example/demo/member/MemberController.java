@@ -50,8 +50,13 @@ public class MemberController {
 	}
 
 	@GetMapping("/signupdate")
-	public String signupdate_page() {
-		return "/member/signUpdate";
+	public String signupdate_page(HttpServletRequest req) {
+		HttpSession session = req.getSession();
+		if (session.getAttribute("id") != null) return "/member/signUpdate";
+		else if (req.getHeader("Referer") != null) {
+			return "redirect:" + req.getHeader("Referer");
+		}
+		else return "welcome";
 	}
 
 	@GetMapping("/find/id")
@@ -62,11 +67,6 @@ public class MemberController {
 	@GetMapping("/find/pw")
 	public String pwfind(HttpServletRequest req) {
 		return redirectMain(req, "/member/findPW");
-	}
-
-	@GetMapping("/add/restaurant")
-	public String addRestaurant_page() {
-		return "/member/addRestaurant";
 	}
 
 	@PostMapping("/submit/login")
@@ -116,7 +116,7 @@ public class MemberController {
 
 	@PostMapping("/submit/logout")
 	@ResponseBody
-	public String do_logout(HttpServletRequest req) {
+	public String submit_logout(HttpServletRequest req) {
 		String check = "true";
 
 		HttpSession session = req.getSession();
@@ -194,7 +194,6 @@ public class MemberController {
 		HttpSession session = req.getSession();
 		if (session.getAttribute("id") != null)
 			return "redirect:/main";
-		// 환영 페이지 만들어지면 리다이렉트 링크 수정해야함
 		else
 			return url;
 	}
@@ -215,7 +214,7 @@ public class MemberController {
 		return sb.toString();
 	}
 
-	@PostMapping("/get_signupInfo")
+	@PostMapping("/get/signupInfo")
 	@ResponseBody
 	public String get_signupInfo(HttpServletRequest req) {
 		HttpSession session = req.getSession();
@@ -241,7 +240,7 @@ public class MemberController {
 		return ja.toString();
 	}
 
-	@PostMapping("/update_signup")
+	@PostMapping("/update/signup")
 	@ResponseBody
 	public String update_signup(HttpServletRequest req) {
 		String check = "true";

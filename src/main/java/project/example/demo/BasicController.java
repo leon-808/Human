@@ -16,9 +16,9 @@ public class BasicController {
 		return "INDEX";
 	}
 	
-	@GetMapping("/WelcomePage")
+	@GetMapping("/welcome")
 	public String welcom_page() {
-		return "/welcomePage";
+		return "welcome";
 	}
 	
 	@PostMapping("/isLogin")
