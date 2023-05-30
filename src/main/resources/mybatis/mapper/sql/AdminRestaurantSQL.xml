@@ -15,6 +15,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		from restaurant
 		where address = #{param1}
 	</select>
+	
+	<select id="admin_getLocalURL" resultType="string">
+		select adrt_localurl
+		from admin_restaurant
+		where adrt_address = #{param1}
+	</select>
 
 	<insert id="admin_insup_restaurant">
 		${param1}

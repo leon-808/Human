@@ -15,12 +15,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		from member
 		where id = #{param1}
 	</select>
+	
+	<select id="check_duplicateRequest" resultType="_int">
+		select count(*)
+		from admin_restaurant
+		where adrt_r_name = #{param1}
+		and adrt_address = #{param2}
+	</select>
 		
 	<insert id="restaurant_approval_request">
 		insert into admin_restaurant
 		values(#{param1},#{param2},#{param3, jdbcType=VARCHAR},#{param4},
 		#{param5, jdbcType=VARCHAR},#{param6},#{param7},#{param8, jdbcType=VARCHAR})
 	</insert>
+	
+	<update id="restaurant_update_request">
+		update admin_restaurant
+		set adrt_lat = #{param1},
+		adrt_lng = #{param2},
+		adrt_primecode = #{param3},
+		adrt_r_name = #{param4},
+		adrt_owner = #{param5},
+		adrt_category = #{param6},
+		adrt_address = #{param7},
+		adrt_localurl = #{param8}
+	</update>
 	
 	<select id="admin_search" resultType="string">
 		select adrt_address

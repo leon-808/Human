@@ -82,7 +82,10 @@ public class MainController {
 		String owner = null;
 		String localURL = null;
 		
-		mdao.restaurant_approval_request(lat, lng, primecode, r_name, owner, category, address, localURL);
+		int duplicate = mdao.check_duplicateRequest(r_name, address);
+		if (duplicate == 0) 
+			mdao.restaurant_approval_request(lat, lng, primecode, r_name, owner, category, address, localURL);
+		else message = "duplicate";
 		
 		return message;
 	}
@@ -123,8 +126,13 @@ public class MainController {
 		} catch (Exception e) {
 		}
 		String localURL = shortLocation + filename;
-
-		mdao.restaurant_approval_request(lat, lng, primecode, r_name, owner, category, address, localURL);
+		
+		int duplicate = mdao.check_duplicateRequest(r_name, address);
+		if (duplicate == 0) 
+			mdao.restaurant_approval_request(lat, lng, primecode, r_name, owner, category, address, localURL);
+		else {
+			mdao.restaurant_update_request(lat, lng, primecode, r_name, owner, category, address, localURL);
+		}
 
 		return message;
 	}

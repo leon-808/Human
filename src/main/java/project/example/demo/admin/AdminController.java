@@ -1,5 +1,8 @@
 package project.example.demo.admin;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -55,6 +58,12 @@ public class AdminController {
 										 @RequestParam("changeFlag") int changeFlag) {
 		String check = "insert";
 		int exist = ardao.admin_beforeInsUp(address);
+		String url = ardao.admin_getLocalURL(address);
+		Path filePath = Paths.get("C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\resources\\static" + url);
+		try {
+			Files.deleteIfExists(filePath);
+		}
+		catch (Exception e) {};
 		String query = "";
 		if (exist == 0 && primecode != "") {
 			query = String.format("""
@@ -89,7 +98,6 @@ public class AdminController {
 					where a.adrt_address = '%1$s' )
 				where r.address = '%1$s'
 				""", address);
-			System.out.println(query);
 			ardao.admin_insup_restaurant(query);
 			ardao.admin_delete_restaurant(address);
 			check = "update";

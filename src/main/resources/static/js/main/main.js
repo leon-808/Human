@@ -440,8 +440,13 @@ function suggestALM() {
 						}
 					},
 					success: function(message) {
-						alert("해당 내용으로 맛집 등록이 요청되었습니다");
-						location.reload();
+						if (message == "proceed") {
+							alert("해당 내용으로 맛집 등록이 요청되었습니다");
+							location.reload();
+						}
+						else {
+							alert("이미 등록 요청이 된 맛집입니다");
+						}
 					},
 					error: function() {
 						alert("카카오 서버와 통신에 실패했습니다");
@@ -463,8 +468,13 @@ function suggestALM() {
 						}
 					},
 					success: function(message) {
-						alert("해당 내용으로 맛집 등록이 요청되었습니다");
-						location.reload();
+						if (message == "proceed") {
+							alert("해당 내용으로 맛집 등록이 요청되었습니다");
+							location.reload();
+						}
+						else {
+							alert("이미 등록 요청이 된 맛집입니다");
+						}
 					},
 					error: function() {
 						alert("카카오 서버와 통신에 실패했습니다");
