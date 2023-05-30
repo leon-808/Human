@@ -5,6 +5,7 @@ $(document)
 .ready(isLogin)
 .ready(geoPosition)
 .ready(checkTag)
+/*.ready(checkNowLocal)*/
 .mousemove(function(e) {
 	let mouseX = e.pageX;
 	let mouseY = e.pageY;
@@ -703,7 +704,17 @@ function suggestDT() {
 function clickCurrentLocaitonButton() {
 	
 }
-
+function checkNowLocal() {
+	var setting = localStorage.getItem("setting");
+	console.log(setting);
+    if (setting === "tag") {
+        showTagSetting();
+    } else if (setting === "review") {
+        showReviewSetting();
+    } else if (setting === "store") {
+        showStoreSetting();
+    } 
+}
 function showTagSetting() {
 	$(".sf_filter").css("display", "block");
 	$(".div_reviewList").css("display", "none");
@@ -714,6 +725,7 @@ function showTagSetting() {
 	$("#btn-reviewSetting").css("background-color", "#06a64f");
 	$("#btn-storeSetting").css("color", "white");
 	$("#btn-storeSetting").css("background-color", "#06a64f");
+	/*localStorage.setItem("setting", "tag");*/
 }
 function showReviewSetting(){
 	$(".sf_filter").css("display", "none");
@@ -725,6 +737,7 @@ function showReviewSetting(){
 	$("#btn-reviewSetting").css("background-color", "#15571e");
 	$("#btn-storeSetting").css("color", "white");
 	$("#btn-storeSetting").css("background-color", "#06a64f");
+	/*localStorage.setItem("setting", "review");*/
 }
 function showStoreSetting(){
 	$(".sf_filter").css("display", "none");
@@ -736,6 +749,7 @@ function showStoreSetting(){
 	$("#btn-reviewSetting").css("background-color", "#06a64f");
 	$("#btn-storeSetting").css("color", "white");
 	$("#btn-storeSetting").css("background-color", "#15571e");
+	/*localStorage.setItem("setting", "store");*/
 }
 function gotoMain() {
 	document.location = "/main";
