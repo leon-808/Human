@@ -31,10 +31,13 @@
 }
 #btn-GO-signUpdate{
   background-image: url("/img/main/setting.png");
+  background-color: transparent;
   background-repeat: no-repeat;
   background-size: cover;
+  border: none;
   width: 20px;
   height: 20px;
+  filter: invert(100%);
   
 }
 .profil_subarea{
@@ -51,16 +54,16 @@
 	width: 85px;
 	margin-right: 3px;
 	font-size: 13px;
-	border-radius: 10px;
-    background-color: #248624;
+	font-weight: bold;
+	border-radius: 5px;
+    background-color: #06a64f;
     color:white;
     border: none;
   
 }
 .btn-userSetting.pas{
-	color:black;
-	background-color: #ffffff;
-	
+	color:white;
+	background-color: #15571e;
 }
 #btn-saveMyTag { 
 	width: 70px;
@@ -68,11 +71,11 @@
 	text-align: center;
 	margin: 0 0 0 10px;
 	border-radius: 10px;
-	background-color: #008000;
+	background-color: #06a64f;
 	cursor: pointer;
 	font-size:15px;
 	font-weight: bold;
-	border: 2px solid #008000;
+	border: 2px solid #06a64f;
 	color: #ffffff;
 }
 .div_reviewList {
@@ -85,12 +88,52 @@
 	width: 50px;
 	margin-right: 3px;
 	font-size: 13px;
-	border-radius: 10px;
+	border-radius: 5px;
     background-color: #808080;
     color:white;
     border: none;
 }
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.silver-background {
+  background: linear-gradient(to right, #eee 0%, #ccc 50%, #eee 100%);
+}
+
+.gold-background {
+  background: linear-gradient(to right, #FFD17E 0%, #FFB830 50%, #FFD17E 100%);
+}
+
+.platinum-background {
+  background: linear-gradient(to right, #B9F2FF 0%, #57C8E0 50%, #B9F2FF 100%);
+}
+
+.diamond-background {
+  background: linear-gradient(to right, #f8d7da, #fce8e8, #fff3cd, #f2f9de, #d8f4e5, #d0edf5, #d9d2e9);
+}
 .btn-userGrade {
   border: none;
-  color: #000;
+  font-weight: bold;
+  background-size: 200% auto;
+  animation: shimmer 2s infinite;
+}
+#userReviewCount {
+  font-weight: normal;
+  transition: font-weight 0.3s;
+  cursor: pointer;
+}
+
+#userReviewCount:hover {
+  font-weight: bold;
+  cursor: pointer;
+}
+.userMessage {
+	margin: 10px;
+	font-size: 15px; 
+	font-weight: bold;
 }

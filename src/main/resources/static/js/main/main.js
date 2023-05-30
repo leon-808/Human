@@ -1,5 +1,6 @@
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+userGrade=null;
 $(document)
 .ready(isLogin)
 .ready(geoPosition)
@@ -35,7 +36,7 @@ $(document)
 .on("click", "#btn-storeSetting", showStoreSetting)
 .on("click", "#btn-backMain", gotoMain)
 .on("click", "#btn-saveMyTag", saveTag)
-
+.on("click", "#userReviewCount",showReviewSetting)
 
 
 $(".each_fcr").hover(function() {
@@ -100,6 +101,7 @@ function isLogin() {
 				createUI();
 				loginFlag = 1;
 				get_userInfo();
+				get_userReviewCount();
 			}	
 		}
 	})
@@ -706,34 +708,34 @@ function showTagSetting() {
 	$(".sf_filter").css("display", "block");
 	$(".div_reviewList").css("display", "none");
 	$(".div_storeList").css("display", "none");
-	$("#btn-pasSetting").css("color", "black");
-	$("#btn-pasSetting").css("background-color", "#ffffff");
+	$("#btn-pasSetting").css("color", "white");
+	$("#btn-pasSetting").css("background-color", "#15571e");
 	$("#btn-reviewSetting").css("color", "white");
-	$("#btn-reviewSetting").css("background-color", "#248624");
+	$("#btn-reviewSetting").css("background-color", "#06a64f");
 	$("#btn-storeSetting").css("color", "white");
-	$("#btn-storeSetting").css("background-color", "#248624");
+	$("#btn-storeSetting").css("background-color", "#06a64f");
 }
 function showReviewSetting(){
 	$(".sf_filter").css("display", "none");
 	$(".div_reviewList").css("display", "block");
 	$(".div_storeList").css("display", "none");
 	$("#btn-pasSetting").css("color", "white");
-	$("#btn-pasSetting").css("background-color", "#248624");
-	$("#btn-reviewSetting").css("color", "black");
-	$("#btn-reviewSetting").css("background-color", "#ffffff");
+	$("#btn-pasSetting").css("background-color", "#06a64f");
+	$("#btn-reviewSetting").css("color", "white");
+	$("#btn-reviewSetting").css("background-color", "#15571e");
 	$("#btn-storeSetting").css("color", "white");
-	$("#btn-storeSetting").css("background-color", "#248624");
+	$("#btn-storeSetting").css("background-color", "#06a64f");
 }
 function showStoreSetting(){
 	$(".sf_filter").css("display", "none");
 	$(".div_reviewList").css("display", "none");
 	$(".div_storeList").css("display", "block");
 	$("#btn-pasSetting").css("color", "white");
-	$("#btn-pasSetting").css("background-color", "#248624");
+	$("#btn-pasSetting").css("background-color", "#06a64f");
 	$("#btn-reviewSetting").css("color", "white");
-	$("#btn-reviewSetting").css("background-color", "#248624");
-	$("#btn-storeSetting").css("color", "black");
-	$("#btn-storeSetting").css("background-color", "#ffffff");
+	$("#btn-reviewSetting").css("background-color", "#06a64f");
+	$("#btn-storeSetting").css("color", "white");
+	$("#btn-storeSetting").css("background-color", "#15571e");
 }
 function gotoMain() {
 	document.location = "/main";
@@ -779,5 +781,46 @@ function checkTag() {
 		}
 	}
 }
+function get_userReviewCount() {
+	$.ajax({
+		url: "/get_userReviewCount",
+		type: "post",
+		dataType: "json",
+		success: function(reviewCheck) {
+			$("#userReviewCount").text(reviewCheck);
+			userGrade = parseInt(reviewCheck);
+			get_userGrade();
+		}
+	})
+}
+function get_userGrade() {
+
+	if (userGrade <= 5) {
+		// 은색 배경
+		$(".btn-userGrade").text("고마운 분");
+		$(".btn-userGrade").css("color", "#ffffff");
+		$(".btn-userGrade").addClass("silver-background");
+	}
+	if (userGrade >= 10) {
+		// 금색 배경
+		$(".btn-userGrade").text("반가운 분");
+		$(".btn-userGrade").css("color", "#ffffff");
+		$(".btn-userGrade").addClass("gold-background");
+	}
+	if (userGrade >= 15) {
+		// 플래티넘 배경
+		$(".btn-userGrade").text("소중한 분");
+		$(".btn-userGrade").css("color", "#ffffff");
+		$(".btn-userGrade").addClass("platinum-background");
+	}
+	if (userGrade >= 20) {
+		// 다이아몬드 배경
+		$(".btn-userGrade").text("귀하신 분");
+		$(".btn-userGrade").css("color", "#808080");
+		$(".btn-userGrade").addClass("diamond-background");
+		
+	}
+}
 	
+
 	

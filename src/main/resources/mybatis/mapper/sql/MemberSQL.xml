@@ -60,5 +60,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			birth = #{param5}, phone = #{param6}
 		where id = #{param1}
 	</update>
+	
+	<select id="get_userReviewCount" resultType="int">
+		select count(*)
+		from review
+		where rv_id = #{param1}
+	</select>
 
 </mapper>

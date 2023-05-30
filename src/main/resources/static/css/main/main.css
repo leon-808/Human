@@ -145,7 +145,8 @@ body{
     z-index: 30;
     width: 350px;
     height: 150px;
-    background-color: #258fff;
+    background-color: rgb(32, 208, 94);
+   /* background-color: #258fff; */
 }
 .header {
     position: relative;

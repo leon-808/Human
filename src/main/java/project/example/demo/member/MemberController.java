@@ -275,5 +275,18 @@ public class MemberController {
 				this.messageService.sendOne(new SingleMessageSendingRequest(message));
 		return response;
 	}
+	
+	@PostMapping("/get_userReviewCount")
+	@ResponseBody
+	public String get_userReviewCount(HttpServletRequest req) {
+		HttpSession session = req.getSession();
+
+		String id = session.getAttribute("id").toString();
+		String reviewCheck = null;
+		Integer reviewCount = mdao.get_userReviewCount(id); 
+		reviewCheck = String.valueOf(reviewCount);
+
+		return reviewCheck;
+	}
 }
 
