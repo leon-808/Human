@@ -16,6 +16,11 @@ public class BasicController {
 		return "INDEX";
 	}
 	
+	@GetMapping("/welcome")
+	public String welcom_page() {
+		return "welcome";
+	}
+	
 	@PostMapping("/isLogin")
 	@ResponseBody
 	public String isLogin(HttpServletRequest req) {

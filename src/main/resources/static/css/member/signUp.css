@@ -171,3 +171,6 @@ select {
 	font-weight: bold;
 	color: red;
 }
+.gender_radio {
+	margin-right: 20px;
+}

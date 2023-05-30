@@ -8,10 +8,13 @@ import project.example.demo.dto.RestaurantDTO;
 
 @Mapper
 public interface MainDAO {
-	ArrayList<RestaurantDTO> check_duplicateLocation
-	(double latRange1, double latRange2, double lngRange1, double lngRange2);
+	ArrayList<RestaurantDTO> check_duplicateLocation(String address);
 	
+	String get_member_name(String id);
+		
 	void restaurant_approval_request
 	(double lat, double lng, String primecode, String r_name, 
 	String owner, String category, String address, String localURL);
+	
+	String admin_search(String primecode);
 }

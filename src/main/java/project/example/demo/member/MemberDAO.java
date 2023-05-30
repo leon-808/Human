@@ -8,6 +8,7 @@ import project.example.demo.dto.MemberDTO;
 @Mapper
 public interface MemberDAO {
 	String get_id(String id,String pw);
+	String get_name(String id,String pw);
 	String search_id(String name, String phone);
 	
 	int check_duplicateID(String id);

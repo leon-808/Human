@@ -7,14 +7,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="check_duplicateLocation" resultType="project.example.demo.dto.RestaurantDTO">
 		select lat, lng, primecode, r_name, owner, category, address, r_phone, r_photo
 		from restaurant
-		where <![CDATA[
-			#{param1} <= lat and lat <= #{param2}
-			and #{param3} <= lng and lng <= #{param4} 
-		]]>
+		where address = #{param1}
 	</select>
 	
+	<select id="get_member_name" resultType="string">
+		select name
+		from member
+		where id = #{param1}
+	</select>
+		
 	<insert id="restaurant_approval_request">
 		insert into admin_restaurant
-		values(#{param1},#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8})
+		values(#{param1},#{param2},#{param3, jdbcType=VARCHAR},#{param4},
+		#{param5, jdbcType=VARCHAR},#{param6},#{param7},#{param8, jdbcType=VARCHAR})
 	</insert>
+	
+	<select id="admin_search" resultType="string">
+		select adrt_address
+		from admin_restaurant
+		where adrt_primecode = #{param1}
+	</select>
 </mapper>
