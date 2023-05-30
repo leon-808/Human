@@ -1,6 +1,5 @@
 package project.example.demo.member;
 
-import java.io.File;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
