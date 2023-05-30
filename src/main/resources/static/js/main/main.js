@@ -1,6 +1,6 @@
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
-
+userGrade=null;
 $(document)
 .ready(isLogin)
 .ready(geoPosition)
@@ -22,9 +22,17 @@ $(document)
 .on("click", "#off_orderby", offOrderby)
 .on("click", "#off_tags", offTags)
 .on("click", ".alm_suggest", suggestALM)
+.on("click", "#btn-myPage", showMyData)
+.on("click", "#btn-GO-signUpdate", signUpdate)
 .on("click", ".toggle_sidebar", toggleBarandMap)
 .on("click", ".dt_suggest", suggestDT)
 .on("click", ".choice_currentmap", rectSearch)
+.on("click", "#btn-pasSetting", showTagSetting)
+.on("click", "#btn-reviewSetting", showReviewSetting)
+.on("click", "#btn-storeSetting", showStoreSetting)
+.on("click", "#btn-backMain", gotoMain)
+.on("click", "#btn-saveMyTag", saveTag)
+.on("click", "#userReviewCount",showReviewSetting)
 .on("click", "#clearMarkerButton", clearMarkers)
 
 
@@ -103,6 +111,7 @@ function isLogin() {
 			if (isLogin == "true") { 
 				createUI();
 				loginFlag = 1;
+				checkTag();
 			}	
 		}
 	})
@@ -792,7 +801,6 @@ function offOrderby() {
 		$(`label[for='${id}']`).removeClass("active");
 	})
 }
-
 function offTags() {
 	$("input:checkbox[name='tags']").each(function() {
 		$(this).prop("checked", false);
@@ -801,6 +809,8 @@ function offTags() {
 	})
 }
 
+
+
 function toggleBarandMap() {
 	if ($(this).hasClass("tsb_close")) {
 		$(".tsb_open").css("display", "block");
@@ -808,6 +818,13 @@ function toggleBarandMap() {
 	else {
 		$(".tsb_open").css("display", "none");
 	}
+}
+
+
+
+function clearMarkers() {
+	markersNuller(keywordMarkers);
+	addLocationMarker.setMap(null);
 }
 
 
@@ -827,9 +844,223 @@ function suggestDT() {
 	}
 }
 
+function clickCurrentLocaitonButton() {
+	
+}
 
 
-function clearMarkers() {
-	markersNuller(keywordMarkers);
-	addLocationMarker.setMap(null);
+
+/*.on("click", "#btn-myPage", showMyData)
+.on("click", "#btn-GO-signUpdate", signUpdate)
+.on("click", ".toggle_sidebar", toggleBarandMap)
+.on("click", ".dt_suggest", suggestDT)
+.on("click", ".choice_currentmap", rectSearch)
+.on("click", "#btn-pasSetting", showTagSetting)
+.on("click", "#btn-reviewSetting", showReviewSetting)
+.on("click", "#btn-storeSetting", showStoreSetting)
+.on("click", "#btn-backMain", gotoMain)
+.on("click", "#btn-saveMyTag", saveTag)
+.on("click", "#userReviewCount",showReviewSetting)
+.on("click", "#clearMarkerButton", clearMarkers)*/
+
+let isMyPage = 0;
+
+function showMyData() {
+	if (loginFlag == 1) {
+		if (isMyPage == 0) {
+			$(".top_sidebar").empty();
+			$(".top_sidebar").append(
+			`<div class="profil" role="banner">
+				<span class="profil img"><img src="/img/main/profil.jpg"
+					width="85" height="85"></span>
+				<div class="profil info">
+					<span id="profil_user_name"></span>님 안녕하세요
+					<button id="btn-GO-signUpdate"></button>
+					<div style="line-height: 50%"><br><br></div>
+					<button type="button" class="btn-userGrade"></button>
+					<span class="profil userInfo">리뷰 <a id=userReviewCount></a></span>
+				</div>
+
+			</div>
+			<div class="profil_subarea">
+				<button type="button" id="btn-backMain">뒤로</button>
+				<button type="button" class="btn-userSetting pas"
+					id="btn-pasSetting">선호도 관리</button>
+				<button type="button" class="btn-userSetting review"
+					id="btn-reviewSetting">리뷰 관리</button>
+				<button type="button" class="btn-userSetting store"
+					id="btn-storeSetting">업체 관리</button>
+			</div>`);
+			isMyPage = 1;
+			$("#food_categories").css("display", "none");
+			$("#btn-saveMyTag").css("display", "block");
+			checkTag();
+			get_userName();
+			get_userReviewCount();
+		}
+	}
+	else alert("로그인이 필요한 페이지입니다.");
+}
+function checkTag() {
+	var orderby = localStorage.getItem("orderby");
+
+	if (orderby !== "" || null) {
+		$("input[type='radio'][value='" + orderby + "']").prop("checked", true);
+		var checkedRadio = $("input[type='radio']:checked");
+
+		if (checkedRadio.length > 0) {
+			var checkedRadioId = checkedRadio.attr("id");
+			$(`label[for='${checkedRadioId}']`).addClass("active");
+		}
+		var storedValues = localStorage.getItem("tags");
+
+		if (storedValues) {
+			checkedValues = JSON.parse(storedValues);
+			$("input:checkbox[name='tags']").each(function() {
+				var value = $(this).val();
+				if (checkedValues.includes(value)) {
+					$(this).prop("checked", true);
+					$(`label[for='${this.id}']`).addClass("active");
+				}
+			});
+		}
+	}
+}
+
+function gotoMain() {
+	isMyPage = 0;
+	$("#food_categories").css("display", "block");
+	$("#btn-saveMyTag").css("display", "none");
+	$(".top_sidebar").empty();
+	$(".top_sidebar").append(`
+		<div class="header" role="banner">
+		    <h1 class="header_title">
+		        <a class="a_title">kakaomap</a>
+		        <button id="button_log" class="btn btn-danger">로그인</button>
+		    </h1>
+		    <button class="choice_currentmap btn btn-success">현 지도 내 장소검색</button>
+			<div class="box_searchbar">
+			    <input id="search_input" class="tf_keyword" maxlength="100" 
+			    autocomplete="off" placeholder="장소, 주소 검색">
+			    <button id="search_button">검색</button>
+			</div>
+		    <div class="header_subarea">
+			 	<button type="button" class="btn btn-success" id="btn-myPage">마이페이지</button>	
+			  	<button type="button" id="challenge" class="btn btn-danger" data-bs-toggle="tooltip" 
+			  	data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>
+			</div>
+		</div>`);
+}
+
+function get_userName() {
+	$.ajax({
+		url: "/get/userName",
+		type: "post",
+		dataType: "json",
+		success: function(data) {
+			if (data.length != 0) {
+				$("#profil_user_name").text(data[0]["name"]);
+			}
+
+		}
+	})
+}
+
+function get_userReviewCount() {
+	$.ajax({
+		url: "/get/userReviewCount",
+		type: "post",
+		dataType: "json",
+		success: function(count) {
+			$("#userReviewCount").text(count);
+			get_userGrade(count);
+		}
+	})
+}
+
+function get_userGrade(count) {
+	if (count <= 5) {
+		// 은색 배경
+		$(".btn-userGrade").text("맛보기");
+		$(".btn-userGrade").css("color", "#ffffff");
+		$(".btn-userGrade").addClass("silver-background");
+	}
+	else if (count >= 10 && count < 15) {
+		// 금색 배경
+		$(".btn-userGrade").text("맛돌이");
+		$(".btn-userGrade").css("color", "#ffffff");
+		$(".btn-userGrade").addClass("gold-background");
+	}
+	else if (count >= 15 && count < 20) {
+		// 플래티넘 배경
+		$(".btn-userGrade").text("맛고수");
+		$(".btn-userGrade").css("color", "#ffffff");
+		$(".btn-userGrade").addClass("platinum-background");
+	}
+	else if (count >= 20) {
+		// 다이아몬드 배경
+		$(".btn-userGrade").text("미식가");
+		$(".btn-userGrade").css("color", "#808080");
+		$(".btn-userGrade").addClass("diamond-background");
+	}
+}
+
+
+
+function signUpdate() {
+	document.location = "/signupdate";
+}
+
+
+
+function showTagSetting() {
+	$(".sf_filter").css("display", "block");
+	$("#food_categories").css("display", "none");
+	$("#btn-saveMyTag").css("display", "block");
+	$(".div_reviewList").css("display", "none");
+	$(".div_storeList").css("display", "none");
+	$("#btn-pasSetting").css("color", "white");
+	$("#btn-pasSetting").css("background-color", "#15571e");
+	$("#btn-reviewSetting").css("color", "white");
+	$("#btn-reviewSetting").css("background-color", "#06a64f");
+	$("#btn-storeSetting").css("color", "white");
+	$("#btn-storeSetting").css("background-color", "#06a64f");
+}
+function showReviewSetting(){
+	$(".sf_filter").css("display", "none");
+	$("#btn-saveMyTag").css("display", "none");
+	$(".div_reviewList").css("display", "block");
+	$(".div_storeList").css("display", "none");
+	$("#btn-pasSetting").css("color", "white");
+	$("#btn-pasSetting").css("background-color", "#06a64f");
+	$("#btn-reviewSetting").css("color", "white");
+	$("#btn-reviewSetting").css("background-color", "#15571e");
+	$("#btn-storeSetting").css("color", "white");
+	$("#btn-storeSetting").css("background-color", "#06a64f");
+}
+function showStoreSetting(){
+	$(".sf_filter").css("display", "none");
+	$("#btn-saveMyTag").css("display", "none");
+	$(".div_reviewList").css("display", "none");
+	$(".div_storeList").css("display", "block");
+	$("#btn-pasSetting").css("color", "white");
+	$("#btn-pasSetting").css("background-color", "#06a64f");
+	$("#btn-reviewSetting").css("color", "white");
+	$("#btn-reviewSetting").css("background-color", "#06a64f");
+	$("#btn-storeSetting").css("color", "white");
+	$("#btn-storeSetting").css("background-color", "#15571e");
+}
+
+
+function saveTag() {
+	checkedValues = [];
+	orderby = $("input:radio[name='orderby']:checked").val();
+	localStorage.setItem("orderby", orderby);
+	$("input:checkbox[name='tags']").each(function() {
+		if ($(this).prop("checked") == true) {
+			checkedValues.push($(this).val());
+		}
+	})
+	localStorage.setItem("tags", JSON.stringify(checkedValues));
+  	alert("설정 태그가 저장되었습니다.");
 }

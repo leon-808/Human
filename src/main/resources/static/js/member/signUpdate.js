@@ -1,6 +1,7 @@
 $(document)
 .ready(get_signupInfo)
 .on('click','#button_submitSignUpdate',update_signup)
+.on('change','#input_phone',check_phone)
 .on('click','#button_submitCancel',cancel_update)
 .on('propertychange change paste input','#input_phone',check_phone)
 

@@ -239,6 +239,27 @@ public class MemberController {
 		return ja.toString();
 	}
 
+	@PostMapping("/get/userName")
+	@ResponseBody
+	public String get_userName (HttpServletRequest req) {
+		HttpSession session = req.getSession();
+		JSONArray ja = new JSONArray();
+				
+		if (session.getAttribute("id") != null) {
+			String id = session.getAttribute("id").toString();
+		
+			ArrayList<MemberDTO> mdto = mdao.get_signupInfo(id);
+			
+			for (int i = 0; i < mdto.size(); i++) {
+				JSONObject jo = new JSONObject();
+				jo.put("name", mdto.get(i).getName());
+				ja.put(jo);
+			}
+		}
+		
+		return ja.toString();
+	}
+
 	@PostMapping("/update/signup")
 	@ResponseBody
 	public String update_signup(HttpServletRequest req) {
@@ -250,7 +271,6 @@ public class MemberController {
 		String gender = req.getParameter("gender");
 		String birth = req.getParameter("birth");
 		String phone = req.getParameter("phone");
-
 		mdao.update_signup(id, pw, name, gender, birth, phone);
 
 		return check;
@@ -266,6 +286,14 @@ public class MemberController {
 				""", temporary));
 		SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
 		return response;
+	}
+	
+	@PostMapping("/get/userReviewCount")
+	@ResponseBody
+	public int get_userReviewCount (HttpServletRequest req) {
+		HttpSession session = req.getSession();
+		String id = session.getAttribute("id").toString();
+		return mdao.get_userReviewCount(id); 
 	}
 
 	@PostMapping("/my/name")

@@ -27,7 +27,7 @@
 				    <button id="search_button">검색</button>
 				</div>
 		        <div class="header_subarea">
-				 	<button type="button" class="btn btn-success">마이페이지</button>	
+				 	<button type="button" class="btn btn-success" id="btn-myPage">마이페이지</button>	
 				  	<button type="button" id="challenge" class="btn btn-danger" data-bs-toggle="tooltip" 
 				  	data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>
 				</div>
@@ -41,7 +41,7 @@
 		    		다양한 기능을 사용하실 수 있습니다
 		    	</p>
 	    	</div>
-	    	<div class="sf_filter">
+	    	<div id="food_categories" class="sf_filter">
 	    		<div style="display: flex;">
 		    		<h3 class="sf_title">카테고리</h3>
 		    		<label id="off_category" class="toggleSwitch off"><span>해제</span></label>
@@ -110,6 +110,7 @@
 	    		<div style="display: flex;">
 		    		<h3 class="sf_title">사용자 선호도 정렬</h3>
 		    		<label id="off_orderby" class="toggleSwitch off"><span>해제</span></label>
+		    		<button type="button" id="btn-saveMyTag">저장</button>
 		    	</div>
 		    	<div style="line-height: 40%"><br><br></div>
 		    	<input type="radio" id="often" class="btn-check" name="orderby" value="often">
@@ -164,6 +165,20 @@
 					</div>
 				</div>
 	    	</div>
+			<div class=div_reviewList style="display: none;">
+				<h3 class="sf_title">리뷰 관리</h3>
+				<p class="userMessage">
+		    		리뷰 정보가 없습니다. <br><br>
+		    		지금 전국 맛집을 리뷰하면서 다양 리뷰를 작성해보세요. <br>
+		    	</p>
+			</div>
+			<div class=div_storeList style="display: none;">
+				<h3 class="sf_title">업체 관리</h3>
+				<p class="userMessage">
+		    		등록된 업체가 없습니다. <br><br>
+		    		사장님이라면 내 업체를 등록해서 직접 관리해보세요. <br>
+		    	</p>
+			</div>
 	    </div>
     	<div class="toggle_sidebar tsb_close" data-bs-toggle="offcanvas" data-bs-target="#wrapper_sidebar"></div>
    	</div>
