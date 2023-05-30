@@ -1,31 +1,142 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-	<!DOCTYPE html>
-	<html>
+<!DOCTYPE html>
+<html>
 
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="/css/basic.css">
-		<jsp:include page="/WEB-INF/views/metaLink.jsp" />
-		<link rel="stylesheet" href="/css/main/main.css">
-		<link rel="stylesheet" href="/css/main/dd.css">
-		<title>메인 페이지</title>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="/css/basic.css">
+	<jsp:include page="/WEB-INF/views/metaLink.jsp" />
+	<link rel="stylesheet" href="/css/main/main.css">
+	<link rel="stylesheet" href="/css/main/dd.css">
+	<title>메인 페이지</title>
 
-	</head>
+</head>
 
-	<body>
-		<div id="wrapper_sidebar" class="offcanvas show offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false">
-			<div class="top_sidebar">
-				<div class="header" role="banner">
-					<h1 class="header_title">
-						<a class="a_title">kakaomap</a>
-						<button id="button_log" class="btn btn-danger">로그인</button>
-					</h1>
-					<button class="choice_currentmap btn btn-success">현 지도 내 장소검색</button>
-					<div class="box_searchbar">
-						<input id="search_input" class="tf_keyword" maxlength="100" autocomplete="off"
-							placeholder="장소, 주소 검색">
-						<button id="search_button">검색</button>
+<body>
+	<div id="wrapper_sidebar" class="offcanvas show offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false">
+		<div class="top_sidebar">
+			<div class="header" role="banner">
+		        <h1 class="header_title">
+		            <a class="a_title">kakaomap</a>
+		            <button id="button_log" class="btn btn-danger">로그인</button>
+		        </h1>
+		        <button class="choice_currentmap btn btn-success">현 지도 내 장소검색</button>
+				<div class="box_searchbar">
+				    <input id="search_input" class="tf_keyword" maxlength="100" 
+				    autocomplete="off" placeholder="장소, 주소 검색">
+				    <button id="search_button">검색</button>
+				</div>
+		        <div class="header_subarea">
+				 	<button type="button" class="btn btn-success" id="btn-myPage">마이페이지</button>	
+				  	<button type="button" id="challenge" class="btn btn-danger" data-bs-toggle="tooltip" 
+				  	data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>
+				</div>
+		    </div>
+	    </div>
+	    <div class="middle_sidebar">
+	   	    <div class="middle_sideMessage">
+		    	<p class="sideMessage">
+		    		로그인 하시면 카테고리, 사용자 선호도 정렬, <br>
+		    		맛집 태그별 검색, 장소 등록 제안 등 <br>
+		    		다양한 기능을 사용하실 수 있습니다
+		    	</p>
+	    	</div>
+	    	<div id="food_categories" class="sf_filter">
+	    		<div style="display: flex;">
+		    		<h3 class="sf_title">카테고리</h3>
+		    		<label id="off_category" class="toggleSwitch off"><span>해제</span></label>
+		    	</div>
+	    		<div class="sf_fcr">
+	    			<div class="each_fcr">
+		    			<input type="radio" id="/img/main/KoreanFood" class="btn-check" name="fc" value="koreanfood">
+		    			<label for="/img/main/KoreanFood">
+		    				<img src="/img/main/KoreanFood.png" class="fc_img"></img><br>
+		    				<span>한식</span>
+		    			</label>
+	    			</div>
+	    			<div class="each_fcr">
+		    			<input type="radio" id="/img/main/ChinaFood" class="btn-check" name="fc" value="chinafood">
+		    			<label for="/img/main/ChinaFood">
+		    				<img src="/img/main/ChinaFood.png" class="fc_img"></img><br>
+		    				<span>중식</span>
+		    			</label>
+	    			</div>
+	    			<div class="each_fcr">
+		    			<input type="radio" id="/img/main/JapanFood" class="btn-check" name="fc" value="japanfood">
+		    			<label for="/img/main/JapanFood">
+		    				<img src="/img/main/JapanFood.png" class="fc_img"></img><br>
+		    				<span>일식</span>
+		    			</label>
+	    			</div>
+	    			<div class="each_fcr">
+		    			<input type="radio" id="/img/main/WesternFood" class="btn-check" name="fc" value=westernfood">
+		    			<label for="/img/main/WesternFood">
+		    				<img src="/img/main/WesternFood.png" class="fc_img"></img><br>
+		    				<span>양식</span>
+		    			</label>
+	    			</div>
+	    			<div style="line-height: 62.5%"><br><br></div>
+	    			<div class="each_fcr">
+		    			<input type="radio" id="/img/main/Pizza" class="btn-check" name="fc" value="pizza">
+		    			<label for="/img/main/Pizza">
+		    				<img src="/img/main/Pizza.png" class="fc_img"></img><br>
+		    				<span>피자</span>
+		    			</label>
+	    			</div>
+	    			<div class="each_fcr">
+		    			<input type="radio" id="/img/main/Chicken" class="btn-check" name="fc" value="chicken">
+		    			<label for="/img/main/Chicken">
+		    				<img src="/img/main/Chicken.png" class="fc_img"></img><br>
+		    				<span>치킨</span>
+		    			</label>
+	    			</div>
+	    			<div class="each_fcr">
+		    			<input type="radio" id="/img/main/Jokbal" class="btn-check" name="fc" value="jokbal">
+		    			<label for="/img/main/Jokbal">
+		    				<img src="/img/main/Jokbal.png" class="fc_img"></img><br>
+		    				<span>족발</span>
+		    			</label>
+	    			</div>
+	    			<div class="each_fcr">
+		    			<input type="radio" id="/img/main/Cafe" class="btn-check" name="fc" value="cafe">
+		    			<label for="/img/main/Cafe">
+		    				<img src="/img/main/Cafe.png" class="fc_img"></img><br>
+		    				<span>카페</span>
+		    			</label>
+	    			</div>
+	    		</div>
+	    	</div>
+	    	<div class="sf_filter">
+	    		<div style="display: flex;">
+		    		<h3 class="sf_title">사용자 선호도 정렬</h3>
+		    		<label id="off_orderby" class="toggleSwitch off"><span>해제</span></label>
+		    		<button type="button" id="btn-saveMyTag">저장</button>
+		    	</div>
+		    	<div style="line-height: 40%"><br><br></div>
+		    	<input type="radio" id="often" class="btn-check" name="orderby" value="often">
+	    		<label for="often" class="toggleSwitch often"><span>자주 가는 맛집순</span></label>
+	    		<input type="radio" id="rare" class="btn-check" name="orderby" value="rare">
+	    		<label for="rare" class="toggleSwitch rare"><span>많이 가지 않은 맛집순</span></label>
+	    	</div>
+	    	<div class="sf_filter">
+	    		<div style="display: flex;">
+		    		<h3 class="sf_title">맛집 태그</h3>
+		    		<label id="off_tags" class="toggleSwitch off"><span>해제</span></label>
+	    		</div>
+	    		<div class="tag_row">
+		    		<div class="tag_column">
+			    		<span class="tag_category">편의성</span>
+			    		<input type="checkbox" name="tags"  id="clean" class="btn-check" value="clean">
+						<label for="clean" class="toggleSwitch2 clean"><span>청결</span></label>
+						<input type="checkbox" name="tags"  id="kind" class="btn-check" value="kind">
+						<label for="kind" class="toggleSwitch2 kind"><span>친절</span></label> 
+						<input type="checkbox" name="tags"  id="parking" class="btn-check" value="parking">
+						<label for="parking" class="toggleSwitch2 parking"><span>주차</span></label>
+						<input type="checkbox" name="tags"  id="fast" class="btn-check" value="fast">
+						<label for="fast" class="toggleSwitch2 fast"><span>조리</span></label>
+						<input type="checkbox" name="tags"  id="pack" class="btn-check" value="pack">
+						<label for="pack" class="toggleSwitch2 pack"><span>포장</span></label>
 					</div>
 					<div class="header_subarea">
 						<button type="button" class="btn btn-success">마이페이지</button>
@@ -33,6 +144,7 @@
 							data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>
 					</div>
 				</div>
+<<<<<<< HEAD
 			</div>
 			<div class="middle_sidebar">
 				<div class="middle_sideMessage">
@@ -172,6 +284,28 @@
 		</div>
 		<div class="toggle_sidebar tsb_open" data-bs-toggle="offcanvas" data-bs-target="#wrapper_sidebar"></div>
 		<div class="mapView">
+=======
+	    	</div>
+			<div class=div_reviewList style="display: none;">
+				<h3 class="sf_title">리뷰 관리</h3>
+				<p class="userMessage">
+		    		리뷰 정보가 없습니다. <br><br>
+		    		지금 전국 맛집을 리뷰하면서 다양 리뷰를 작성해보세요. <br>
+		    	</p>
+			</div>
+			<div class=div_storeList style="display: none;">
+				<h3 class="sf_title">업체 관리</h3>
+				<p class="userMessage">
+		    		등록된 업체가 없습니다. <br><br>
+		    		사장님이라면 내 업체를 등록해서 직접 관리해보세요. <br>
+		    	</p>
+			</div>
+	    </div>
+    	<div class="toggle_sidebar tsb_close" data-bs-toggle="offcanvas" data-bs-target="#wrapper_sidebar"></div>
+   	</div>
+   		<div class="toggle_sidebar tsb_open" data-bs-toggle="offcanvas" data-bs-target="#wrapper_sidebar"></div>
+	    <div class="mapView">
+>>>>>>> 355af225652da95c86e4d1f5762e2d1ae626c8f6
 			<div id="map">
 				<div class="controlDiv">
 					<div class="controlBox">

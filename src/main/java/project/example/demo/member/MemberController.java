@@ -1,6 +1,5 @@
 package project.example.demo.member;
 
-import java.io.File;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,8 +49,13 @@ public class MemberController {
 	}
 
 	@GetMapping("/signupdate")
-	public String signupdate_page() {
-		return "/member/signUpdate";
+	public String signupdate_page(HttpServletRequest req) {
+		HttpSession session = req.getSession();
+		if (session.getAttribute("id") != null) return "/member/signUpdate";
+		else if (req.getHeader("Referer") != null) {
+			return "redirect:" + req.getHeader("Referer");
+		}
+		else return "welcome";
 	}
 
 	@GetMapping("/find/id")
@@ -62,11 +66,6 @@ public class MemberController {
 	@GetMapping("/find/pw")
 	public String pwfind(HttpServletRequest req) {
 		return redirectMain(req, "/member/findPW");
-	}
-
-	@GetMapping("/add/restaurant")
-	public String addRestaurant_page() {
-		return "/member/addRestaurant";
 	}
 
 	@PostMapping("/submit/login")
@@ -116,7 +115,7 @@ public class MemberController {
 
 	@PostMapping("/submit/logout")
 	@ResponseBody
-	public String do_logout(HttpServletRequest req) {
+	public String submit_logout(HttpServletRequest req) {
 		String check = "true";
 
 		HttpSession session = req.getSession();
@@ -194,7 +193,6 @@ public class MemberController {
 		HttpSession session = req.getSession();
 		if (session.getAttribute("id") != null)
 			return "redirect:/main";
-		// 환영 페이지 만들어지면 리다이렉트 링크 수정해야함
 		else
 			return url;
 	}
@@ -215,7 +213,7 @@ public class MemberController {
 		return sb.toString();
 	}
 
-	@PostMapping("/get_signupInfo")
+	@PostMapping("/get/signupInfo")
 	@ResponseBody
 	public String get_signupInfo(HttpServletRequest req) {
 		HttpSession session = req.getSession();
@@ -241,7 +239,28 @@ public class MemberController {
 		return ja.toString();
 	}
 
-	@PostMapping("/update_signup")
+	@PostMapping("/get/userName")
+	@ResponseBody
+	public String get_userName (HttpServletRequest req) {
+		HttpSession session = req.getSession();
+		JSONArray ja = new JSONArray();
+				
+		if (session.getAttribute("id") != null) {
+			String id = session.getAttribute("id").toString();
+		
+			ArrayList<MemberDTO> mdto = mdao.get_signupInfo(id);
+			
+			for (int i = 0; i < mdto.size(); i++) {
+				JSONObject jo = new JSONObject();
+				jo.put("name", mdto.get(i).getName());
+				ja.put(jo);
+			}
+		}
+		
+		return ja.toString();
+	}
+
+	@PostMapping("/update/signup")
 	@ResponseBody
 	public String update_signup(HttpServletRequest req) {
 		String check = "true";
@@ -252,7 +271,6 @@ public class MemberController {
 		String gender = req.getParameter("gender");
 		String birth = req.getParameter("birth");
 		String phone = req.getParameter("phone");
-
 		mdao.update_signup(id, pw, name, gender, birth, phone);
 
 		return check;
@@ -268,6 +286,14 @@ public class MemberController {
 				""", temporary));
 		SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
 		return response;
+	}
+	
+	@PostMapping("/get/userReviewCount")
+	@ResponseBody
+	public int get_userReviewCount (HttpServletRequest req) {
+		HttpSession session = req.getSession();
+		String id = session.getAttribute("id").toString();
+		return mdao.get_userReviewCount(id); 
 	}
 
 	@PostMapping("/my/name")

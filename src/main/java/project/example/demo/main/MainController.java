@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,18 +33,23 @@ public class MainController {
 		return "main";
 	}
 
+	@GetMapping("/main/search/{query}")
+	public String detail(@PathVariable("query") String query) {
+		return "main";
+	}
+
+	@GetMapping("/mainmy")
+	public String mainmy_page() {
+		return "mainMy";
+	}
+
 	@PostMapping("/check/duplicateLocation")
 	@ResponseBody
 	public String check_duplicateLocation(HttpServletRequest req) {
-		double lat = Double.parseDouble(req.getParameter("lat"));
-		double lng = Double.parseDouble(req.getParameter("lng"));
-
-		double differ = 0.00001;
-		double latRange1 = lat - differ, latRange2 = lat + differ,
-				lngRange1 = lng - differ, lngRange2 = lat + differ;
+		String address = req.getParameter("address");
 
 		JSONArray ja = new JSONArray();
-		ArrayList<RestaurantDTO> rdto = mdao.check_duplicateLocation(latRange1, latRange2, lngRange1, lngRange2);
+		ArrayList<RestaurantDTO> rdto = mdao.check_duplicateLocation(address);
 
 		for (RestaurantDTO r : rdto) {
 			JSONObject jo = new JSONObject();
@@ -61,27 +67,32 @@ public class MainController {
 		}
 		return ja.toString();
 	}
-	
-//	@PostMapping("/suggest/alm")
+
+	@PostMapping("/suggest/alm")
+
 	@PostMapping("/suggest/alm/user")
 	@ResponseBody
-	public String suggest_alm (@RequestPart(value = "restaurant") RestaurantDTO rdto) {
+	public String suggest_alm(@RequestPart(value = "restaurant") RestaurantDTO rdto) {
 		String message = "proceed";
-		
+
 		double lat = rdto.getLat();
 		double lng = rdto.getLng();
 		String primecode = null;
 		String r_name = rdto.getR_name();
 		String category = rdto.getCategory();
-		String address = rdto.getAddress();
+		String address = rdto.getAddress().replace("\"", "");
 		String owner = null;
 		String localURL = null;
-		
-		mdao.restaurant_approval_request(lat, lng, primecode, r_name, owner, category, address, localURL);
-		
+
+		int duplicate = mdao.check_duplicateRequest(r_name, address);
+		if (duplicate == 0)
+			mdao.restaurant_approval_request(lat, lng, primecode, r_name, owner, category, address, localURL);
+		else
+			message = "duplicate";
+
 		return message;
 	}
-	
+
 	@PostMapping("/suggest/alm/ceo")
 	@ResponseBody
 	public String suggest_alm(HttpServletRequest req,
@@ -94,10 +105,11 @@ public class MainController {
 		String primecode = rdto.getPrimecode();
 		String r_name = rdto.getR_name();
 		String category = rdto.getCategory();
-		String address = rdto.getAddress();
+		String address = rdto.getAddress().replace("\"", "");
 
 		HttpSession session = req.getSession();
-		String owner = String.valueOf(session.getAttribute("id"));
+		String realname = mdao.get_member_name(String.valueOf(session.getAttribute("id")));
+		String owner = String.valueOf(session.getAttribute("id")) + "," + realname;
 		String idString = String.valueOf(session.getAttribute("id")) + " ";
 
 		LocalDate today = LocalDate.now();
@@ -107,19 +119,26 @@ public class MainController {
 		DateTimeFormatter fn = DateTimeFormatter.ofPattern("HH-mm-ss ");
 		String timeString = now.format(fn);
 
-		String location = "C:\\Users\\admin\\Documents\\SeoJaeHyeon\\MapProject\\Project\\src\\main\\webapp\\WEB-INF\\files";
-		
-//		String location = "C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\webapp\\WEB-INF\\files";
-		
+		// String location =
+		// "C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\webapp\\WEB-INF\\files";
+
+		String location = "C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\resources\\static\\img\\admin\\restaurant";
+		String shortLocation = "/img/admin/restaurant/";
+
 		String filename = r_name + " " + idString + todayString + timeString + bnd[0].getOriginalFilename();
 		File savefile = new File(location, filename);
 		try {
 			bnd[0].transferTo(savefile);
 		} catch (Exception e) {
 		}
-		String localURL = location + "\\" + filename;
+		String localURL = shortLocation + filename;
 
-		mdao.restaurant_approval_request(lat, lng, primecode, r_name, owner, category, address, localURL);
+		int duplicate = mdao.check_duplicateRequest(r_name, address);
+		if (duplicate == 0)
+			mdao.restaurant_approval_request(lat, lng, primecode, r_name, owner, category, address, localURL);
+		else {
+			mdao.restaurant_update_request(lat, lng, primecode, r_name, owner, category, address, localURL);
+		}
 
 		return message;
 	}

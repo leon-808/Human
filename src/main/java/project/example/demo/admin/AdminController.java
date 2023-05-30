@@ -1,5 +1,8 @@
 package project.example.demo.admin;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -20,25 +23,15 @@ public class AdminController {
 	@Autowired
 	private AdminRestaurantDAO ardao;
 
-	@PostMapping("/check/admin")
-	@ResponseBody
+	@GetMapping("/admin/restaurant")
 	public String check_admin(HttpServletRequest req) {
-		String check = "false";
 		HttpSession session = req.getSession();
-
-		if (session.getAttribute("id") != null)
-			if (session.getAttribute("id").equals("admin"))
-				check = "true";
-
-		return check;
+		if (session.getAttribute("id") != null 
+		&& session.getAttribute("id").equals("admin")) return "/admin/adminRestaurant";
+		else return "main";
 	}
 
-	@GetMapping("/add/restaurant/list")
-	public String addRestaurantList_page() {
-		return "/admin/addRestaurantList";
-	}
-
-	@PostMapping("/adminRestaurant/getList")
+	@PostMapping("/admin/restaurant/getList")
 	@ResponseBody
 	public String adminRestaurant_getList() {
 		ArrayList<AdminRestaurantDTO> ardto = ardao.adminRestaurantList();
@@ -47,8 +40,6 @@ public class AdminController {
 		for (int i = 0; i < ardto.size(); i++) {
 			JSONObject jo = new JSONObject();
 
-			jo.put("adrt_lat", ardto.get(i).getAdrt_lat());
-			jo.put("adrt_lng", ardto.get(i).getAdrt_lng());
 			jo.put("adrt_primecode", ardto.get(i).getAdrt_primecode());
 			jo.put("adrt_r_name", ardto.get(i).getAdrt_r_name());
 			jo.put("adrt_owner", ardto.get(i).getAdrt_owner());
@@ -58,31 +49,67 @@ public class AdminController {
 			ja.put(jo);
 		}
 		return ja.toString();
-
 	}
 
-	@PostMapping("/insertRestaurant")
+	@PostMapping("/admin/insup/restaurant")
 	@ResponseBody
-	public String insertRestaurant(@RequestParam("primecode") String primecode) {
-		String check = "true";
-		if (primecode != null) {
-			ardao.insertRestaurant(primecode);
-		} else
-			check = "false";
-
+	public String admin_insup_restaurant(@RequestParam("primecode") String primecode,
+										 @RequestParam("address") String address,
+										 @RequestParam("changeFlag") int changeFlag) {
+		String check = "insert";
+		int exist = ardao.admin_beforeInsUp(address);
+		String url = ardao.admin_getLocalURL(address);
+		Path filePath = Paths.get("C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\resources\\static" + url);
+		try {
+			Files.deleteIfExists(filePath);
+		}
+		catch (Exception e) {};
+		String query = "";
+		if (exist == 0 && primecode != "") {
+			query = String.format("""
+				insert into restaurant (lat, lng, primecode, r_name, owner, category, address) 
+				select adrt_lat, adrt_lng, adrt_primecode, adrt_r_name, adrt_owner,
+				adrt_category, adrt_address
+				from admin_restaurant 
+				where adrt_primecode = '%1$s'
+				""", primecode);
+			ardao.admin_insup_restaurant(query);
+			ardao.admin_delete_restaurant(address);
+		}
+		else if (exist == 0 && primecode == "") {
+			query = String.format("""
+				insert into restaurant (lat, lng, primecode, r_name, owner, category, address) 
+				select adrt_lat, adrt_lng, adrt_primecode, adrt_r_name, adrt_owner,
+				adrt_category, adrt_address
+				from admin_restaurant 
+				where adrt_address = '%1$s'
+				""", address);
+			ardao.admin_insup_restaurant(query);
+			ardao.admin_delete_restaurant(address);
+		}
+		else if  (exist != 0 && changeFlag == 0) check = "exist";
+		else if (changeFlag == 1) {
+			query = String.format("""
+				update restaurant r
+				set (r.lat, r.lng, r.primecode, r.r_name, r.owner, r.category, r.address)
+				= (	select a.adrt_lat, a.adrt_lng, a.adrt_primecode, a.adrt_r_name, 
+					a.adrt_owner, a.adrt_category, a.adrt_address
+					from admin_restaurant a
+					where a.adrt_address = '%1$s' )
+				where r.address = '%1$s'
+				""", address);
+			ardao.admin_insup_restaurant(query);
+			ardao.admin_delete_restaurant(address);
+			check = "update";
+		}
 		return check;
 	}
 
-	@PostMapping("/deleteRestaurant")
+	@PostMapping("/admin/delete/restaurant")
 	@ResponseBody
-	public String deleteRestaurant(@RequestParam("primecode") String primecode) {
+	public String admin_delete_restaurant(@RequestParam("address") String address) {
 		String check = "true";
-		if (primecode != null) {
-			ardao.deleteRestaurant(primecode);
-		} else
-			check = "false";
-
+		ardao.admin_delete_restaurant(address);
 		return check;
 	}
-
 }

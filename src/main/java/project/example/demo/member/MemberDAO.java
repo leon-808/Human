@@ -21,6 +21,7 @@ public interface MemberDAO {
 
 	ArrayList<MemberDTO> get_signupInfo(String id);
 	void update_signup(String id, String pw, String name, String gender, String birth, String phone);
+	int get_userReviewCount(String id);
 	
 
 }

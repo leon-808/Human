@@ -4,7 +4,7 @@ $(document)
 .on("click","#btnSignup",gotoSignup)
 
 function gotoNoMember(){
-	document.location = "/noMember"
+	document.location = "/main"
 }
 
 function gotoLogin(){

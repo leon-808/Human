@@ -80,10 +80,10 @@
 					<label>성별</label>
 				</h3>
 				<span class="box gender_code"> 
-					<input type="radio" id="gender_male" name="gender" value="남">
-					<label for="gender_male" style="margin-right: 20px;">남</label>
-					<input type="radio" id="gender_female" name="gender" value="여">
-					<label for="gender_female">여</label>
+					<input type="radio" id="gender_male" class="gender_radio" name="gender" value="남">
+					<label for="gender_male" class="gender_radio">남</label>
+					<input type="radio" id="gender_female" class="gender_radio" name="gender" value="여">
+					<label for="gender_female" class="gender_radio">여</label>
 				</span>
 				<span class="error_box">필수 정보입니다.</span>
 			</div>
