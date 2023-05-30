@@ -20,14 +20,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select> -->
 
 	<select id="adminRestaurantList" resultType="project.example.demo.dto.AdminRestaurantDTO">
-		select adrt_lat,adrt_lng,adrt_primecode,adrt_r_name,adrt_document,adrt_owner,
+		select adrt_lat,adrt_lng,adrt_primecode,adrt_r_name,adrt_owner,
 		adrt_category,adrt_address,adrt_localurl from adrt_restaurant
 	</select>
 
 	<insert id="insertRestaurant">
 		insert into restaurant
-		(lat,lng,primecode,r_name,document,owner,category,address,localurl) 
-		select adrt_lat,adrt_lng,adrt_primecode,adrt_r_name,adrt_document,adrt_owner,
+		(lat,lng,primecode,r_name,owner,category,address,localurl) 
+		select adrt_lat,adrt_lng,adrt_primecode,adrt_r_name,adrt_owner,
 		adrt_category,adrt_address,adrt_localurl from adrt_restaurant 
 		where adrt_primecode=#{param1}
 	</insert>

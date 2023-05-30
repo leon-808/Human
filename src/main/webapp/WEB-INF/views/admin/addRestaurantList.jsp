@@ -25,7 +25,6 @@
 						<th scope="col">매장 이름</th>
 						<th scope="col">사업자 번호</th>
 						<th scope="col">증빙 서류</th>
-						<th scope="col" hidden>LOCALURL</th>
 						<th scope="col" hidden>LAT</th>
 						<th scope="col" hidden>LNG</th>
 						<th scope="col" hidden>OWNER</th>

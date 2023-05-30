@@ -51,7 +51,6 @@ public class AdminController {
 			jo.put("adrt_lng", ardto.get(i).getAdrt_lng());
 			jo.put("adrt_primecode", ardto.get(i).getAdrt_primecode());
 			jo.put("adrt_r_name", ardto.get(i).getAdrt_r_name());
-			jo.put("adrt_document", ardto.get(i).getAdrt_document());
 			jo.put("adrt_owner", ardto.get(i).getAdrt_owner());
 			jo.put("adrt_category", ardto.get(i).getAdrt_category());
 			jo.put("adrt_address", ardto.get(i).getAdrt_address());

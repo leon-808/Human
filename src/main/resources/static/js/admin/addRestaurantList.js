@@ -27,13 +27,14 @@ function getList() {
             $("#tbl_adrtRestaurant tr:gt(0)").remove();
 
             for (i = 0; i < data.length; i++) {
+
                 html = [];
                 html.push(
                     "<tbody><tr><th scope='row'>", i + 1, "</th>",
                     "<td>", data[i]["adrt_r_name"], "</td>",
                     "<td>", data[i]["adrt_primecode"], "</td>",
-                    "<td>", data[i]["adrt_document"], "</td>",
-                    "<td hidden>", data[i]["adrt_localurl"], "</td>",
+                    // "<td>", data[i]["adrt_localurl"], "</td>",
+                    "<td>", data[i]["adrt_localurl"], "<img class=gallery height='50px' data-image='", data[i]["adrt_localurl"], "'src=/img/welcomePage/docu.jpg></td>",
                     "<td hidden>", data[i]["adrt_lat"], "</td>",
                     "<td hidden>", data[i]["adrt_lng"], "</td>",
                     "<td hidden>", data[i]["adrt_owner"], "</td>",
@@ -84,3 +85,32 @@ function ajaxDeleteRestaurant() {
         }
     })
 }
+
+$(document).ready(function () {
+    var xOffset = 10;
+    var yOffset = 30;
+
+    //마우스 오버시 preview 생성
+    $(document).on("mouseover", ".gallery", function (e) {
+        var image_data = $(this).data("image");
+        var add_caption = (image_data != undefined) ? "<br/>" + image_data : "";
+        $("body").append("<p id='preview'><img src='" + $(this).attr("src") + "' width='400px' />" + add_caption + "</p>");
+        $("#preview")
+            .css("top", (e.pageY - xOffset) + "px")
+            .css("left", (e.pageX + yOffset) + "px")
+            .fadeIn("fast");
+    });
+
+    //마우스 이동시 preview 이동
+    $(document).on("mousemove", ".gallery", function (e) {
+        $("#preview")
+            .css("top", (e.pageY - xOffset) + "px")
+            .css("left", (e.pageX + yOffset) + "px");
+    });
+
+    //마우스 아웃시 preview 제거
+    $(document).on("click", ".gallery", function () {
+        $("#preview").remove();
+    });
+
+});

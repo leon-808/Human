@@ -62,7 +62,7 @@ public class MainController {
 		return ja.toString();
 	}
 	
-	@PostMapping("/suggest/alm")
+//	@PostMapping("/suggest/alm")
 	@PostMapping("/suggest/alm/user")
 	@ResponseBody
 	public String suggest_alm (@RequestPart(value = "restaurant") RestaurantDTO rdto) {
@@ -109,7 +109,7 @@ public class MainController {
 
 		String location = "C:\\Users\\admin\\Documents\\SeoJaeHyeon\\MapProject\\Project\\src\\main\\webapp\\WEB-INF\\files";
 		
-		String location = "C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\webapp\\WEB-INF\\files";
+//		String location = "C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\webapp\\WEB-INF\\files";
 		
 		String filename = r_name + " " + idString + todayString + timeString + bnd[0].getOriginalFilename();
 		File savefile = new File(location, filename);
