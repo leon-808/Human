@@ -26,7 +26,11 @@ public class BasicController {
 	public String isLogin(HttpServletRequest req) {
 		String isLogin = "false";
 		HttpSession session = req.getSession();
-		if (session.getAttribute("id") != null) isLogin = "true";
+		if (session.getAttribute("id") != null) { 
+			isLogin = "true";
+			if (session.getAttribute("id").equals("admin"))
+				isLogin = "admin";
+		}
 		return isLogin;
 	}
 	

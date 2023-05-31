@@ -198,6 +198,20 @@
 	<div class="cursor">
 		<img src="" id="cursorImg">
 	</div>
+	<div id="manageModal" class="modal fade" aria-labelledby="manageModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+		    <div class="modal-content">
+				<div class="modal-header">
+				  <h1 class="modal-title fs-5" id="manageModalLabel">관리자 메뉴</h1>
+				  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-footer">
+				  <button type="button" id="gotoAdminRestaurant" class="btn btn-primary">업체 등록 관리</button>
+				  <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+				</div>
+		    </div>
+		</div>
+	</div>
 <jsp:include page="/WEB-INF/views/script.jsp"/>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=329e5620a47418538719e0a8fbdae4ce&libraries=services"></script>
 <script src="/js/main/main.js"></script>

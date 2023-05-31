@@ -6,20 +6,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="project.example.demo.admin.AdminRestaurantDAO">
 	<select id="adminRestaurantList" resultType="project.example.demo.dto.AdminRestaurantDTO">
 		select *
-		from admin_restaurant
-		order by adrt_primecode
+		from (
+			select a.*, rownum r
+			from (
+				select *
+				from admin_restaurant 
+				order by adrt_primecode
+			) a
+			where rownum <![CDATA[<=]]> ${param2}
+		)
+		where r <![CDATA[>=]]> ${param1}
 	</select>
 	
 	<select id="admin_beforeInsUp" resultType="_int">
 		select count(address)
 		from restaurant
-		where address = #{param1}
+		where r_name = #{param1}
+		and address = #{param2}
 	</select>
 	
 	<select id="admin_getLocalURL" resultType="string">
 		select adrt_localurl
 		from admin_restaurant
-		where adrt_address = #{param1}
+		where adrt_r_name = #{param1}
+		and adrt_address = #{param2}
 	</select>
 
 	<insert id="admin_insup_restaurant">
@@ -28,6 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<delete id="admin_delete_restaurant">
 		delete from admin_restaurant 
-		where adrt_address = #{param1}
+		where adrt_r_name = #{param1}
+		and adrt_address = #{param2}
 	</delete>
 </mapper>
