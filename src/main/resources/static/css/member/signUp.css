@@ -142,3 +142,35 @@ select {
     font-weight: bold;
     font-family: Dotum,'돋움',Helvetica,sans-serif;
 }
+
+#button_submitSignUpdate {
+    width: 40%;
+    padding: 21px 0 17px;
+    border: 0;
+    cursor: pointer;
+    color: #4d4d4d;
+    background-color: #dcdbdd;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: Dotum,'돋움',Helvetica,sans-serif;
+}
+
+#button_submitCancel {
+    width: 40%;
+    padding: 21px 0 17px;
+    border: 0;
+    cursor: pointer;
+    color: #4d4d4d;
+    background-color: #dcdbdd;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: Dotum,'돋움',Helvetica,sans-serif;
+    float: right;
+}
+.info_msg{
+	font-weight: bold;
+	color: red;
+}
+.gender_radio {
+	margin-right: 20px;
+}

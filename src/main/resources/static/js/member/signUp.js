@@ -1,5 +1,4 @@
 $(document)
-.ready(clear_signup)
 .on("propertychange change paste input", "#input_id", check_duplicateID)
 .on("propertychange change paste input", "#input_phone", check_phone)
 .on("propertychange change paste input", "#input_passwordCheck", check_samePWC)

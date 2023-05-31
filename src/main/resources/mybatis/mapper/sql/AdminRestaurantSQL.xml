@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="project.example.demo.admin.AdminRestaurantDAO">
+	<select id="adminRestaurantList" resultType="project.example.demo.dto.AdminRestaurantDTO">
+		select *
+		from admin_restaurant
+		order by adrt_primecode
+	</select>
+	
+	<select id="admin_beforeInsUp" resultType="_int">
+		select count(address)
+		from restaurant
+		where address = #{param1}
+	</select>
+	
+	<select id="admin_getLocalURL" resultType="string">
+		select adrt_localurl
+		from admin_restaurant
+		where adrt_address = #{param1}
+	</select>
+
+	<insert id="admin_insup_restaurant">
+		${param1}
+	</insert>
+
+	<delete id="admin_delete_restaurant">
+		delete from admin_restaurant 
+		where adrt_address = #{param1}
+	</delete>
+</mapper>
