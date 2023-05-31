@@ -26,6 +26,8 @@
 				</tr>
 			</thead>
 		</table>
+		<button id="appendTable" class="btn btn-primary">더보기</button>
+		<button id="gotoMain" class="btn btn-danger">메인으로</button>
 	</div>
 <jsp:include page="/WEB-INF/views/script.jsp" />
 <script src="/js/admin/adminRestaurant.js"></script>

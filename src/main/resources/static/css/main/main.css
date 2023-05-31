@@ -235,6 +235,13 @@ body{
     padding: 5px;
     font-size: 10px;
 }
+#button_manage {
+	position: absolute;
+    top: 22px;
+    right: 189px;
+    padding: 5px;
+    font-size: 10px;
+}
 .choice_currentmap {
     position: absolute;
     top: 22px;
@@ -436,9 +443,9 @@ body{
   background: #68d98a;
 }
 .iw_placename {
-	width: fit-content; 
-	padding: 5px; 
-	text-align: center; 
+	width: 200px;
+	height: fit-content;
+	text-align: center;
 	font-size: 12px; 
 	font-weight: bold;
 }
