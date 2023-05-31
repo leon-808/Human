@@ -99,6 +99,10 @@ $(".eraserIcon").hover(function() {
 	$(this).css("background-position-x", "-80px");
 })
 
+$("#gotoAdminRestaurant").click(function() {
+	document.location = "/admin/restaurant";
+})
+
 
 let loginFlag = 0;
 
@@ -108,8 +112,8 @@ function isLogin() {
 		type: "post",
 		dataType: "text",
 		success: function(isLogin) {
-			if (isLogin == "true") { 
-				createUI();
+			if (isLogin == "true" || isLogin == "admin") { 
+				createUI(isLogin);
 				loginFlag = 1;
 				checkTag();
 			}	
@@ -117,13 +121,18 @@ function isLogin() {
 	})
 }
 
-function createUI() {
+function createUI(isLogin) {
 	let addLocationButton = `
 		<button id="addLocationButton" class="controlButton cursorButton"></button>`
 	$(".controlBox").append(addLocationButton);
 	$("#button_log").html("로그아웃");
 	$(".middle_sideMessage").css("display", "none");
 	$(".sf_filter").css("display", "block");
+	if (isLogin == "admin") {
+		$(".header_title").append(`
+		<button id="button_manage" class="btn btn-dark" data-bs-toggle="modal"
+		data-bs-target="#manageModal">관리</button>`)
+	}
 }
 
 
@@ -139,7 +148,47 @@ function geoPosition() {
 	markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
 	selfMarker, selfContent = 0;
 	
-	if (navigator.geolocation) {
+	lat = 36.81044107630051,
+	lng = 127.14647463417765;
+	selfLat = lat; selfLng = lng;
+	makeMap(lat, lng);
+	
+	map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+				
+	selfMarker = new kakao.maps.Marker({
+		position: new kakao.maps.LatLng(lat, lng),
+		image: markerImage,
+		clickable: true
+	})
+	selfMarker.setMap(map);
+	
+	selfContent = `
+		<div class="simpleOverlay">
+	  		<span class="simpleOverlayTitle" onclick="closeOverlay()">내 위치</span>
+	  	</div>`;
+	selfOverlay = new kakao.maps.CustomOverlay({
+		map: map,
+		position: selfMarker.getPosition(),
+		content: selfContent,
+		xAnchor: 0.6,
+		yAnchor: -0.2
+	});
+	
+	kakao.maps.event.addListener(selfMarker, "click", function() {
+		selfOverlay.setMap(map);
+	});
+	selfOverlay.setMap(null);
+	
+	kakao.maps.event.addListener(map, "rightclick", function(e) {
+		if ($("#cursorImg").attr("src") == "/img/main/AddLocationCursor.gif") {
+			$("#addLocationButton").trigger("click");
+		}
+		return false;
+	})
+	
+	isAdminSearch();
+	
+	/*if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(
 			function(position) {
 				lat = position.coords.latitude; 
@@ -187,7 +236,7 @@ function geoPosition() {
 		lng = 127.14647463417765;
 		makeMap(lat, lng);
 		isAdminSearch();
-	}
+	}*/
 }
 
 function makeMap(lat, lng) {
@@ -198,8 +247,11 @@ function makeMap(lat, lng) {
 	map = new kakao.maps.Map($("#map").get(0), mapOption);
 }
 
+let adminSearchFlag = 0;
+
 function isAdminSearch() {
 	if (window.location.href.includes("/main/search/")) {
+		adminSearchFlag = 1;
 		let tempURL = window.location.href.split("search/"),
 		query = tempURL[1],
 		searchURL = 
@@ -328,15 +380,21 @@ function check_duplicateLocation(latLng) {
 					 			<div class="alm_append">
 					 			</div>
 					 			<a class="alm_ceo" isCEO = 0>사장님이신가요?</a>
-					 			<div><button class="alm_suggest btn btn-primary">제안하기</button></div>
+					 			<div><button class="alm_suggest btn btn-primary" aors="">제안하기</button></div>
 						 	</div>
 						 </div>`;
-						 
-						 $("#r_name").val(dt_placename);
 						 
 						 addLocationOverlay.setContent(emptyContent);
 						 addLocationOverlay.setPosition(latLng);
 						 addLocationOverlay.setMap(map);
+					}
+					$("#r_name").val(dt_placename);
+					
+					if (addLocationMarker.getMap() != null && selectedKeywordMarker == null) {
+						$(".alm_suggest").attr("aors", "a");
+					}
+					else if (addLocationMarker.getMap() == null && selectedKeywordMarker != null) {
+						$(".alm_suggest").attr("aors", "s");
 					}
 				}
 			})
@@ -390,11 +448,18 @@ function onlyNumber() {
 }
 
 function suggestALM() {
+	let marker = null;
+	
+	if ($(".alm_suggest").attr("aors") == "a") {
+		marker = addLocationMarker;
+	}
+	else marker = selectedKeywordMarker;
+	
 	let formData = new FormData(),
 	files = null;
 	
-	let lat = addLocationMarker.getPosition().getLat(),
-	lng = addLocationMarker.getPosition().getLng(),
+	let lat = marker.getPosition().getLat(),
+	lng = marker.getPosition().getLng(),
 	primecode = $("input[id='primecode']").val(),
 	r_name = $("#r_name").val(),
 	category = $("#category option:selected").val(),
@@ -402,6 +467,7 @@ function suggestALM() {
 		
 	if (isCEO == 1) {
 		files = $("input[name='upload_bnd']")[0].files;
+		fileSize = $("input[name='upload_bnd']")[0].files[0].size;
 		for (i = 0; i < files.length; i++) formData.append("bnd", files[i]);
 	}
 	
@@ -436,6 +502,10 @@ function suggestALM() {
 						}
 						else if (isCEO == 1 && (primecode.length != 10 || formData.get("bnd") == null)) {
 							alert("사업자 번호와 증빙 서류는 필수입니다");
+							return false;
+						}
+						else if (fileSize > 5 * 1024 * 1024) {
+							alert("첨부 파일 사이즈는 5MB 이내로 등록 가능합니다")
 							return false;
 						}
 					},
@@ -484,6 +554,21 @@ function suggestALM() {
 		}
 	}
 	geocoder.coord2Address(lng, lat, callback);
+}
+
+let dt_placename = "";
+
+function suggestDT() {
+	if (loginFlag == 1) {
+		let position = selectedKeywordMarker.getPosition();
+		dt_placename = $(".dt_placename").text();
+		closeOverlay();
+		addLocationFlag = 1;
+		check_duplicateLocation(position);
+	}
+	else {
+		alert("로그인하셔야 맛집 제안이 가능합니다");
+	}
 }
 
 
@@ -764,10 +849,14 @@ function displayAddressMarker(data) {
 		 		</div>
 			 	<div class="alm_body">
 		 			<p>도로명 주소: ${data.address_name}</p>
-		 			<p>지번 주소: ${data.address.address_name}</p>
-		 			<button class="dt_suggest btn btn-primary">맛집으로 제안하기</button>
-			 	</div>
-			 </div>`;
+		 			<p>지번 주소: ${data.address.address_name}</p>`;
+		 if (adminSearchFlag == 0) {
+			 detailContent = detailContent + 
+ 			 `<button class="dt_suggest btn btn-primary">맛집으로 제안하기</button></div></div>`
+		 }
+		 else {
+			 detailContent = detailContent + `</div></div>`;
+		 } 
 		 map.setCenter(addressMarker.getPosition());
 		 detailOverlay.setContent(detailContent);
 		 detailOverlay.setPosition(addressMarker.getPosition());
@@ -838,21 +927,6 @@ function clearMarkers() {
 }
 
 
-
-let dt_placename = "";
-
-function suggestDT() {
-	if (loginFlag == 1) {
-		let position = selectedKeywordMarker.getPosition();
-		dt_placename = $(".dt_placename").text();
-		closeOverlay();
-		addLocationFlag = 1;
-		check_duplicateLocation(position);
-	}
-	else {
-		alert("로그인하셔야 맛집 제안이 가능합니다");
-	}
-}
 
 function clickCurrentLocaitonButton() {
 	

@@ -24,7 +24,7 @@ public class AdminController {
 	private AdminRestaurantDAO ardao;
 
 	@GetMapping("/admin/restaurant")
-	public String check_admin(HttpServletRequest req) {
+	public String check_admin(HttpServletRequest req) {		
 		HttpSession session = req.getSession();
 		if (session.getAttribute("id") != null 
 		&& session.getAttribute("id").equals("admin")) return "/admin/adminRestaurant";
@@ -33,8 +33,11 @@ public class AdminController {
 
 	@PostMapping("/admin/restaurant/getList")
 	@ResponseBody
-	public String adminRestaurant_getList() {
-		ArrayList<AdminRestaurantDTO> ardto = ardao.adminRestaurantList();
+	public String adminRestaurant_getList(HttpServletRequest req) {
+		int start = Integer.parseInt(req.getParameter("start"));
+		int end = Integer.parseInt(req.getParameter("end"));
+		
+		ArrayList<AdminRestaurantDTO> ardto = ardao.adminRestaurantList(start, end);
 		JSONArray ja = new JSONArray();
 
 		for (int i = 0; i < ardto.size(); i++) {
@@ -53,17 +56,12 @@ public class AdminController {
 
 	@PostMapping("/admin/insup/restaurant")
 	@ResponseBody
-	public String admin_insup_restaurant(@RequestParam("primecode") String primecode,
+	public String admin_insup_restaurant(@RequestParam("r_name") String r_name,
+										 @RequestParam("primecode") String primecode,
 										 @RequestParam("address") String address,
 										 @RequestParam("changeFlag") int changeFlag) {
 		String check = "insert";
-		int exist = ardao.admin_beforeInsUp(address);
-		String url = ardao.admin_getLocalURL(address);
-		Path filePath = Paths.get("C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\resources\\static" + url);
-		try {
-			Files.deleteIfExists(filePath);
-		}
-		catch (Exception e) {};
+		int exist = ardao.admin_beforeInsUp(r_name, address);
 		String query = "";
 		if (exist == 0 && primecode != "") {
 			query = String.format("""
@@ -74,7 +72,7 @@ public class AdminController {
 				where adrt_primecode = '%1$s'
 				""", primecode);
 			ardao.admin_insup_restaurant(query);
-			ardao.admin_delete_restaurant(address);
+			adrt_delete_procedure(r_name, address);
 		}
 		else if (exist == 0 && primecode == "") {
 			query = String.format("""
@@ -82,10 +80,11 @@ public class AdminController {
 				select adrt_lat, adrt_lng, adrt_primecode, adrt_r_name, adrt_owner,
 				adrt_category, adrt_address
 				from admin_restaurant 
-				where adrt_address = '%1$s'
-				""", address);
+				where adrt_r_name = '%1$s'
+				and adrt_address = '%2$s'
+				""", r_name, address);
 			ardao.admin_insup_restaurant(query);
-			ardao.admin_delete_restaurant(address);
+			adrt_delete_procedure(r_name, address);
 		}
 		else if  (exist != 0 && changeFlag == 0) check = "exist";
 		else if (changeFlag == 1) {
@@ -95,11 +94,13 @@ public class AdminController {
 				= (	select a.adrt_lat, a.adrt_lng, a.adrt_primecode, a.adrt_r_name, 
 					a.adrt_owner, a.adrt_category, a.adrt_address
 					from admin_restaurant a
-					where a.adrt_address = '%1$s' )
-				where r.address = '%1$s'
-				""", address);
+					where a.adrt_r_name = '%1$s'
+					and a.adrt_address = '%2$s' )
+				where r.r_name = '%1$s'
+				and r.address = '%2$s'
+				""", r_name, address);
 			ardao.admin_insup_restaurant(query);
-			ardao.admin_delete_restaurant(address);
+			adrt_delete_procedure(r_name, address);
 			check = "update";
 		}
 		return check;
@@ -107,9 +108,20 @@ public class AdminController {
 
 	@PostMapping("/admin/delete/restaurant")
 	@ResponseBody
-	public String admin_delete_restaurant(@RequestParam("address") String address) {
+	public String admin_delete_restaurant(@RequestParam("r_name") String r_name,
+										  @RequestParam("address") String address) {
 		String check = "true";
-		ardao.admin_delete_restaurant(address);
+		adrt_delete_procedure(r_name, address);
 		return check;
+	}
+	
+	public void adrt_delete_procedure(String r_name, String address) {
+		String url = ardao.admin_getLocalURL(r_name, address);
+		Path filePath = Paths.get("C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\resources\\static" + url);
+		try {
+			Files.deleteIfExists(filePath);
+		}
+		catch (Exception e) {};
+		ardao.admin_delete_restaurant(r_name, address);
 	}
 }
