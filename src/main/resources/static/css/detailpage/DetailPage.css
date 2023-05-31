@@ -1,14 +1,32 @@
+@font-face {
+    font-family: 'SUITE-Regular';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'MBC1961GulimM';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/MBC1961GulimM.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
   margin: 0;
   padding: 0;
   background-color:#EEEEEE;
-  font-family: Arial, sans-serif;
+  font-family: 'SUITE-Regular', sans-serif;
 }
 
 iframe {
   width: 100%;
   height: 100vh;
   border: none;
+}
+
+pre{
+	font-family: 'SUITE-Regular', sans-serif;
 }
 
 section {
@@ -22,6 +40,7 @@ textarea{
 	height:100px;
 	border:none;
 	resize:none;
+	font-family: 'MBC1961GulimM', sans-serif;
 }
 
 textarea:focus{
@@ -30,6 +49,29 @@ textarea:focus{
 
 input:focus{
 	outline:none;
+}
+
+.btnEditReview, .btnReviewDelete, #btnreviewup, #btnSubmit {
+  border:1px solid #393646;
+  background-color:rgba(0,0,0,0);
+  color:#393646;
+  padding:4px;
+  border-radius:5px;
+}
+
+button:hover {
+  color: white;
+  background: #393646;
+}
+
+#btnreviewup:hover{
+  color: white;
+  background: #393646;
+}
+
+#btnSubmit:hover{
+  color: white;
+  background: #393646;
 }
 .restaurantImg {
   text-align: center;
@@ -56,9 +98,15 @@ input:focus{
   border:none;
 }
 
+
+#rReviewN{
+	text-align:left;
+}
+
 #rName{
-	text-align:right;
-	font-size: 18px;
+	text-align:center;
+	font-size: 25px;
+	font-family: 'SUITE-Regular', sans-serif;
 }
 
 #restaurantDetail{
@@ -81,7 +129,8 @@ input:focus{
 
 #restaurantDetail input{
 	border:none;
-	font-size:13px;
+	font-size:15px;
+	font-family: 'MBC1961GulimM', sans-serif;
 }
 
 #restaurantMenu{
@@ -97,12 +146,21 @@ input:focus{
 	font-weight: bold;
 }
 
+#rMenu{
+	font-size:20px;
+}
 
 #restaurantTage{
   margin-bottom: 2%;
   border: 1px solid #FFFFFF;
   padding: 10px;
   background-color:#FFFFFF;
+  font-family: 'SUITE-Regular', sans-serif;
+}
+
+#restaurantTage input{
+	font-size:20px;
+	font-family: 'SUITE-Regular', sans-serif;
 }
 
 #reviewPhoto{
@@ -120,13 +178,39 @@ input:focus{
   background-color:#FFFFFF;
 }
 
-#review-info{
+.review-info{
   text-align: center;
   margin-bottom: 2%;
   border: 1px solid #FFFFFF;
   padding: 10px;
   background-color:#FFFFFF;
 }
+
+.review-info table{
+	margin: 0 auto;
+}
+
+.review-info pre{
+	font-size:18px;
+	margin-left:2%;
+	font-weight: bold;
+}
+
+.myreview-info{
+  margin-bottom: 2%;
+  border: 1px solid #FFFFFF;
+  padding: 10px;
+  background-color:#FFFFFF;
+}
+
+.myreview-info table{
+	margin: 0 auto;
+}
+
+.button-container {
+  text-align: left;
+}
+
 
 #myreview{
 	width:50%;
@@ -137,17 +221,11 @@ input:focus{
 }
 
 #logincheckReviw{
-	margin-bottom: 2%;
+  margin-bottom: 2%;
   border: 1px solid #FFFFFF;
   padding: 10px;
   background-color:#FFFFFF;
-}
-
-.review-info{
-	margin-bottom: 2%;
-  border: 1px solid #FFFFFF;
-  padding: 10px;
-  background-color:#FFFFFF;
+  text-align:center;
 }
 
 .custom-file-upload {
@@ -163,6 +241,10 @@ input:focus{
 }
 
 #fileUpload{
+	display:none;
+}
+
+#fileUpload1{
 	display:none;
 }
 
@@ -183,4 +265,46 @@ input:focus{
 .test_obj input[type="checkbox"]:checked + span {
     background-color: #d0d0d0;
     color: black;
+}
+
+#restaurantTage pre{
+	font-size:18px;
+	margin-left:2%;
+	font-weight: bold;
+}
+
+#restaurantTage input{
+	background-color: transparent;
+  	font-weight: bold;
+  	border:none;
+}
+
+#infoUp{
+	text-align:right;
+}
+
+a{
+	color:black;
+	text-decoration:none;
+}
+
+#reviewAllModal textarea, button{
+	font-family: 'SUITE-Regular', sans-serif;
+}
+
+#reviewModal textarea{
+	font-family: 'SUITE-Regular', sans-serif;
+}
+
+.review_myTable td{
+	overflow:hidden;
+	text-overflow: ellipsis;
+	white-space: normal;
+	min-width:0;
+
+}
+
+.reviewcontent {
+  rows: 4;
+  cols: 50;
 }

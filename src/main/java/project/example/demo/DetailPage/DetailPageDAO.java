@@ -2,6 +2,7 @@ package project.example.demo.DetailPage;
 
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -20,7 +21,5 @@ public interface DetailPageDAO {
 	void reviewUpdate(String x1, String x2, String x3, String x4, String x5);
 	void reviewDelete(String x1,String x2);
 	Integer reviewAllCount(String x1);
-	int checkReview(String primecode, String id);
-	
-	
+	int checkReview(String primecode, String id);		
 }

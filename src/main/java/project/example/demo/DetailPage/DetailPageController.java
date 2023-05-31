@@ -1,8 +1,17 @@
 package project.example.demo.DetailPage;
 
+import java.awt.PageAttributes.MediaType;
+import java.io.File;
+import java.io.IOException;
 import java.net.URLEncoder;
+import java.net.http.HttpHeaders;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.UUID;
 
 import org.apache.ibatis.annotations.Param;
 import org.json.JSONArray;
@@ -12,15 +21,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import okio.BufferedSink;
+import okio.BufferedSource;
+import okio.Okio;
+import okio.Path;
 import project.example.demo.dto.RestaurantDTO;
 import project.example.demo.dto.ReviewDTO;
 
@@ -63,7 +79,7 @@ public class DetailPageController{
 	//리뷰쪽
 	@PostMapping("/review/insert")
 	@ResponseBody
-	public String getReviewInsert(HttpServletRequest req) {
+	public String getReviewInsert(HttpServletRequest req/*, @RequestParam("photo") MultipartFile photo*/) {
 		HttpSession session = req.getSession();
 		String id = (String) session.getAttribute("id");
 		
@@ -72,6 +88,30 @@ public class DetailPageController{
 		}
 		
 		String retval="ok";
+		
+//		String rv_photo = "";
+		
+//		if(!photo.isEmpty()) {
+//			try {
+//				String uploadPath = "img/DetailPage";
+//				// 파일 이름 설정 (고유한 파일 이름 생성 또는 원본 파일 이름 사용)
+//	            String fileName = UUID.randomUUID().toString() + "_" + photo.getOriginalFilename();
+//	            
+//	            // 파일 저장
+//	            java.nio.file.Path filePath = Paths.get(uploadPath, fileName);
+//	            BufferedSink sink = Okio.buffer(Okio.sink(filePath.toFile()));
+//	            BufferedSource source = Okio.buffer(Okio.source(photo.getInputStream()));
+//	            sink.writeAll(source);
+//	            sink.close();
+//	            source.close();
+//	            
+//	            // 저장된 파일 경로나 이름을 rv_photo 변수에 저장
+//	            rv_photo = filePath.toString();
+//			}catch(IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
+		
 		try {
 			String rv_primcode = req.getParameter("primecode");
 			String rv_id = req.getParameter("id");
@@ -87,6 +127,7 @@ public class DetailPageController{
 			
 		}catch(Exception e) {
 			retval="fail";
+			e.printStackTrace();
 		}
 		return retval;
 	}
@@ -286,4 +327,5 @@ public class DetailPageController{
 		return top;
 		
 	}
+	
 }

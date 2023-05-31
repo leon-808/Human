@@ -2,10 +2,12 @@ $(document)
 .ready(function() {
     loadFoodDetails();
     uploadimage();
+    uploadimage1();
     reviewGet();
     myreviewGet();
     checkReview();
     tagTop();
+    
 })
 .on('click','#btnSubmit',reviewInsert)
 .on('click','#btnreviewup',reviewUpdate)
@@ -13,12 +15,20 @@ $(document)
 .on('click','.btnReviewDelete',reviewDelete)
 .on('click','#review_table tr',function(){
 	var id=$(this).find('td:eq(0)').text();
-	openModal(id);
+	var ids=id.split(" | ")	
+	var idpart = ids[0].trim();
+	
+	if(idpart !=""){
+		console.log(idpart);
+		openModal(idpart);
+	}
+	
 })
 .on('click','input[name="tagsD"]',function(e){
 	e.preventDefault();
 	return false;
 })
+
 
 function loadFoodDetails() {
 	var primecode =window.location.pathname.split('/').pop();
@@ -73,7 +83,7 @@ function uploadimage(){
 }
 
 function uploadimage1(){
-	const fileInput = document.getElementById("fileUploadD");
+	const fileInput = document.getElementById("fileUpload1");
 
 	const handleFiles = (e) => {
   	const selectedFile = [...fileInput.files];
@@ -82,7 +92,7 @@ function uploadimage1(){
 	fileReader.readAsDataURL(selectedFile[0]);	
 	
 		fileReader.onload = function () {
-	  		document.getElementById("previewImgD").src = fileReader.result;
+	  		document.getElementById("previewImg1").src = fileReader.result;
 		};
 	
 	};
@@ -104,7 +114,20 @@ function reviewInsert(){
 	$('input[name="tags"]:checked').each(function(){
 		checkboxValues.push($(this).val());
 	})
+	
+	var photo = $('#fileUpload')[0].files[0];
+	console.log(photo);
+	
+	// FormData 객체 생성
+	var formData = new FormData();
+	formData.append('primecode', primecode);
+	formData.append('id', $('#name').val());
+	formData.append('visit', 1);
+	formData.append('photo', photo);
+	formData.append('tags', checkboxValues);
+	formData.append('detail', $('#myreview').val());
 
+	
 	$.ajax({
 		url:"/review/insert",
 		type:"post",
@@ -115,7 +138,7 @@ function reviewInsert(){
 			visit:1,
 			photo:$('#fileUpload').val(),
 			tags:checkboxValues,
-			detail:$('#myreview').val(),
+			detail:$('#myreview').val()
 		},
 		beforeSend:function(){
 			var content = $('#myreview').val();
@@ -139,43 +162,6 @@ function reviewInsert(){
 	})
 }
 
-/*function reviewGet(){
-	var primecode =window.location.pathname.split('/').pop();
-	
-	$.ajax({
-		url:'/review/get',
-		type:'post',
-		data:{
-			primecode:primecode
-		},
-		dataType:'json',
-		success:function(reviewdata){
-            for(let i=0;i<reviewdata.length;i++){
-				let str='<tr>';
-				str +='<td>'+reviewdata[i]['rvid']+'</td>';
-				str +='<td>'+reviewdata[i]['rvdetail']+'</td>';
-				
-				var time=reviewdata[i]['rvtime'];
-				
-				str +='<td>' + time + '</td>';
-			    str += '</tr>';
-			   
-				$('#review_table').append(str);
-				
-
-			}
-			if (reviewdata.length > 0) {
-			  var reviewcount = reviewdata[0]['reviewcount'];
-			  $('#rReviewN').val(reviewcount);
-		    } else {			
-			 	  $('#rReviewN').val('아직 후기가 없습니다.');
-			}
-			 
-		}
-		
-	})
-}*/
-
 function reviewGet() {
     var primecode = window.location.pathname.split('/').pop();
 
@@ -187,6 +173,7 @@ function reviewGet() {
         },
         dataType: 'json',
         success: function(reviewdata) {
+		
 			updateReviewCount();
             var reviewTable = $('#review_table');
             reviewTable.empty(); // 데이터를 추가하기 전에 테이블을 비워줍니다.
@@ -206,14 +193,20 @@ function reviewGet() {
                 var pageReviews = reviewdata.slice(startIndex, endIndex);
 
                 for (let i = 0; i < pageReviews.length; i++) {
+					/*var imageScr = "/img/DetailPage/"+pageReviews[0].rvphoto;
+					var imageUrl = imageScr;
+					console.log(imageScr);
+					
+					$('#reviewP1').attr('src', imageUrl);
+					$('#reviewP2').attr('src', imageUrl);*/
+					//$('#reviewP3').attr('src', pageReviews[2].rvphoto);
+
+					var time = pageReviews[i]['rvtime'].split(' ')[0];
                     let str = '<tr>';
-                    str += '<td>' + pageReviews[i]['rvid'] + '</td>';
-                    str += '<td>' + pageReviews[i]['rvdetail'] + '</td>';
-
-                    var time = pageReviews[i]['rvtime'];
-
-                    str += '<td>' + time + '</td>';
-                    str += '</tr>';
+                    str += '<td width="300">' + pageReviews[i]['rvid'] +" | "+time+ '</td>';
+                    str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + pageReviews[i]['rvdetail'] + '</textarea></td></tr>';
+                    str+='<tr><td height="10"></td></tr>'
+                    str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';
 
                     reviewTable.append(str);
                 }
@@ -288,6 +281,9 @@ function reviewGet() {
 			    }
 			}
    			
+   			if(reviewdata.length<=5){
+				   buttonsContainer.remove();
+			}
 	}
 	})
 }
@@ -312,11 +308,14 @@ function myreviewGet(){
 		dataType:'json',
 		success:function(reviewdata){
             for(let i=0;i<reviewdata.length;i++){
-				let str='<tr>';
-				str +='<td>'+reviewdata[i]['rvid']+'</td>';
-				str +='<td>'+reviewdata[i]['rvdetail']+'</td>';
-				str += '<td><button class="btnEditReview" data-review-id="' + reviewdata[i]['rvid'] + '">수정</button></td>';
-			    str += '<td><button class="btnReviewDelete" data-review-id="'+ reviewdata[i]['rvid'] + ')">삭제</button></td>';
+				let str = '<tr>';
+			    str += '<td>' + reviewdata[i]['rvid'] + ' | ' + reviewdata[i]['rvtime'] + '</td>';
+			    str += '<tr><td><textarea rows=4 cols=50 class="reviewcontent" readonly>' + reviewdata[i]['rvdetail'] + '</textarea></td></tr>';
+			    str += '<tr>';
+			    str += '<td class="button-container">';
+			    str += '<button class="btnEditReview" data-review-id="' + reviewdata[i]['rvid'] + '">수정</button>';
+			    str += '<button class="btnReviewDelete" data-review-id="' + reviewdata[i]['rvid'] + '">삭제</button>';
+			    str += '</td>';
 			    str += '</tr>';
 			    $('#review_myTable').append(str);
 			}
@@ -443,28 +442,28 @@ function reviewUpdate(){
 
 function reviewDelete(){
 	var primecode =window.location.pathname.split('/').pop();
-	
-	$.ajax({
-		url:'/review/delete',
-		type:'post',
-		dataType:'text',
-		data:{
-			primecode:primecode,
-			id:$('#name').val()
-		},
-		beforSend:function(){
-			
-		},
-		success:function(data){
-			if(data=="ok"){
+	if(confirm("정말로 지우시겠습니까?")==true){
+		$.ajax({
+			url:'/review/delete',
+			type:'post',
+			dataType:'text',
+			data:{
+				primecode:primecode,
+				id:$('#name').val()
+			},
+			success:function(data){
 				
-				alert("삭제되셨습니다.")
-				location.reload();
-			}else{
-				alert("delete 실패");
+				if(data=="ok"){	
+					alert("삭제되셨습니다.")
+					location.reload();
+				}else{
+					alert("delete 실패");
+				}
 			}
-		}
-	})
+		})
+	} else{
+		alert("삭제가 취소됬습니다.");
+	}
 }
 
 function checkReview(){
@@ -480,13 +479,13 @@ function checkReview(){
 		},
 		dataType:"text",
 		success:function(check){
-			console.log(check);
 			if(check == "리뷰 없음"){
 				$('#review').show();
 				$('#logincheckReviw').hide();
 			}else if(check == "비회원"){
 				$("#review").hide();
 				$('#logincheckReviw').show();
+				$('.myreview-info').hide();				
 			}else {
 				$("#review").hide();
 				$('#logincheckReviw').hide();
@@ -505,7 +504,8 @@ function tagTop(){
 			primecode:primecode
 		},
 		dataType:"json",
-		success:function(tagtop){			
+		success:function(tagtop){		
+				
 			var categoryCounts = {
                 	 cleanlinessC : 0,
 	                 kindnessC : 0,
@@ -521,8 +521,9 @@ function tagTop(){
 	                 quantityC : 0,
 	                 costC : 0,
 	                 niceC : 0,
-	                 satisfaction : 0
+	                 satisfactionC : 0
             };  
+            
 			
             for (let i = 0; i < tagtop.length; i++) {
                 var value = tagtop[i].tags;                
@@ -558,11 +559,12 @@ function tagTop(){
 				   }else if(values[j] == "알참"){
 					   categoryCounts.niceC++;
 				   }else if(values[j] == "만족"){
-					   categoryCounts.satisfaction++;
+					   categoryCounts.satisfactionC++;
 				   }
 					
 				}
-			}
+			}					
+			
 			var categoryRanking = [];
 			
 			for (var category in categoryCounts) {
@@ -576,28 +578,59 @@ function tagTop(){
 			
 			categoryRanking.sort(function(a, b) {
 			    return b.count - a.count;
-			});
+			});	
 			
 			for ( i = 0; i < categoryRanking.length; i++) {
-			    console.log('순위 ' + (i + 1) + ': ' + categoryRanking[i].category + ' (' + categoryRanking[i].count + ')');
+				
+				var category = categoryRanking[i].category;
+			
+				if(category =="kindnessC"){
+					 // 실제 아이콘 코드 포인트로 대체
+  					category ="😊 \t친절";							
+				}else if(category =="cleanlinessC"){
+					category="🧹 \t청결";
+				}else if(category =="parkingC"){
+					category="🅿️ \t주차"
+				}else if(category =="cookingC"){
+					category="🍳 \t조리"
+				}else if(category =="packagingC"){
+					category="🥡 \t포장"
+				}else if(category =="aloneC"){
+					category="🙇‍♀ \t혼밥"
+				}else if(category =="groupC"){
+					category="👥 \t단체"
+				}else if(category =="focusC"){
+					category="🔥 \t집중"
+				}else if(category =="conversationC"){
+					category="💭 \t대화"
+				}else if(category =="photoC"){
+					category="📷 \t사진"
+				}else if(category =="tasteC"){
+					category="🍱 \t맛"
+				}else if(category =="quantityC"){
+					category="🥣 \t양"
+				}else if(category =="costC"){
+					category="💰 \t가성비"
+				}else if(category =="niceC"){
+					category="👌 \t알참"
+				}else if(category =="satisfactionC"){
+					category="👍 \t만족"
+				}
 		
+				if(i==0){
+					$('#tagTop1').val(category+" "+"(" +categoryRanking[0].count+')');
+				}else if(i==1){
+					$('#tagTop2').val(category+" "+"(" +categoryRanking[1].count+')');	
+				}else if(i==2){
+					$('#tagTop3').val(category+" "+"(" +categoryRanking[2].count+')');	
+				}else if(i==3){
+					$('#tagTop4').val(category+" "+"(" +categoryRanking[3].count+')');	
+				}else if(i==4){
+					$('#tagTop5').val(category+" "+"(" +categoryRanking[4].count+')');	
+				}
+				
 			}
-			$('#tagTop1').val(categoryRanking[0].category+"(" +categoryRanking[0].count+')');
-			$('#tagTop2').val(categoryRanking[1].category);		
-			$('#tagTop3').val(categoryRanking[2].category);		
-			$('#tagTop4').val(categoryRanking[3].category);		
-			$('#tagTop5').val(categoryRanking[4].category);		
-			$('#tagTop6').val(categoryRanking[5].category);		
-			$('#tagTop7').val(categoryRanking[6].category);		
-			$('#tagTop8').val(categoryRanking[7].category);		
-			$('#tagTop9').val(categoryRanking[8].category);		
-			$('#tagTop10').val(categoryRanking[9].category);		
-			$('#tagTop11').val(categoryRanking[10].category);		
-			$('#tagTop12').val(categoryRanking[11].category);		
-			$('#tagTop13').val(categoryRanking[12].category);		
-			$('#tagTop14').val(categoryRanking[13].category);		
-			$('#tagTop15').val(categoryRanking[14].category);		
-					
+	
 		}
         
 	})

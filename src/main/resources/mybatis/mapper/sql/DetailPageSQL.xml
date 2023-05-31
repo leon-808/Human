@@ -14,7 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select *
 		from review
 		where rv_primecode=#{param1}
-		order by rv_time
+		order by rv_time desc
 	</select>
 	<insert id="reviewInsert">
 	    insert into review(rv_primecode, rv_id, rv_photo, rv_visit,tags, rv_detail, rv_time)
