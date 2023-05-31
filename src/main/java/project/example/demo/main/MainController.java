@@ -68,7 +68,7 @@ public class MainController {
 		return ja.toString();
 	}
 
-	@PostMapping("/suggest/alm")
+//	@PostMapping("/suggest/alm")
 
 	@PostMapping("/suggest/alm/user")
 	@ResponseBody
