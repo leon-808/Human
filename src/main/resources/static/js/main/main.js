@@ -114,7 +114,8 @@ function isLogin() {
 		success: function(isLogin) {
 			if (isLogin == "true" || isLogin == "admin") { 
 				createUI(isLogin);
-				loginFlag = 1;
+				if (isLogin == "true") loginFlag = 1;
+				else if (isLogin == "admin") loginFlag = 2;
 				checkTag();
 			}	
 		}
@@ -142,18 +143,18 @@ let zoomControl = new kakao.maps.ZoomControl();
 let selfLat, selfLng = 0;
 
 function geoPosition() {
-	let imageSrc = "/img/main/HumanMarker.png",
-	imageSize = new kakao.maps.Size(30, 30),
-	imageOption = {offset: new kakao.maps.Point(20, 20)},
-	markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
-	selfMarker, selfContent = 0;
-	
 	lat = 36.81044107630051,
 	lng = 127.14647463417765;
 	selfLat = lat; selfLng = lng;
 	makeMap(lat, lng);
 	
 	map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+	
+	let imageSrc = "/img/main/HumanMarker.png",
+	imageSize = new kakao.maps.Size(30, 30),
+	imageOption = {offset: new kakao.maps.Point(20, 20)},
+	markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
+	selfMarker, selfContent = 0;
 				
 	selfMarker = new kakao.maps.Marker({
 		position: new kakao.maps.LatLng(lat, lng),
@@ -264,11 +265,14 @@ function isAdminSearch() {
 
 
 function closeOverlay() {
+	isCEO = 0;
 	if (selfOverlay != null) selfOverlay.setMap(null);
 	if (addLocationOverlay != null) addLocationOverlay.setMap(null);
 	if (openedKeywordOverlay != null) openedKeywordOverlay.setMap(null);
 	if (openedAddressOverlay != null) openedAddressOverlay.setMap(null);
+	if (openedDetailOverlay != null) openedDetailOverlay.setMap(null);
 }
+
 
 
 let addLocationMarker = new kakao.maps.Marker({
@@ -342,7 +346,9 @@ function check_duplicateLocation(latLng) {
 			if (result[0].road_address != null) address = JSON.stringify(result[0].road_address.address_name);
 			else address = JSON.stringify(result[0].address.address_name);
 		}
-			
+		
+		address = address.replaceAll(/"/g, "");
+					
 		if (addLocationFlag == 1) {
 			$.ajax({
 				url: "/check/duplicateLocation",
@@ -417,7 +423,7 @@ function addCeoInput() {
 			<div>
 				<label for="input_bnd">사업자 증빙 서류</label>
  				<input class="form-control" type="file" name="upload_bnd" id="input_bnd" 
- 				accept=".jpg, .jpeg, .png, .webp .jfif">
+ 				accept=".bmp .jpg, .jpeg, .gif, .png, .webp, .webm .jfif .pdf">
 			</div>`)
 		$(".alm_append").append(html);
 		$(this).html("사장님 아니에요");
@@ -514,6 +520,11 @@ function suggestALM() {
 							alert("해당 내용으로 맛집 등록이 요청되었습니다");
 							location.reload();
 						}
+						else if (message == "extension") {
+							alert("지원하지 않는 확장자 파일입니다\n" +
+							".bmp .jpg, .jpeg, .gif, .png,\n" +
+							".webp, .webm .jfif .pdf 만을 지원합니다");
+						}
 						else {
 							alert("이미 등록 요청이 된 맛집입니다");
 						}
@@ -594,31 +605,36 @@ function manageLoginButton() {
 
 function search() {
 	let sf_count = 0;
+	let query, fc, ob = null;
+	let tags = [];
+	
 	$("input:radio[name='fc']").each(function() {
 		if ($(this).prop("checked") == true) {
-			sf_category = $(this).val();
+			fc = $(this).val();
 			sf_count++; return false;
 		}
 	});
 	$("input:radio[name='orderby']").each(function() {
 		if ($(this).prop("checked") == true) {
+			ob = $(this).val();
 			sf_count++; return false;
 		}
 	});
 	$("input:checkbox[name='tags']").each(function() {
 		if ($(this).prop("checked") == true) {
-			sf_count++; return false;
+			tags.push($(this).val());
+			sf_count++;
 		}
 	});
-	
+		
 	let position = map.getCenter();
 	let lat = position.getLat(),
 	lng = position.getLng();
 	
-	if (sf_category == "" && sf_count == 0) {
-		markersNuller(keywordMarkers);
-		markersNuller(addressMarkers);  
-		let query = encodeURI($("#search_input").val());
+	wholeMarkersNull();
+	
+	if (sf_count == 0) {
+		query = encodeURI($("#search_input").val());
 		let searchURL =
 		`https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy&query=${query}&x=${lng}&y=${lat}`;
 		$.ajax({
@@ -652,12 +668,26 @@ function search() {
 		})
 	}
 	else if (sf_count != 0) { 
-		
+		query = $("#search_input").val();
+		$.ajax({
+			url: "/main/filter/search",
+			type: "post",
+			data: {
+				query: query,
+				fc: fc,
+				ob: ob,
+				tags: tags
+			},
+			dataType: "json",
+			success: function(data) {
+				
+			}
+		})
 	}	 
 }
 
 function rectSearch() {
-		let sf_count = 0;
+	let sf_count = 0;
 	$("input:radio[name='fc']").each(function() {
 		if ($(this).prop("checked") == true) {
 			sf_category = $(this).val();
@@ -685,11 +715,12 @@ function rectSearch() {
 	neLat = bounds.getNorthEast().getLat().toString(),
 	neLng = bounds.getNorthEast().getLng().toString() + ",";
 	
-	let tempBoundary = swLng + swLat + neLng + neLat;
+	let tempBoundary = swLng + swLat + neLng + neLat,
 	boundary = encodeURI(tempBoundary);	
+	
+	wholeMarkersNull();
 			
 	if (sf_category == "" && sf_count == 0) {
-		markersNuller(keywordMarkers); 
 		let query = encodeURI($("#search_input").val());
 		let searchURL =
 		`https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy
@@ -729,9 +760,9 @@ function rectSearch() {
 	}	 
 }
 
-
-
 function addressSearch(searchURL, query) {
+	wholeMarkersNull();
+	
 	searchURL = 
 		`https://dapi.kakao.com/v2/local/search/address.json?analyze_type=similar&page=1&size=10
 		&query=${query}"`
@@ -761,6 +792,8 @@ function addressSearch(searchURL, query) {
 		}
 	})
 }
+
+
 
 let keywordMarkers = [];
 let selectedKeywordMarker = null,
@@ -828,11 +861,11 @@ function displayAddressMarker(data) {
 	detailOverlay = new kakao.maps.CustomOverlay({
 		clickable: true
 	});
-	
+
 	let address = data.address_name;
 	if (data.address_name == null) address = data.address.address_name;
 	
-	let infowindow = new kakao.maps.InfoWindow({
+	infowindow = new kakao.maps.InfoWindow({
 		content: `<div class="iw_placename">${address}</div>`
 	});
 	
@@ -841,6 +874,16 @@ function displayAddressMarker(data) {
 			openedAddressOverlay.setMap(null);
 		}
 		selectedAddressMarker = addressMarker;
+		
+		let ifAdminSearch = "";
+	 	if (adminSearchFlag == 0) {
+			 ifAdminSearch =
+ 			 `<button class="dt_suggest btn btn-primary">맛집으로 제안하기</button></div></div>`
+		 }
+		 else {
+			 ifAdminSearch = `</div></div>`;
+		 } 
+		 
 		let detailContent = `
 		 	<div class="dt_info">
 		 		<div class="dt_title">
@@ -849,14 +892,9 @@ function displayAddressMarker(data) {
 		 		</div>
 			 	<div class="alm_body">
 		 			<p>도로명 주소: ${data.address_name}</p>
-		 			<p>지번 주소: ${data.address.address_name}</p>`;
-		 if (adminSearchFlag == 0) {
-			 detailContent = detailContent + 
- 			 `<button class="dt_suggest btn btn-primary">맛집으로 제안하기</button></div></div>`
-		 }
-		 else {
-			 detailContent = detailContent + `</div></div>`;
-		 } 
+		 			<p>지번 주소: ${data.address.address_name}</p>
+		 		${ifAdminSearch}`;
+
 		 map.setCenter(addressMarker.getPosition());
 		 detailOverlay.setContent(detailContent);
 		 detailOverlay.setPosition(addressMarker.getPosition());
@@ -874,6 +912,81 @@ function displayAddressMarker(data) {
 	addressMarkers.push(addressMarker);
 }
 
+
+
+let detailMarkers = [];
+let selectedDetailMarker = null,
+openedDetailOverlay = null;
+
+function displayDetailMarker(data) {
+	let imageSrc = 	"/img/main/" + category + ".png",
+	imageSize = new kakao.maps.Size(30, 30),
+	imageOption = {offset: new kakao.maps.Point(20, 20)},
+	markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+	
+	let detailMarker = new kakao.maps.Marker({
+		clickable: true,
+		map: map,
+		position: new kakao.maps.LatLng(data["lng"], data["lat"]),
+		image: markerImage
+	}),
+	detailOverlay = new kakao.maps.CustomOverlay({
+		clickable: true
+	});
+	
+	let r_name = data["r_name"],
+	category = data["category"],
+	address = data["address"],
+	r_phone = data["r_phone"];
+	
+	infowindow = new kakao.maps.InfoWindow({
+		content: `<div class="iw_placename">${address}</div>`
+	});
+		
+	kakao.maps.event.addListener(detailMarker, "click", function() {
+		if (selectedDetailMarker != null && detailMarker != selectedDetailMarker) {
+			openedDetailOverlay.setMap(null);
+		}
+		selectedDetailMarker = detailMarker;
+		let detailContent = `
+		 	<div class="dt_info">
+		 		<div class="dt_title">
+		 			<span class="dt_placename">${r_name}</span>
+		 			<div class="alm_close" onclick="closeOverlay()" title="닫기"></div>
+		 		</div>
+			 	<div class="alm_body">
+		 			<p>주소: ${address}</p>
+		 			<p>전화번호: ${r_phone}</p>
+		 			<button class="btn btn-primary">상세보기</button>
+		 			<button class="btn btn-primary">리뷰보기</button>
+		 		</div>
+		 	</div>`;
+		 map.setCenter(detailMarker.getPosition());
+		 detailOverlay.setContent(detailContent);
+		 detailOverlay.setPosition(detailMarker.getPosition());
+		 detailOverlay.setMap(map);
+		 openedAddressOverlay = detailOverlay;
+	});
+	
+	kakao.maps.event.addListener(addressMarker, "mouseover", function() {
+		infowindow.open(map, addressMarker);
+	})
+	kakao.maps.event.addListener(addressMarker, "mouseout", function() {
+		infowindow.close();
+	})
+		
+	detailMarkers.push(detailMarker);
+}
+
+
+
+function wholeMarkersNull() {
+	addLocationMarker.setMap(null);
+	markersNuller(keywordMarkers);
+	markersNuller(addressMarkers);
+	markersNuller(detailMarkers);
+}
+
 function markersNuller(markers) {
 	for (i = 0; i < markers.length; i++) {
 		markers[i].setMap(null);
@@ -881,8 +994,6 @@ function markersNuller(markers) {
 }
 
 
-
-let sf_category = "";
 
 function offCategory() {
 	sf_category = "";
@@ -934,54 +1045,36 @@ function clickCurrentLocaitonButton() {
 
 
 
-/*.on("click", "#btn-myPage", showMyData)
-.on("click", "#btn-GO-signUpdate", signUpdate)
-.on("click", ".toggle_sidebar", toggleBarandMap)
-.on("click", ".dt_suggest", suggestDT)
-.on("click", ".choice_currentmap", rectSearch)
-.on("click", "#btn-pasSetting", showTagSetting)
-.on("click", "#btn-reviewSetting", showReviewSetting)
-.on("click", "#btn-storeSetting", showStoreSetting)
-.on("click", "#btn-backMain", gotoMain)
-.on("click", "#btn-saveMyTag", saveTag)
-.on("click", "#userReviewCount",showReviewSetting)
-.on("click", "#clearMarkerButton", clearMarkers)*/
-
-let isMyPage = 0;
-
 function showMyData() {
-	if (loginFlag == 1) {
-		if (isMyPage == 0) {
-			$(".top_sidebar").empty();
-			$(".top_sidebar").append(
-			`<div class="profil" role="banner">
-				<span class="profil img"><img src="/img/main/profil.jpg"
-					width="85" height="85"></span>
-				<div class="profil info">
-					<span id="profil_user_name"></span>님 안녕하세요
-					<button id="btn-GO-signUpdate"></button>
-					<div style="line-height: 50%"><br><br></div>
-					<button type="button" class="btn-userGrade"></button>
-					<span class="profil userInfo">리뷰 <a id=userReviewCount></a></span>
-				</div>
-
+	if (loginFlag == 1 || loginFlag == 2) {
+		$(".top_sidebar").empty();
+		$(".top_sidebar").append(
+		`<div class="profil" role="banner">
+			<span class="profil img"><img src="/img/main/profil.jpg"
+				width="85" height="85"></span>
+			<div class="profil info">
+				<span id="profil_user_name"></span>님 안녕하세요
+				<button id="btn-GO-signUpdate"></button>
+				<div style="line-height: 50%"><br><br></div>
+				<button type="button" class="btn-userGrade"></button>
+				<span class="profil userInfo">리뷰 <a id=userReviewCount></a></span>
 			</div>
-			<div class="profil_subarea">
-				<button type="button" id="btn-backMain">뒤로</button>
-				<button type="button" class="btn-userSetting pas"
-					id="btn-pasSetting">선호도 관리</button>
-				<button type="button" class="btn-userSetting review"
-					id="btn-reviewSetting">리뷰 관리</button>
-				<button type="button" class="btn-userSetting store"
-					id="btn-storeSetting">업체 관리</button>
-			</div>`);
-			isMyPage = 1;
-			$("#food_categories").css("display", "none");
-			$("#btn-saveMyTag").css("display", "block");
-			checkTag();
-			get_userName();
-			get_userReviewCount();
-		}
+
+		</div>
+		<div class="profil_subarea">
+			<button type="button" id="btn-backMain">뒤로</button>
+			<button type="button" class="btn-userSetting pas"
+				id="btn-pasSetting">선호도 관리</button>
+			<button type="button" class="btn-userSetting review"
+				id="btn-reviewSetting">리뷰 관리</button>
+			<button type="button" class="btn-userSetting store"
+				id="btn-storeSetting">업체 관리</button>
+		</div>`);
+		$("#food_categories").css("display", "none");
+		$("#btn-saveMyTag").css("display", "block");
+		checkTag();
+		get_userName();
+		get_userReviewCount();
 	}
 	else alert("로그인이 필요한 페이지입니다.");
 }
@@ -1012,15 +1105,21 @@ function checkTag() {
 }
 
 function gotoMain() {
-	isMyPage = 0;
 	$("#food_categories").css("display", "block");
 	$("#btn-saveMyTag").css("display", "none");
 	$(".top_sidebar").empty();
+	
+	let manageButton = "" ;
+	if (loginFlag == 2) manageButton = 
+	`<button id='button_manage' class='btn btn-dark' data-bs-toggle='modal' 
+	data-bs-target='#manageModal'>관리</button>`
+	
 	$(".top_sidebar").append(`
 		<div class="header" role="banner">
 		    <h1 class="header_title">
 		        <a class="a_title">kakaomap</a>
-		        <button id="button_log" class="btn btn-danger">로그인</button>
+		        <button id="button_log" class="btn btn-danger">로그아웃</button>
+			    ${manageButton}
 		    </h1>
 		    <button class="choice_currentmap btn btn-success">현 지도 내 장소검색</button>
 			<div class="box_searchbar">

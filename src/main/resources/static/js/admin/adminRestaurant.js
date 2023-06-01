@@ -152,7 +152,7 @@ function admin_delete_restaurant() {
         dataType: "text",
         success: function (check) {
 			alert("해당 업체 신청은 반려되었습니다");
-			getList();
+			location.reload();
         }
     })
 }

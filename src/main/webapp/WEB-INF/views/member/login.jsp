@@ -15,11 +15,13 @@
 			<div class="wrapperSI">
 				<span class="loginspan">ID</span>
 				<input type="text" id="input_loginID" class="form-control">
-			</div><br>
+			</div>
+			<br>
 			<div class="wrapperSI">
 		        <span class="loginspan">PW</span>
 			    <input type="password" id="input_loginPW" class="form-control">
-			</div><br>
+			</div>
+			<br>
             <button type="button" class="btn btn-primary" id="btnLogin">로그인</button>
 	        <div class="wrapperA">
                 <a class="text-decoration-none aText" id="signup">회원가입</a>

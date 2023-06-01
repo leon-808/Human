@@ -8,7 +8,6 @@ import project.example.demo.dto.MemberDTO;
 @Mapper
 public interface MemberDAO {
 	String get_id(String id,String pw);
-	String get_name(String id,String pw);
 	String search_id(String name, String phone);
 	
 	int check_duplicateID(String id);
@@ -22,7 +21,4 @@ public interface MemberDAO {
 	ArrayList<MemberDTO> get_signupInfo(String id);
 	void update_signup(String id, String pw, String name, String gender, String birth, String phone);
 	int get_userReviewCount(String id);
-	
-
 }
-
