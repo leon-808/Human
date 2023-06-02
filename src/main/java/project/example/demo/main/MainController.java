@@ -37,11 +37,6 @@ public class MainController {
 	public String detail(@PathVariable("query") String query) {
 		return "main";
 	}
-
-	@GetMapping("/mainmy")
-	public String mainmy_page() {
-		return "mainMy";
-	}
 	
 	@PostMapping("/check/duplicateLocation")
 	@ResponseBody
@@ -119,6 +114,21 @@ public class MainController {
 		String location = "C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\resources\\static\\img\\admin\\restaurant";
 		String shortLocation = "/img/admin/restaurant/";
 		
+		String[] extensions = {
+				".bmp", ".jpg", ".jpeg", ".gif", ".png", ".webp", ".webm", ".jfif", ".pdf"
+		};
+		String originalExtension = bnd[0].getOriginalFilename().split("\\.")[1];
+		int acceptable = 0;
+		for (String s : extensions) {
+			if (s.equals(originalExtension)) {
+				acceptable = 1; break;
+			}
+		}
+		if (acceptable == 0) {
+			message = "extension";
+			return message;
+		}
+		
 		String filename = r_name + " " + idString + todayString + timeString + bnd[0].getOriginalFilename();
 		File savefile = new File(location, filename);
 		try {
@@ -135,5 +145,102 @@ public class MainController {
 		}
 
 		return message;
+	}
+	
+	@PostMapping("/main/filter/search")
+	@ResponseBody
+	public String filter_search(HttpServletRequest req) {
+		String words = req.getParameter("query");
+		String fc = req.getParameter("fc");
+		String ob = req.getParameter("ob");
+		HttpSession session = req.getSession();
+		String id = String.valueOf(session.getAttribute("id"));
+		ArrayList<String> tags = new ArrayList<>();
+		if (req.getParameterValues("tags[]") != null) {
+			for (String s : req.getParameterValues("tags[]")) tags.add(s);
+		}
+		
+		String query = make_searchFilterQuery(words, fc, ob, id, tags);
+		System.out.println(query);
+//		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
+//		JSONArray ja = new JSONArray();
+//		
+//		for (RestaurantDTO r : rdto) {
+//			JSONObject jo = new JSONObject();
+//			jo.put("lat", r.getLat());
+//			jo.put("lng", r.getLng());
+//			jo.put("r_name", r.getR_name());
+//			jo.put("category", r.getCategory());
+//			jo.put("address", r.getAddress());
+//			jo.put("r_phone", r.getR_phone());
+//			jo.put("r_photo", r.getR_photo());
+//			
+//			ja.put(jo);
+//		}
+				
+		return "스트링"; // ja.toString();
+	}
+	
+	public String make_searchFilterQuery(String words, String fc, String ob, 
+										 String id, ArrayList<String> tags) {
+		StringBuilder query = new StringBuilder();
+		query.append("""
+				select a.*
+				from (
+					select *
+					from restaurant
+				""");
+		
+		if (! words.equals("")) {
+			query.append(String.format("""
+						where (r_name like '%%%1$s%%'
+						or address like '%%%1$s%%')
+					""", words));
+		}
+		
+		if (fc != null) {
+			if (words.equals("")) {
+				query.append(String.format("""
+				where category = '%1$s'
+			) a, review b, statistic c
+			""", fc));
+			}
+			else {
+				query.append(String.format("""
+				and category = '%1$s'
+			) a, review b, statistic c
+			""", fc));
+			}
+		}
+		else {
+			query.append(String.format("""
+		) a, review b, statistic c
+		""", fc));
+		}
+		
+		if (! ob.equals("")) {
+			query.append(String.format("""
+					where a.primecode = b.rv_primecode
+					and b.rv_id = '%1$s'
+					""", id));
+		}
+		
+		if (tags.size() != 0) {
+			query.append("""
+					and a.primecode = c.s_primecode
+					""");
+			for (String s : tags) {
+				query.append(String.format("""
+						and c.%1$s > 0
+						""", s));
+			}
+		}
+		
+		if (! ob.equals("")) {
+			if (ob.equals("often")) query.append("order by b.rv_visit desc");
+			else if (ob.equals("rare")) query.append("order by b.rv_visit asc");
+		}
+		
+		return query.toString();
 	}
 }

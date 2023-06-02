@@ -46,4 +46,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		from admin_restaurant
 		where adrt_primecode = #{param1}
 	</select>
+	
+	<select id="get_searchFilterLIst" resultType="project.example.demo.dto.RestaurantDTO">
+		${param1}
+	</select>
+
 </mapper>

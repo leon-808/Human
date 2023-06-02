@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -78,14 +77,12 @@ public class MemberController {
 		String id = req.getParameter("id");
 		String pw = req.getParameter("pw");
 
-		String get_name = mdao.get_name(id, pw);
 		int flag = mdao.check_duplicateID(id);
 
 		if (flag != 0) {
 			String get_id = mdao.get_id(id, pw);
 			if (get_id != null) {
 				session.setAttribute("id", get_id);
-				session.setAttribute("name", get_name);
 				session.setMaxInactiveInterval(600);
 				check = "true";
 			} else
@@ -181,7 +178,6 @@ public class MemberController {
 
 		if (flag != 0) {
 			mdao.update_pw(id, name, phone, temporary);
-
 			sendTemporalPw(phone, temporary);
 			result = "true";
 		}
@@ -295,18 +291,4 @@ public class MemberController {
 		String id = session.getAttribute("id").toString();
 		return mdao.get_userReviewCount(id); 
 	}
-
-	@PostMapping("/my/name")
-	@ResponseBody
-	public String get_mypageName(HttpServletRequest req) {
-		String name = "";
-
-		HttpSession session = req.getSession();
-
-		if (session.getAttribute("name") != null)
-			name = session.getAttribute("name").toString();
-
-		return name;
-	}
-
 }

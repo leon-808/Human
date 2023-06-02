@@ -3,14 +3,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="/css/basic.css">
 <jsp:include page="/WEB-INF/views/metaLink.jsp"/>
 <link rel="stylesheet" href="/css/main/main.css">
 <link rel="stylesheet" href="/css/main/dd.css">
 <title>메인 페이지</title>
-
 </head>
 <body>
 	<div id="wrapper_sidebar" class="offcanvas show offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false">
@@ -69,7 +65,7 @@
 		    			</label>
 	    			</div>
 	    			<div class="each_fcr">
-		    			<input type="radio" id="/img/main/WesternFood" class="btn-check" name="fc" value=westernfood">
+		    			<input type="radio" id="/img/main/WesternFood" class="btn-check" name="fc" value="westernfood">
 		    			<label for="/img/main/WesternFood">
 		    				<img src="/img/main/WesternFood.png" class="fc_img"></img><br>
 		    				<span>양식</span>

@@ -23,4 +23,6 @@ public interface MainDAO {
 	String owner, String category, String address, String localURL);
 	
 	String admin_search(String primecode);
+	
+	ArrayList<RestaurantDTO> get_searchFilterLIst(String query);
 }
