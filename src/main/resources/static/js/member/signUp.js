@@ -99,7 +99,6 @@ function submit_signup() {
 		},
 		dataType: "text",
 		beforeSend: function() {	
-					
 			if (userName == "" || userName == null) {
 				alert("이름을 입력해주세요.");
 				return false;

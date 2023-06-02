@@ -37,8 +37,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		adrt_r_name = #{param4},
 		adrt_owner = #{param5},
 		adrt_category = #{param6},
-		adrt_address = #{param7},
 		adrt_localurl = #{param8}
+		where adrt_address = #{param7}
 	</update>
 	
 	<select id="admin_search" resultType="string">
@@ -46,4 +46,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		from admin_restaurant
 		where adrt_primecode = #{param1}
 	</select>
+	
+	<select id="get_searchFilterLIst" resultType="project.example.demo.dto.RestaurantDTO">
+		${param1}
+	</select>
+
 </mapper>
