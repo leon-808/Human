@@ -17,21 +17,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		order by rv_time desc
 	</select>
 	<insert id="reviewInsert">
-	    insert into review(rv_primecode, rv_id, rv_photo, rv_visit,tags, rv_detail, rv_time)
-	    values(#{param1}, #{param2}, #{param3}, ${param4}, #{param5},#{param6}, to_char(sysdate,'YYYY-MM-DD HH:mi:ss'))
+	    insert into review(rv_primecode,rv_r_name,rv_address, rv_id, rv_photo, rv_visit,tags, rv_detail, rv_time)
+	    values(#{param1}, #{param2}, #{param3}, #{param4}, #{param5}, #{param6}, #{param7}, #{param8}, to_char(sysdate,'YYYY-MM-DD HH:mi:ss'))
 	</insert>
 	<update id="reviewUpdate">
 		update review 
-		set rv_photo=#{param3},
-		tags=#{param4},
-		rv_detail=#{param5}
-		where rv_primecode=#{param1} and rv_id=#{param2}
+		set rv_photo=#{param4},
+		tags=#{param5},
+		rv_detail=#{param6}
+		where rv_r_name=#{param1} and rv_address=#{param2} and rv_id=#{param3}
 	</update>
 	<delete id="reviewDelete">
 		delete
 		from review
-		where rv_primecode=#{param1}
-		and rv_id=#{param2}
+		where rv_r_name=#{param1}
+		and rv_address=#{param2}
+		and rv_id=#{param3}
 	</delete>
 	<select id="getMyReview" resultType="project.example.demo.dto.ReviewDTO">
 		select *

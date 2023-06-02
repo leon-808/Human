@@ -43,6 +43,11 @@ textarea{
 	font-family: 'MBC1961GulimM', sans-serif;
 }
 
+img{
+	width:100px;
+	height:100px;
+}
+
 textarea:focus{
 	outline:none;
 }
@@ -302,9 +307,4 @@ a{
 	white-space: normal;
 	min-width:0;
 
-}
-
-.reviewcontent {
-  rows: 4;
-  cols: 50;
 }

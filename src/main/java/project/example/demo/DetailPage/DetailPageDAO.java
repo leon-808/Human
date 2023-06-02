@@ -17,9 +17,9 @@ public interface DetailPageDAO {
 	ArrayList<ReviewDTO> getMyRUpSel(String x1, String x2);
 	ArrayList<ReviewDTO> tagTop(String primecode);
 
-	void reviewInsert(String x1,String x2,String x3,String x4, String string,String x5);
-	void reviewUpdate(String x1, String x2, String x3, String x4, String x5);
-	void reviewDelete(String x1,String x2);
+	void reviewInsert(String x1,String x2,String x3,String x4, String string,String x5,String x6,String x7);
+	void reviewUpdate(String x1, String x2, String x3, String x4, String x5,String x6);
+	void reviewDelete(String x1,String x2,String x3);
 	Integer reviewAllCount(String x1);
 	int checkReview(String primecode, String id);		
 }

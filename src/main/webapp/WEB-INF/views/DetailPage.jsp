@@ -50,9 +50,8 @@
 	</div>
 	<div id='reviewPhoto'>
 		<pre>사진</pre>
-		<img id="reviewP1">
-		<img id="reviewP2">
-		<img id="reviewP3">
+		<table id="reviewPhotoList" class="reviewPhotoList">
+		</table>
 	</div>
 	<div id="logincheckReviw">
 		<pre>후기를 남기시려면</pre>
@@ -62,70 +61,69 @@
 		<pre>후기를 남겨주세요</pre>
 		<div>
 			<label class="test_obj" >
-				<input type="checkbox" value="청결" id="tags" name="tags">
+				<input type="checkbox" value="clean" id="tags" name="tags">
 				<span># 청결</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="친절" id="tags" name="tags">
+				<input type="checkbox" value="kind" id="tags" name="tags">
 				<span># 친절</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="주차" id="tags" name="tags">
+				<input type="checkbox" value="parking" id="tags" name="tags">
 				<span># 주차</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="조리" id="tags" name="tags">
+				<input type="checkbox" value="fast" id="tags" name="tags">
 				<span># 조리</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="포장" id="tags" name="tags">
+				<input type="checkbox" value="pack" id="tags" name="tags">
 				<span># 포장</span><br>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="혼밥" id="tags" name="tags">
+				<input type="checkbox" value="alone" id="tags" name="tags">
 				<span># 혼밥</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="단체" id="tags" name="tags">
+				<input type="checkbox" value="together" id="tags" name="tags">
 				<span># 단체</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="집중" id="tags" name="tags">
+				<input type="checkbox" value="focus" id="tags" name="tags">
 				<span># 집중</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="대화" id="tags" name="tags">
+				<input type="checkbox" value="talk" id="tags" name="tags">
 				<span># 대화</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="사진" id="tags" name="tags">
+				<input type="checkbox" value="photoplace" id="tags" name="tags">
 				<span># 사진</span><br>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="맛" id="tags" name="tags">
+				<input type="checkbox" value="delicious" id="tags" name="tags">
 				<span># 맛</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="양" id="tags" name="tags">
+				<input type="checkbox" value="lot" id="tags" name="tags">
 				<span># 양</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="가성비" id="tags" name="tags">
+				<input type="checkbox" value="cost" id="tags" name="tags">
 				<span># 가성비</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="알참" id="tags" name="tags">
+				<input type="checkbox" value="portion" id="tags" name="tags">
 				<span># 알참</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="만족" id="tags" name="tags">
+				<input type="checkbox" value="satisfy" id="tags" name="tags">
 				<span># 만족</span>
 			</label>			
 		</div>
 		<input type="hidden" id="name" value="<%= session.getAttribute("id") %>" readonly><br>
-		<textarea id="myreview" maxlength="2000" placeholder="음식점에 대한 솔직한 리뷰를 작성해주세요.&#13;&#10;서로 배려하는 마음을 담아 작성해주세요."></textarea>
+		<textarea id="myreview" maxlength="1000" placeholder="음식점에 대한 솔직한 리뷰를 작성해주세요.&#13;&#10;서로 배려하는 마음을 담아 작성해주세요."></textarea>
 		<br>
-		<!-- <form id="imageUploadForm" enctype="multipart/form-data"> -->
 			<label for="fileUpload" class="custom-file-upload">
 				<i class="fa fa-cloud-upload"></i> 
 				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-images" viewBox="0 0 16 16">
@@ -134,7 +132,6 @@
 				</svg><br>이미지
 			</label>
 			<input type="file" id="fileUpload" multiple accept="image/*">
-		<!-- </form> -->
 		<img id="previewImg" width="100"><br><br>
 		<input type="button" id=btnSubmit value="리뷰등록">
 	</div>	
@@ -160,63 +157,63 @@
 	<div id="reviewModal" style="display: none;">
 		<div>
 			<label class="test_obj" >
-				<input type="checkbox" value="청결" id="tags" name="tagsU">
+				<input type="checkbox" value="clean" id="tags" name="tagsU">
 				<span># 청결</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="친절" id="tags" name="tagsU">
+				<input type="checkbox" value="kind" id="tags" name="tagsU">
 				<span># 친절</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="주차" id="tags" name="tagsU">
+				<input type="checkbox" value="parking" id="tags" name="tagsU">
 				<span># 주차</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="조리" id="tags" name="tagsU">
+				<input type="checkbox" value="fast" id="tags" name="tagsU">
 				<span># 조리</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="포장" id="tags" name="tagsU">
+				<input type="checkbox" value="pack" id="tags" name="tagsU">
 				<span># 포장</span><br>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="혼밥" id="tags" name="tagsU">
+				<input type="checkbox" value="alone" id="tags" name="tagsU">
 				<span># 혼밥</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="단체" id="tags" name="tagsU">
+				<input type="checkbox" value="together" id="tags" name="tagsU">
 				<span># 단체</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="집중" id="tags" name="tagsU">
+				<input type="checkbox" value="focus" id="tags" name="tagsU">
 				<span># 집중</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="대화" id="tags" name="tagsU">
+				<input type="checkbox" value="talk" id="tags" name="tagsU">
 				<span># 대화</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="사진" id="tags" name="tagsU">
+				<input type="checkbox" value="photoplace" id="tags" name="tagsU">
 				<span># 사진</span><br>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="맛" id="tags" name="tagsU">
+				<input type="checkbox" value="delicious" id="tags" name="tagsU">
 				<span># 맛</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="양" id="tags" name="tagsU">
+				<input type="checkbox" value="lot" id="tags" name="tagsU">
 				<span># 양</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="가성비" id="tags" name="tagsU">
+				<input type="checkbox" value="cost" id="tags" name="tagsU">
 				<span># 가성비</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="알참" id="tags" name="tagsU">
+				<input type="checkbox" value="portion" id="tags" name="tagsU">
 				<span># 알참</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="만족" id="tags" name="tagsU">
+				<input type="checkbox" value="satisfy" id="tags" name="tagsU">
 				<span># 만족</span>
 			</label>			
 		</div>
@@ -237,69 +234,69 @@
 	<div id="reviewAllModal" style="display: none;" >
 		<div>
 			<label class="test_obj" >
-				<input type="checkbox" value="청결" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="clean" id="tags" name="tagsD" readonly>
 				<span># 청결</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="친절" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="kind" id="tags" name="tagsD" readonly>
 				<span># 친절</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="주차" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="parking" id="tags" name="tagsD" readonly>
 				<span># 주차</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="조리" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="fast" id="tags" name="tagsD" readonly>
 				<span># 조리</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="포장" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="pack" id="tags" name="tagsD" readonly>
 				<span># 포장</span><br>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="혼밥" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="alone" id="tags" name="tagsD" readonly>
 				<span># 혼밥</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="단체" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="together" id="tags" name="tagsD" readonly>
 				<span># 단체</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="집중" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="focus" id="tags" name="tagsD" readonly>
 				<span># 집중</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="대화" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="talk" id="tags" name="tagsD" readonly>
 				<span># 대화</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="사진" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="photoplace" id="tags" name="tagsD" readonly>
 				<span># 사진</span><br>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="맛" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="delicious" id="tags" name="tagsD" readonly>
 				<span># 맛</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="양" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="lot" id="tags" name="tagsD" readonly>
 				<span># 양</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="가성비" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="cost" id="tags" name="tagsD" readonly>
 				<span># 가성비</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="알참" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="portion" id="tags" name="tagsD" readonly>
 				<span># 알참</span>
 			</label>
 			<label class="test_obj">
-				<input type="checkbox" value="만족" id="tags" name="tagsD" readonly>
+				<input type="checkbox" value="satisfy" id="tags" name="tagsD" readonly>
 				<span># 만족</span>
 			</label>			
 		</div><br>
 		<textarea id="myreviewD" readonly></textarea>
 		<br>
-		<img id="previewImgD" width="100"><br><br>
+		<img id="previewImgD" class="previewImgD" width="100"><br><br>
 	</div>
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

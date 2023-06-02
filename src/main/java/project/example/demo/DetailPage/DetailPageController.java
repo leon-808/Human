@@ -1,32 +1,18 @@
 package project.example.demo.DetailPage;
 
-import java.awt.PageAttributes.MediaType;
-import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.net.http.HttpHeaders;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.UUID;
 
-import org.apache.ibatis.annotations.Param;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +22,6 @@ import jakarta.servlet.http.HttpSession;
 import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
-import okio.Path;
 import project.example.demo.dto.RestaurantDTO;
 import project.example.demo.dto.ReviewDTO;
 
@@ -79,50 +64,53 @@ public class DetailPageController{
 	//리뷰쪽
 	@PostMapping("/review/insert")
 	@ResponseBody
-	public String getReviewInsert(HttpServletRequest req/*, @RequestParam("photo") MultipartFile photo*/) {
+	public String getReviewInsert(HttpServletRequest req, @RequestParam(value="photo", required = false) MultipartFile photo) {
 		HttpSession session = req.getSession();
 		String id = (String) session.getAttribute("id");
-		
+	   
 		if(id==null) {
 			return "login";
 		}
 		
 		String retval="ok";
 		
-//		String rv_photo = "";
-		
-//		if(!photo.isEmpty()) {
-//			try {
-//				String uploadPath = "img/DetailPage";
-//				// 파일 이름 설정 (고유한 파일 이름 생성 또는 원본 파일 이름 사용)
-//	            String fileName = UUID.randomUUID().toString() + "_" + photo.getOriginalFilename();
-//	            
-//	            // 파일 저장
-//	            java.nio.file.Path filePath = Paths.get(uploadPath, fileName);
-//	            BufferedSink sink = Okio.buffer(Okio.sink(filePath.toFile()));
-//	            BufferedSource source = Okio.buffer(Okio.source(photo.getInputStream()));
-//	            sink.writeAll(source);
-//	            sink.close();
-//	            source.close();
-//	            
-//	            // 저장된 파일 경로나 이름을 rv_photo 변수에 저장
-//	            rv_photo = filePath.toString();
-//			}catch(IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
+		String rv_photo = "";
 		
 		try {
 			String rv_primcode = req.getParameter("primecode");
 			String rv_id = req.getParameter("id");
-			String rv_photo = req.getParameter("photo");
 			String rv_visit = req.getParameter("visit");
-			String[] tagsString = req.getParameterValues("tags[]");
-			String tags = Arrays.toString(tagsString);			
-			tags = tags.substring(1, tags.length() - 1);
-			
+			String tagsString = req.getParameter("tags");
+			String[] tagsArray = tagsString.split(",");			
+			String tags = String.join(",", tagsArray);			
 			String rv_detail = req.getParameter("detail");
-			ddao.reviewInsert(rv_primcode,rv_id,rv_photo,rv_visit,tags,rv_detail);
+			String rv_r_name = req.getParameter("rname");
+			String rv_address = req.getParameter("raddress");
+
+			if(photo !=null &&!photo.isEmpty()) {
+				try {
+					String uplocation="src\\main\\resources\\static\\img\\DetailPage";
+					String uploadPath = "/img/DetailPage/";
+					// 파일 이름 설정 (고유한 파일 이름 생성 또는 원본 파일 이름 사용)
+		            String fileName =  rv_r_name + "_" + rv_address + "_" +id + "_" + photo.getOriginalFilename();
+						
+		            // 파일 저장
+		            java.nio.file.Path filePath = Paths.get(uplocation, fileName);
+		            BufferedSink sink = Okio.buffer(Okio.sink(filePath.toFile()));
+		            BufferedSource source = Okio.buffer(Okio.source(photo.getInputStream()));
+		            sink.writeAll(source);
+		            sink.close();
+		            source.close();
+		            
+		            // 저장된 파일 경로나 이름을 rv_photo 변수에 저장
+		            rv_photo = uploadPath+fileName;
+	        
+				}catch(Exception e) {
+				}
+			}else {
+				rv_photo="";
+			}
+			ddao.reviewInsert(rv_primcode,rv_r_name,rv_address,rv_id,rv_photo,rv_visit,tags,rv_detail);
 			
 			
 		}catch(Exception e) {
@@ -151,6 +139,8 @@ public class DetailPageController{
 			jo.put("rvdetail", vdao.get(i).getRv_detail());
 			jo.put("rvowner", vdao.get(i).getRv_owner());
 			jo.put("rvtime", vdao.get(i).getRv_time());
+			jo.put("rvrname", vdao.get(i).getRv_r_name());
+			jo.put("raddress", vdao.get(i).getRv_address());
 			jo.put("reviewcount", reviewCount);
 			
 			ja.put(jo);
@@ -161,24 +151,46 @@ public class DetailPageController{
 	
 	@PostMapping("/review/update")
 	@ResponseBody
-	public String reviewUpdate(HttpServletRequest req) {
+	public String reviewUpdate(HttpServletRequest req,
+							   @RequestParam(value="photo", required = false) MultipartFile photo) {		
 		String retval="ok";
+		String rv_photo ="";
+
 		try {
 			String rv_primcode = req.getParameter("primecode");
 			String rv_id = req.getParameter("id");
-			String rv_photo = req.getParameter("photo");
-
-			String[] tagsString = req.getParameterValues("tags[]");
-			String tags = Arrays.toString(tagsString);			
-			tags = tags.substring(1, tags.length() - 1);
-			
+			String tagsString = req.getParameter("tags");
+			String[] tagsArray = tagsString.split(",");			
+			String tags = String.join(",", tagsArray);			
 			String rv_detail = req.getParameter("detail");
-			ddao.reviewUpdate(rv_primcode,rv_id,rv_photo,tags,rv_detail);
+			String rv_r_name = req.getParameter("rname");
+			String rv_address = req.getParameter("raddress");
 			
-			
+			if(photo!=null && !photo.isEmpty()) {
+				 String uplocation = "src/main/resources/static/img/DetailPage";
+			     String uploadPath = "/img/DetailPage/";
+			     String fileName = rv_r_name + "_" + rv_address + "_" +rv_id + "_" + photo.getOriginalFilename();
+			     java.nio.file.Path filePath = Paths.get(uplocation, fileName);
+			     BufferedSink sink = Okio.buffer(Okio.sink(filePath.toFile()));
+			     BufferedSource source = Okio.buffer(Okio.source(photo.getInputStream()));
+			     sink.writeAll(source);
+			     sink.close();
+			     source.close();
+            
+	            rv_photo = uploadPath+fileName;
+			}
+			else {
+				String oldPhoto = req.getParameter("photo");
+				if(oldPhoto != null&& !oldPhoto.isEmpty()) {
+					rv_photo= oldPhoto;
+				}				
+			}			
+			ddao.reviewUpdate(rv_r_name,rv_address,rv_id,rv_photo,tags,rv_detail);			
 		}catch(Exception e) {
 			retval="fail";
+			e.printStackTrace();
 		}
+		System.out.println(retval);
 		return retval;
 	}
 	
@@ -271,15 +283,49 @@ public class DetailPageController{
 	@ResponseBody
 	public String reveiwDelete(@RequestParam("primecode") String rPrimecode,HttpServletRequest req) {
 		HttpSession session = req.getSession();
-		String id = (String) session.getAttribute("id");
+		String id = (String) session.getAttribute("id");		
+		String rv_r_name = req.getParameter("rname");
+		String rv_address = req.getParameter("raddress");
 		
 		String retval="ok";
 		try {
-			ddao.reviewDelete(rPrimecode,id);
+			ddao.reviewDelete(rv_r_name,rv_address,id);
 		}catch(Exception e) {
 			retval="fail";
 		}		
 		return retval;
+	}
+	
+	@PostMapping("/review/deleteImageFiles")
+	@ResponseBody
+	public String deleteImageFiles(HttpServletRequest req,
+								   @RequestParam("primecode") String primecode,
+								   @RequestParam(value="photo", required = false) MultipartFile photo) {
+		
+		String id = req.getParameter("id");
+		String rv_r_name = req.getParameter("rname");
+		String rv_address = req.getParameter("raddress");
+		System.out.println(photo);
+		try {
+			if(photo==null || photo.isEmpty()) {
+				return "fail";
+			}
+	        // 이미지 파일 삭제 로직 구현
+	        String uplocation = "C:\\Users\\admin\\Desktop\\Project\\src\\main\\resources\\static\\img\\DetailPage";
+	        String fileName = rv_r_name + "_" + rv_address + "_" +id + "_" + photo.getOriginalFilename(); // 삭제할 파일명 패턴
+	        java.nio.file.Path filePath = Paths.get(uplocation, fileName);
+	        try {
+	            Files.delete(filePath);
+	            return "ok";
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            // 파일 삭제 실패 처리
+	            return "fail";
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return "fail";
+	    }
 	}
 	
 	@PostMapping("/check/review")

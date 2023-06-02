@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="/css/main/main.css">
 <link rel="stylesheet" href="/css/main/dd.css">
 <title>메인 페이지</title>
-
 </head>
 <body>
 	<div id="wrapper_sidebar" class="offcanvas show offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false">

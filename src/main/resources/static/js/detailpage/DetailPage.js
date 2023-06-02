@@ -7,12 +7,14 @@ $(document)
     myreviewGet();
     checkReview();
     tagTop();
-    
+    textMax();
 })
 .on('click','#btnSubmit',reviewInsert)
 .on('click','#btnreviewup',reviewUpdate)
 .on('click','.btnEditReview',myModalOpen)
 .on('click','.btnReviewDelete',reviewDelete)
+.on('click','.reviewP',photoMax)
+.on('click','.previewImgD',photoMax)
 .on('click','#review_table tr',function(){
 	var id=$(this).find('td:eq(0)').text();
 	var ids=id.split(" | ")	
@@ -116,30 +118,38 @@ function reviewInsert(){
 	})
 	
 	var photo = $('#fileUpload')[0].files[0];
-	console.log(photo);
+	
 	
 	// FormData 객체 생성
 	var formData = new FormData();
 	formData.append('primecode', primecode);
 	formData.append('id', $('#name').val());
 	formData.append('visit', 1);
-	formData.append('photo', photo);
+	if(photo){
+		formData.append('photo',photo);
+	}else{
+		formData.append('photo','');
+	}
 	formData.append('tags', checkboxValues);
 	formData.append('detail', $('#myreview').val());
-
+	formData.append('rname',$('#rName').val());
+	formData.append('raddress',$('#rAddress').val());
+	
+	
+	/*{primecode:primecode,
+			id:$('#name').val(),
+			visit:1,
+			photo:$('#fileUpload').val(),
+			tags:checkboxValues,
+			detail:$('#myreview').val()}*/
 	
 	$.ajax({
 		url:"/review/insert",
 		type:"post",
 		dataType:"text",
-		data:{
-			primecode:primecode,
-			id:$('#name').val(),
-			visit:1,
-			photo:$('#fileUpload').val(),
-			tags:checkboxValues,
-			detail:$('#myreview').val()
-		},
+		data:formData,
+		processData: false,
+        contentType: false,
 		beforeSend:function(){
 			var content = $('#myreview').val();
 			
@@ -169,7 +179,9 @@ function reviewGet() {
         url: '/review/get',
         type: 'post',
         data: {
-            primecode: primecode
+            primecode: primecode,
+            rname:$('#rName').val(),
+            raddress:$('#rAddress').val()
         },
         dataType: 'json',
         success: function(reviewdata) {
@@ -193,13 +205,16 @@ function reviewGet() {
                 var pageReviews = reviewdata.slice(startIndex, endIndex);
 
                 for (let i = 0; i < pageReviews.length; i++) {
-					/*var imageScr = "/img/DetailPage/"+pageReviews[0].rvphoto;
-					var imageUrl = imageScr;
-					console.log(imageScr);
+					var imageScr = pageReviews[i]['rvphoto'];
 					
-					$('#reviewP1').attr('src', imageUrl);
-					$('#reviewP2').attr('src', imageUrl);*/
-					//$('#reviewP3').attr('src', pageReviews[2].rvphoto);
+					let photolist = '<tr>';
+					if(imageScr != undefined){
+						photolist += '<td><img src="'+ imageScr + '" class=reviewP></td>';
+					}					
+					photolist += '</tr>';
+					
+					$('#reviewPhotoList').append(photolist);
+					
 
 					var time = pageReviews[i]['rvtime'].split(' ')[0];
                     let str = '<tr>';
@@ -292,12 +307,6 @@ function myreviewGet(){
 	var primecode =window.location.pathname.split('/').pop();
 	var id=$('#name').val();
 	
-	if (!id) {
-        // id 값이 없을 경우 처리
-        console.log('id 값이 없습니다.');
-        return false;
-    }
-	
 	$.ajax({
 		url:'/review/getMy',
 		type:'post',
@@ -311,7 +320,7 @@ function myreviewGet(){
 				let str = '<tr>';
 			    str += '<td>' + reviewdata[i]['rvid'] + ' | ' + reviewdata[i]['rvtime'] + '</td>';
 			    str += '<tr><td><textarea rows=4 cols=50 class="reviewcontent" readonly>' + reviewdata[i]['rvdetail'] + '</textarea></td></tr>';
-			    str += '<tr>';
+			    str += '<td><img id="reviewPhoto" class="reviewPhoto" src="' + reviewdata[i]['rvphoto'] + '" ></td><tr>';
 			    str += '<td class="button-container">';
 			    str += '<button class="btnEditReview" data-review-id="' + reviewdata[i]['rvid'] + '">수정</button>';
 			    str += '<button class="btnReviewDelete" data-review-id="' + reviewdata[i]['rvid'] + '">삭제</button>';
@@ -339,11 +348,18 @@ function openModal(id){
             $('#reviewAllModal').dialog({
                 title: '리뷰',
                 modal: true,
-                width: 700,
-                
+                width: 700,                
             });
+            
             $('#myreviewD').val(review[0]['rvdetail']);
-            $('#fileUploadD').val(review[0]['rvphoto']);
+            var photoUrl = review[0]['rvphoto'];
+            if(photoUrl){
+				$('#previewImgD').attr('src', photoUrl);
+				$('#previewImgD').show();
+			}else{
+				$('#previewImgD').attr('src', '').hide();
+			}
+            console.log(photoUrl);
                         
             var tags = review[0]['tags'].split(",").map(function(tag) {
 			  return tag.trim();
@@ -376,11 +392,10 @@ function myModalOpen(){
             $('#reviewModal').dialog({
                 title: '리뷰 수정',
                 modal: true,
-                width: 700,
-                
+                width: 700,                
             });
             $('#myreviewU').val(review[0]['rvdetail']);
-            $('#previewImg1').val(review[0]['rvphoto']);
+            $('#previewImg1').attr('src', review[0]['rvphoto']);
             
             var tags = review[0]['tags'].split(",").map(function(tag) {
 			  return tag.trim();
@@ -406,17 +421,39 @@ function reviewUpdate(){
 		checkboxValues.push($(this).val());
 	})
 	
+	
+	var photo;
+	var oldImageUrl = $('#previewImg1').attr('src');
+	
+	var fileInput = $('#fileUpload1')[0];
+	if (fileInput.files.length > 0) {
+	    photo = fileInput.files[0];
+	}
+	
+	var formData = new FormData();
+	formData.append('primecode', primecode);
+	formData.append('id', $('#nameU').val());
+	formData.append('rname',$('#rName').val());
+	formData.append('raddress',$('#rAddress').val());
+	
+	if (photo) {
+	    formData.append('photo', photo);
+	} else if (oldImageUrl && oldImageUrl !== '/img/DetailPage/') {
+	    formData.append('photo', oldImageUrl);
+	}else {
+	    formData.append('photo', '');
+	}	
+	
+	formData.append('tags',checkboxValues);
+	formData.append('detail',$('#myreviewU').val());	
+
 	$.ajax({
 		url:'/review/update',
 		type:'post',
 		dataType:'text',
-		data:{
-			primecode:primecode,
-			id:$('#nameU').val(),
-			photo:$('#fileUpload1').val(),
-			tags:checkboxValues,
-			detail:$('#myreviewU').val(),
-		},
+		data:formData,
+		processData: false, // FormData 객체를 jQuery가 처리하지 않도록 설정
+		contentType: false,
 		beforeSend:function(){
 			var content = $('#myreviewU').val();
 			
@@ -440,9 +477,77 @@ function reviewUpdate(){
 	
 }
 
-function reviewDelete(){
+function reviewDelete() {
+  var primecode = window.location.pathname.split('/').pop();
+  if (confirm("정말로 지우시겠습니까?") == true) {
+    var photo = $('.reviewPhoto').attr('src');
+    console.log(photo);
+
+    function deleteImageFiles(primecode, photo, callback) {
+      var id = $('#name').val();
+		
+      var formData = new FormData();
+      formData.append('primecode', primecode);
+      formData.append('photo', photo);
+      formData.append('id', id);
+	  formData.append('rname',$('#rName').val());
+	  formData.append('raddress',$('#rAddress').val());
+
+      $.ajax({
+        url: '/review/deleteImageFiles',
+        type: 'post',
+        dataType: 'text',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+          if (data == "ok") {
+			  console.log(data);
+            callback(true);
+          } else {
+            callback(false);
+          }
+        }
+      });
+    }
+
+    deleteImageFiles(primecode, photo, function (result) {
+      $.ajax({
+        url: '/review/delete',
+        type: 'post',
+        dataType: 'text',
+        data: {
+          primecode: primecode,
+          id: $('#name').val(),
+          rname:$('#rName').val(),
+          raddress:$('#rAddress').val()
+        },
+        success: function (data) {
+          if (data == "ok") {
+            if (result) {
+              alert("삭제되셨습니다.");
+              location.reload();
+            } else {
+				console.log(result);
+              alert("이미지 파일 삭제 실패");
+            }
+          } else {
+            alert("delete 실패");
+          }
+        }
+      });
+    });
+  } else {
+    alert("삭제가 취소됬습니다.");
+  }
+}
+
+/*function reviewDelete(){
 	var primecode =window.location.pathname.split('/').pop();
 	if(confirm("정말로 지우시겠습니까?")==true){
+		var photo = $('#reviewPhoto').attr('src');
+		console.log(photo);
+		deleteImageFiles(primecode,photo,)
 		$.ajax({
 			url:'/review/delete',
 			type:'post',
@@ -452,19 +557,47 @@ function reviewDelete(){
 				id:$('#name').val()
 			},
 			success:function(data){
-				
-				if(data=="ok"){	
-					alert("삭제되셨습니다.")
-					location.reload();
-				}else{
-					alert("delete 실패");
-				}
-			}
-		})
-	} else{
-		alert("삭제가 취소됬습니다.");
-	}
+				if (data == "ok") {
+                    if (result) {
+                        alert("삭제되셨습니다.");
+                        location.reload();
+                    } else {
+                        alert("이미지 파일 삭제 실패");
+                    }
+                } else {
+                    alert("delete 실패");
+                }
+            }
+        });
+    } else {
+        alert("삭제가 취소됬습니다.");
+    }
 }
+
+function deleteImageFiles(primecode, photo,callback){
+	var id=$('#name').val();
+	
+	var formData = new FormData();
+	formData.append('primecode',primecode);
+	formData.append('photo',photo);
+	formData.append('id',id);
+	
+	$.ajax({
+		url:'/review/deleteImageFiles',
+		type:'post',
+		dataType:'text',
+		data:formData,
+		processData: false, // 데이터를 처리하지 않도록 설정
+    	contentType: false, // 기본 컨텐트 타입 설정 제거
+		success:function(data){
+			if(data == "ok"){
+				callback(true);
+			}else{
+				callback(false);
+			}
+		}
+	})
+}*/
 
 function checkReview(){
 	var primecode =window.location.pathname.split('/').pop();
@@ -530,35 +663,35 @@ function tagTop(){
                 var values = value.split(',').map(tag => tag.trim());
                 
                 for (let j = 0; j < values.length; j++) {
-				   if(values[j] == "청결"){
+				   if(values[j] == "clean"){
 					   categoryCounts.cleanlinessC++;					   
-				   }else if(values[j] == "친절"){
+				   }else if(values[j] == "kind"){
 					   categoryCounts.kindnessC++;
-				   }else if(values[j] == "주차"){
+				   }else if(values[j] == "parking"){
 					   categoryCounts.parkingC++;
-				   }else if(values[j] == "조리"){
+				   }else if(values[j] == "fast"){
 					   categoryCounts.cookingC++;
-				   }else if(values[j] == "포장"){
+				   }else if(values[j] == "pack"){
 					   categoryCounts.packagingC++;
-				   }else if(values[j] == "혼밥"){
+				   }else if(values[j] == "alone"){
 					   categoryCounts.aloneC++;
-				   }else if(values[j] == "단체"){
+				   }else if(values[j] == "together"){
 					   categoryCounts.groupC++;
-				   }else if(values[j] == "집중"){
+				   }else if(values[j] == "focus"){
 					   categoryCounts.focusC++;
-				   }else if(values[j] == "대화"){
+				   }else if(values[j] == "talk"){
 					   categoryCounts.conversationC++;
-				   }else if(values[j] == "사진"){
+				   }else if(values[j] == "photoplace"){
 					   categoryCounts.photoC++;
-				   }else if(values[j] == "맛"){
+				   }else if(values[j] == "delicious"){
 					   categoryCounts.tasteC++;
-				   }else if(values[j] == "양"){
+				   }else if(values[j] == "lot"){
 					   categoryCounts.quantityC++;
-				   }else if(values[j] == "가성비"){
+				   }else if(values[j] == "cost"){
 					   categoryCounts.costC++;
-				   }else if(values[j] == "알참"){
+				   }else if(values[j] == "portion"){
 					   categoryCounts.niceC++;
-				   }else if(values[j] == "만족"){
+				   }else if(values[j] == "satisfy"){
 					   categoryCounts.satisfactionC++;
 				   }
 					
@@ -634,4 +767,24 @@ function tagTop(){
 		}
         
 	})
+}
+
+function textMax(){
+	$('#myreview').keyup(function(){
+		if($(this).val().length>1000){
+			alert('내용이 초과됬습니다.');
+			$(this).val($(this).val().substr(0, $(this).attr('maxlength')));
+		}
+	})
+}
+
+function photoMax(){
+	const src = $(this).attr("src");
+	const image_Max = window.open("", '_blank',"width=500, height=500");
+	image_Max.document.write(`
+		<html><head></head>
+		<body>
+			<img src='${src}' style="width:100%; height:100%">
+		</body>
+	`)
 }
