@@ -14,6 +14,10 @@
 	<div id="restaurantImg" class="restaurantImg">
 		<img id="rImg">
 	</div>
+	<div>
+		<input type="hidden" id="rPrimecode" class="rPrimecode">
+		<input type="hidden" id="rOwner" class="rOwner">
+	</div>
 	<div id="restaurantName" class="restaurantName">
 		<pre><input type="text" id="rName" class="inputRDetail" readonly></pre>
 		<pre><input type='text' id='rCategory' class='inputDetail' readonly></pre>
@@ -48,10 +52,10 @@
 		<input type="text" id="tagTop4" readonly><br>
 		<input type="text" id="tagTop5" readonly><br>		
 	</div>
-	<div id='reviewPhoto'>
+	<div id='reviewPhoto' >
 		<pre>사진</pre>
-		<table id="reviewPhotoList" class="reviewPhotoList">
-		</table>
+		<div id="reviewPhotoList" class="reviewPhotoList">
+		</div>
 	</div>
 	<div id="logincheckReviw">
 		<pre>후기를 남기시려면</pre>
@@ -297,6 +301,11 @@
 		<textarea id="myreviewD" readonly></textarea>
 		<br>
 		<img id="previewImgD" class="previewImgD" width="100"><br><br>
+	</div>
+	<div id="ownerReview" style="display: none;">
+		<input type="text" id="ownerId" value="<%= session.getAttribute("id") %>"readonly><br>
+		<textarea id="ownerRC"></textarea>
+		<button id="btnOwnerR">답글작성</button>
 	</div>
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
