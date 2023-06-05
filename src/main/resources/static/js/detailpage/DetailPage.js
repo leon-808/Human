@@ -3,7 +3,6 @@ $(document)
     loadFoodDetails();
     uploadimage();
     uploadimage1();
-    reviewGet();
     reviewGetImage();
     myreviewGet();
     checkReview();
@@ -76,7 +75,15 @@ function loadFoodDetails() {
             $('#rMenu').val(menuConcatenated);      
             $('#rTage').val(restaurant.goodPoints);
 
-           checkOwner();
+           checkOwner(function(check){
+			   if(check=="사장"){
+				   $('#review').hide();
+				   OwnerReviewList();
+			   }else{
+				   reviewGet();
+			   }
+		   });
+           
         },
         error: function() {
             console.log('음식상세정보를 불러오지 못했습니다.');
@@ -271,7 +278,7 @@ function reviewGet() {
     var primecode =$('#rPrimecode').val();
 	var rname = decodeURIComponent(window.location.pathname.split('/')[3]);
 	var address = decodeURIComponent(window.location.pathname.split('/').pop());
-
+	
     $.ajax({
         url: '/review/get',
         type: 'post',
@@ -310,8 +317,8 @@ function reviewGet() {
                     str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + pageReviews[i]['rvdetail'] + '</textarea></td></tr>';
                     str += '<tr><td height="10"></td></tr>'
                     if(content){
-						str += '<tr><td><span>사장님 답글</span></td></tr>';										
-						str += '<tr><td class="ownerc"><textarea readonly>'+content+'</textarea></td>'
+						str += '<tr><td><span>사장님 답글</span></td><td class="ownerc" ><textarea class="ownerreviews" readonly> ⤷ '+content+'</textarea></td></tr>'
+
 					}  
                     str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';                                                      				
                     reviewTable.append(str);
@@ -730,11 +737,9 @@ function checkReview(){
 }
 
 //사장인지 체크하는 함수 및 댓글 달게 하는 함수
-function checkOwner(){
+function checkOwner(callback){
 	var primecode = $('#rPrimecode').val();
 	var id = $('#name').val();	
-	var rname = decodeURIComponent(window.location.pathname.split('/')[3]);
-	var address = decodeURIComponent(window.location.pathname.split('/').pop());
 	
 	$.ajax({
 		url:"/check/owner",
@@ -745,93 +750,96 @@ function checkOwner(){
 		},
 		dataType:"text",
 		success:function(check){
-			if(check=="사장"){
-				$('#review').hide();
-				
-				 $.ajax({
-				        url: '/review/get',
-				        type: 'post',
-				        data: {
-				            primecode: primecode,
-				            rname: rname,
-				            address: address
-				        },
-				        dataType: 'json',
-				        success: function (reviewdata) {
-							$('#rReviewN').val(reviewdata.length);
-							
-				            var reviewTable = $('#review_table');
-				            reviewTable.empty(); // 데이터를 추가하기 전에 테이블을 비워줍니다.
-				
-				            var reviewsPerPage = 5; // 페이지 당 표시되는 후기 수
-				            var totalPages = Math.ceil(reviewdata.length / reviewsPerPage); // 총 페이지 수를 계산합니다.
-				
-				            if (totalPages > 1) {
-				                var currentPage = 1; // 초기 페이지를 설정합니다.
-				                displayReviews(currentPage); // 초기 페이지에 해당하는 후기를 표시합니다.
-				
-				                // 주어진 페이지에 해당하는 후기를 표시하는 함수입니다.
-				                function displayReviews(page) {
-				                    reviewTable.empty(); // 데이터를 추가하기 전에 테이블을 비워줍니다.
-				
-				                    var startIndex = (page - 1) * reviewsPerPage;
-				                    var endIndex = startIndex + reviewsPerPage;
-				                    var pageReviews = reviewdata.slice(startIndex, endIndex);
-				
-				                    for (let i = 0; i < pageReviews.length; i++) {
-				                        var time = pageReviews[i]['rvtime'].split(' ')[0];
-				                        var content = pageReviews[i]['rvowner']
-				                        let str = '<tr>';
-				                        str += '<td width="300" class="customid" data-rvid="'+pageReviews[i]['rvid']+'">' + pageReviews[i]['rvid'] + " | " + time + '</td>';
-				                        str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + pageReviews[i]['rvdetail'] + '</textarea></td></tr>';
-				                        str += '<tr><td height="10"></td></tr>'
-				                        if(check == '사장'){
-											if(!content){
-				                            	str += '<tr><td><textarea maxlength="1000" placeholder="답글을 달아주세요" rows=4 cols=30 class="ownercontent"></textarea></td></tr>';
-				                            	str += '<td><<button id="btnowner">답글달기</button></td></tr>'
-				                            }
-				                        }
-				                        if(content){
-											str += '<tr><td><textarea maxlength="1000" class="ownercontent" onclick="event.stopPropagation()">'+content+'</textarea></td></tr>'
-											str += '<td><button id="btnownerup">답글수정</button></td>'
-										}
-				                        str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';						                        										
-				                        reviewTable.append(str);
-				                    }
-				                }
-				                createPagination(totalPages, currentPage, displayReviews);
-				            } else if(totalPages == 0){
-				                reviewTable.append('<div class="noreview"> 아직 리뷰가 없습니다. 첫 리뷰를 써보세요!</div>');
-				            } else {
-				                // 리뷰가 5개 미만인 경우에는 페이지 네이션을 생성하지 않습니다.
-				                for (let i = 0; i < reviewdata.length; i++) {
-				                    var time = reviewdata[i]['rvtime'].split(' ')[0];
-				                    var content = reviewdata[i]['rvowner']
-				                    let str = '<tr>';
-									str += '<td width="300" class="customid" data-rvid="'+reviewdata[i]['rvid']+'">' + reviewdata[i]['rvid'] + " | " + time + '</td>';				                    str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + reviewdata[i]['rvdetail'] + '</textarea></td></tr>';
-				                    str += '<tr><td height="10"></td></tr>'
-				                    if(check == '사장'){
-										if(!content){
-											str += '<tr><td><textarea maxlength="1000" placeholder="답글을 달아주세요" rows=4 cols=30 class="ownercontent"></textarea></td>';
-											str += '<td><button id="btnowner">답글달기</button></td></tr>'
-										}										
-				                    }
-				                    if(content){										
-											str += '<tr><td><textarea class="ownercontent" onclick="event.stopPropagation()">'+content+'</textarea></td>'
-											str += '<td><button id="btnownerup">답글수정</button></td>'
-									}
-				                    str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';								                    
-									
-				                    reviewTable.append(str);				                    				                    
-				                }
-				            }
-				            
-				            
-				        }
-				    })
-			}
+			if(typeof callback ==="function"){
+				callback(check);
+			}			
 		}
 	})
+}
+
+//사장일때 나오는 리뷰 목록함수
+function OwnerReviewList(){
+	var primecode = $('#rPrimecode').val();
+	var rname = decodeURIComponent(window.location.pathname.split('/')[3]);
+	var address = decodeURIComponent(window.location.pathname.split('/').pop());
+
+	$.ajax({
+        url: '/review/get',
+        type: 'post',
+        data: {
+            primecode: primecode,
+            rname: rname,
+            address: address
+        },
+        dataType: 'json',
+        success: function (reviewdata) {
+			$('#rReviewN').val(reviewdata.length);
+			
+            var reviewTable = $('#review_table');
+            reviewTable.empty(); // 데이터를 추가하기 전에 테이블을 비워줍니다.
+
+            var reviewsPerPage = 5; // 페이지 당 표시되는 후기 수
+            var totalPages = Math.ceil(reviewdata.length / reviewsPerPage); // 총 페이지 수를 계산합니다.
+
+            if (totalPages > 1) {
+                var currentPage = 1; // 초기 페이지를 설정합니다.
+                displayReviews(currentPage); // 초기 페이지에 해당하는 후기를 표시합니다.
+
+                // 주어진 페이지에 해당하는 후기를 표시하는 함수입니다.
+                function displayReviews(page) {
+                    reviewTable.empty(); // 데이터를 추가하기 전에 테이블을 비워줍니다.
+
+                    var startIndex = (page - 1) * reviewsPerPage;
+                    var endIndex = startIndex + reviewsPerPage;
+                    var pageReviews = reviewdata.slice(startIndex, endIndex);
+
+                    for (let i = 0; i < pageReviews.length; i++) {
+                        var time = pageReviews[i]['rvtime'].split(' ')[0];
+                        var content = pageReviews[i]['rvowner']
+                        let str = '<tr>';
+                        str += '<td width="300" class="customid" data-rvid="'+pageReviews[i]['rvid']+'">' + pageReviews[i]['rvid'] + " | " + time + '</td>';
+                        str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + pageReviews[i]['rvdetail'] + '</textarea></td></tr>';
+                        str += '<tr><td height="10"></td></tr>'
+                        
+						if(!content){
+                        	str += '<tr><td><textarea maxlength="1000" placeholder="답글을 달아주세요" rows=4 cols=30 class="ownercontent"></textarea></td>';
+                        	str += '<td><button id="btnowner">답글달기</button></td></tr>'
+                        }else if(content){
+							str += '<tr><td><textarea maxlength="1000" class="ownercontent" onclick="event.stopPropagation()">'+content+'</textarea></td>'
+							str += '<td><button id="btnownerup">답글수정</button></td>'
+						}
+                        str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';						                        										
+                        reviewTable.append(str);
+                    }
+                }
+                createPagination(totalPages, currentPage, displayReviews);
+            } else if(totalPages == 0){
+                reviewTable.append('<div class="noreview"> 아직 리뷰가 없습니다. 첫 리뷰를 써보세요!</div>');
+            } else {
+                // 리뷰가 5개 미만인 경우에는 페이지 네이션을 생성하지 않습니다.
+                for (let i = 0; i < reviewdata.length; i++) {
+                    var time = reviewdata[i]['rvtime'].split(' ')[0];
+                    var content = reviewdata[i]['rvowner']
+                    let str = '<tr>';
+					str += '<td width="300" class="customid" data-rvid="'+reviewdata[i]['rvid']+'">' + reviewdata[i]['rvid'] + " | " + time + '</td>';				                    str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + reviewdata[i]['rvdetail'] + '</textarea></td></tr>';
+                    str += '<tr><td height="10"></td></tr>'
+                   
+					if(!content){
+						str += '<tr><td><textarea maxlength="1000" placeholder="답글을 달아주세요" rows=4 cols=30 class="ownercontent"></textarea></td>';
+						str += '<td><button id="btnowner">답글달기</button></td></tr>'
+					}else if(content){										
+						str += '<tr><td><textarea class="ownercontent" onclick="event.stopPropagation()">'+content+'</textarea></td>'
+						str += '<td><button id="btnownerup">답글수정</button></td>'
+					}
+                    str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';								                    
+					
+                    reviewTable.append(str);				                    				                    
+                }
+            }
+            
+            
+        }
+    })
 }
 
 //사장 리뷰 insert,update 함수
@@ -848,7 +856,7 @@ function ownerReview(ownerContent,id,primecode){
 		success:function(data){
 			if(data=="ok"){
 				alert("답글이 작성되었습니다.")
-				return false;
+				location.reload();
 			}else{
 				alert("리뷰 안들어감");
 				return false;

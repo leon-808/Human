@@ -169,7 +169,7 @@ public class DetailPageController {
 			String rv_detail = req.getParameter("detail");
 			String rv_r_name = req.getParameter("rname");
 			String rv_address = req.getParameter("raddress");
-
+			
 			if (photo != null && !photo.isEmpty()) {
 				String uplocation = "src/main/resources/static/img/DetailPage";
 				String uploadPath = "/img/DetailPage/";
@@ -180,14 +180,7 @@ public class DetailPageController {
 				sink.writeAll(source);
 				sink.close();
 				source.close();
-
-				if (oldPhoto != null && !oldPhoto.isEmpty()) {
-					String oldImagePath = "C:\\Users\\admin\\Desktop\\Project\\src\\main\\resources\\static";
-			        String oldPhotos = "src/main/resources/static/"+oldPhoto;
-					Path oldPath = Paths.get(oldImagePath, oldPhotos);
-			        Files.deleteIfExists(oldPath);
-				}
-				System.out.println(oldPhoto);
+				
 				rv_photo = uploadPath + fileName;
 				
 			} else {				
