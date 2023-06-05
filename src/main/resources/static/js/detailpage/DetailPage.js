@@ -17,6 +17,7 @@ $(document)
 .on('click','.reviewP',photoMax)
 .on('click','.reviewPhoto',photoMax)
 .on('click','.previewImgD',photoMax)
+.on('click','.imgFileD',popupImgFildRm)
 .on('click','#review_table tr',function(){
 	var id=$(this).find('td:eq(0)').text();
 	var ids=id.split(" | ")	
@@ -43,6 +44,7 @@ $(document)
     var primecode =$('#rPrimecode').val();
     ownerReview(ownerContent,id,primecode);    
 })
+
 
 //음식점 정보 가져오는 함수
 function loadFoodDetails() {
@@ -92,8 +94,8 @@ function uploadimage(){
 	
 	fileReader.readAsDataURL(selectedFile[0]);	
 	
-		fileReader.onload = function () {
-	  		document.getElementById("previewImg").src = fileReader.result;
+		fileReader.onload = function (e) {
+	  		$("#preview").html(['<img class="thumb" src="', e.target.result, '" title="', escape(e.name), '"/>'].join(''))
 		};
 	
 	};
@@ -119,6 +121,12 @@ function uploadimage1(){
 	
 	fileInput.addEventListener("change", handleFiles);
 	$('input[tpye=radio]').prop('checked', false);
+}
+
+//후기 들어가기 전에 이미지 삭제
+function popupImgFildRm(){
+	$('#fileUpload').val("");
+	$('#preview').empty();
 }
 
 //리뷰 clear 함수

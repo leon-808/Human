@@ -1,5 +1,6 @@
 package project.example.demo.DetailPage;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -159,6 +160,7 @@ public class DetailPageController {
 		String rv_photo = "";
 
 		try {
+			String oldPhoto = req.getParameter("photo");			
 			String rv_primcode = req.getParameter("primecode");
 			String rv_id = req.getParameter("id");
 			String tagsString = req.getParameter("tags");
@@ -179,9 +181,16 @@ public class DetailPageController {
 				sink.close();
 				source.close();
 
+				if (oldPhoto != null && !oldPhoto.isEmpty()) {
+					String oldImagePath = "C:\\Users\\admin\\Desktop\\Project\\src\\main\\resources\\static";
+			        String oldPhotos = "src/main/resources/static/"+oldPhoto;
+					Path oldPath = Paths.get(oldImagePath, oldPhotos);
+			        Files.deleteIfExists(oldPath);
+				}
+				System.out.println(oldPhoto);
 				rv_photo = uploadPath + fileName;
-			} else {
-				String oldPhoto = req.getParameter("photo");
+				
+			} else {				
 				if (oldPhoto != null && !oldPhoto.isEmpty()) {
 					rv_photo = oldPhoto;
 				}
