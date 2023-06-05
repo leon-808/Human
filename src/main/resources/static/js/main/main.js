@@ -67,6 +67,16 @@ $("input:radio[name='fc']").change(function() {
 	})
 })
 
+$("input:radio[name='close_or_eval']").change(function() {
+	$("input:radio[name='close_or_eval']").each(function() {
+		let id = $(this).attr("id");
+		if ($(this).prop("checked")) {
+			$(`label[for='${id}']`).addClass("active");
+		}
+		else $(`label[for='${id}']`).removeClass("active");
+	})
+})
+
 $("input:radio[name='orderby']").change(function() {
 	$("input[name='orderby']").each(function() {
 		let id = $(this).attr("id");
@@ -138,9 +148,9 @@ function createUI(isLogin) {
 
 
 
-let mapOption, map, lat, lng, selfOverlay = 0;
+let mapOption, map, lat, lng, selfOverlay;
 let zoomControl = new kakao.maps.ZoomControl();
-let selfLat, selfLng = 0;
+let selfLat, selfLng;
 
 function geoPosition() {
 	lat = 36.81044107630051,
@@ -154,7 +164,7 @@ function geoPosition() {
 	imageSize = new kakao.maps.Size(30, 30),
 	imageOption = {offset: new kakao.maps.Point(20, 20)},
 	markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
-	selfMarker, selfContent = 0;
+	selfMarker, selfContent;
 				
 	selfMarker = new kakao.maps.Marker({
 		position: new kakao.maps.LatLng(lat, lng),
@@ -423,7 +433,7 @@ function addCeoInput() {
 			<div>
 				<label for="input_bnd">사업자 증빙 서류</label>
  				<input class="form-control" type="file" name="upload_bnd" id="input_bnd" 
- 				accept=".bmp .jpg, .jpeg, .gif, .png, .webp, .webm .jfif .pdf">
+ 				accept=".bmp, .jpg, .jpeg, .gif, .png, .webp, .webm, .jfif, .pdf">
 			</div>`)
 		$(".alm_append").append(html);
 		$(this).html("사장님 아니에요");
@@ -570,7 +580,7 @@ function suggestALM() {
 let dt_placename = "";
 
 function suggestDT() {
-	if (loginFlag == 1) {
+	if (loginFlag == 1 || loginFlag == 2) {
 		let position = selectedKeywordMarker.getPosition();
 		dt_placename = $(".dt_placename").text();
 		closeOverlay();
@@ -605,35 +615,29 @@ function manageLoginButton() {
 
 function search() {
 	let sf_count = 0;
-	let query, fc, ob = null;
+	let query, fc, ce, ob;
 	let tags = [];
 	
-	$("input:radio[name='fc']").each(function() {
-		if ($(this).prop("checked") == true) {
-			fc = $(this).val();
-			sf_count++; return false;
-		}
-	});
-	$("input:radio[name='orderby']").each(function() {
-		if ($(this).prop("checked") == true) {
-			ob = $(this).val();
-			sf_count++; return false;
-		}
-	});
+	fc = $("input:radio[name='fc']:checked").val();
+	if (fc != null) sf_count++; 
+	ce = $("input:radio[name='close_or_eval']:checked").val();
+	ob = $("input:radio[name='orderby']:checked").val();
+	if (ob != null) sf_count++;
+	
 	$("input:checkbox[name='tags']").each(function() {
 		if ($(this).prop("checked") == true) {
 			tags.push($(this).val());
 			sf_count++;
 		}
 	});
-		
+	
 	let position = map.getCenter();
 	let lat = position.getLat(),
 	lng = position.getLng();
-	
+		
 	wholeMarkersNull();
 	
-	if (sf_count == 0) {
+	if (sf_count == 0 || loginFlag == 0) {
 		query = encodeURI($("#search_input").val());
 		let searchURL =
 		`https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy&query=${query}&x=${lng}&y=${lat}`;
@@ -646,7 +650,7 @@ function search() {
 			dataType: "json",
 			beforeSend: function() {
 				if (query == "") {
-					alert("검색어를 입력해주세요");
+					alert("검색어 또는 검색 조건을 하나라도 활성화해주세요");
 					return false;
 				}
 			},
@@ -675,15 +679,24 @@ function search() {
 			data: {
 				query: query,
 				fc: fc,
+				ce: ce,
 				ob: ob,
-				tags: tags
+				tags: tags,
+				lat: lat,
+				lng: lng
 			},
 			dataType: "json",
+			beforeSend: function() {
+				if (ce == "eval" && tags.length == 0) {
+					alert("평점순 정렬을 위해선 최소한 하나 이상의 태그를 선택해주세요");
+					return false;
+				}
+			},
 			success: function(data) {
 				
 			}
 		})
-	}	 
+	}
 }
 
 function rectSearch() {
@@ -717,14 +730,15 @@ function rectSearch() {
 	
 	let tempBoundary = swLng + swLat + neLng + neLat,
 	boundary = encodeURI(tempBoundary);	
-	
+		
 	wholeMarkersNull();
 			
-	if (sf_category == "" && sf_count == 0) {
+	if (sf_count == 0) {
 		let query = encodeURI($("#search_input").val());
 		let searchURL =
 		`https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy
 		&query=${query}&x=${lng}&y=${lat}&rect=${boundary}`;
+		console.log(searchURL);
 		$.ajax({
 			url: searchURL,
 			type: "get",
@@ -1063,11 +1077,11 @@ function showMyData() {
 		</div>
 		<div class="profil_subarea">
 			<button type="button" id="btn-backMain">뒤로</button>
-			<button type="button" class="btn-userSetting pas"
+			<button type="button" class="btn-userSetting active"
 				id="btn-pasSetting">선호도 관리</button>
-			<button type="button" class="btn-userSetting review"
+			<button type="button" class="btn-userSetting"
 				id="btn-reviewSetting">리뷰 관리</button>
-			<button type="button" class="btn-userSetting store"
+			<button type="button" class="btn-userSetting"
 				id="btn-storeSetting">업체 관리</button>
 		</div>`);
 		$("#food_categories").css("display", "none");
@@ -1078,23 +1092,26 @@ function showMyData() {
 	}
 	else alert("로그인이 필요한 페이지입니다.");
 }
+
 function checkTag() {
-	var orderby = localStorage.getItem("orderby");
-
-	if (orderby !== "" || null) {
-		$("input[type='radio'][value='" + orderby + "']").prop("checked", true);
-		var checkedRadio = $("input[type='radio']:checked");
-
+	let ce = localStorage.getItem("close_or_eval"),
+	orderby = localStorage.getItem("orderby");
+	
+	if (ce != null && orderby != null) {
+		$(`input:radio[value='${ce}']`).prop("checked", true);
+		$(`input:radio[value='${orderby}']`).prop("checked", true);
+		
+		let checkedRadio = $("input[type='radio']:checked");
 		if (checkedRadio.length > 0) {
-			var checkedRadioId = checkedRadio.attr("id");
+			let checkedRadioId = checkedRadio.attr("id");
 			$(`label[for='${checkedRadioId}']`).addClass("active");
 		}
-		var storedValues = localStorage.getItem("tags");
-
+		
+		let storedValues = localStorage.getItem("tags");
 		if (storedValues) {
 			checkedValues = JSON.parse(storedValues);
 			$("input:checkbox[name='tags']").each(function() {
-				var value = $(this).val();
+				let value = $(this).val();
 				if (checkedValues.includes(value)) {
 					$(this).prop("checked", true);
 					$(`label[for='${this.id}']`).addClass("active");
@@ -1109,7 +1126,7 @@ function gotoMain() {
 	$("#btn-saveMyTag").css("display", "none");
 	$(".top_sidebar").empty();
 	
-	let manageButton = "" ;
+	let manageButton = "";
 	if (loginFlag == 2) manageButton = 
 	`<button id='button_manage' class='btn btn-dark' data-bs-toggle='modal' 
 	data-bs-target='#manageModal'>관리</button>`
@@ -1202,42 +1219,35 @@ function showTagSetting() {
 	$("#btn-saveMyTag").css("display", "block");
 	$(".div_reviewList").css("display", "none");
 	$(".div_storeList").css("display", "none");
-	$("#btn-pasSetting").css("color", "white");
-	$("#btn-pasSetting").css("background-color", "#15571e");
-	$("#btn-reviewSetting").css("color", "white");
-	$("#btn-reviewSetting").css("background-color", "#06a64f");
-	$("#btn-storeSetting").css("color", "white");
-	$("#btn-storeSetting").css("background-color", "#06a64f");
+	$("#btn-pasSetting").addClass("active");
+	$("#btn-reviewSetting").removeClass("active");
+	$("#btn-storeSetting").removeClass("active");
 }
 function showReviewSetting(){
 	$(".sf_filter").css("display", "none");
 	$("#btn-saveMyTag").css("display", "none");
 	$(".div_reviewList").css("display", "block");
 	$(".div_storeList").css("display", "none");
-	$("#btn-pasSetting").css("color", "white");
-	$("#btn-pasSetting").css("background-color", "#06a64f");
-	$("#btn-reviewSetting").css("color", "white");
-	$("#btn-reviewSetting").css("background-color", "#15571e");
-	$("#btn-storeSetting").css("color", "white");
-	$("#btn-storeSetting").css("background-color", "#06a64f");
+	$("#btn-pasSetting").removeClass("active");
+	$("#btn-reviewSetting").addClass("active");
+	$("#btn-storeSetting").removeClass("active");
 }
 function showStoreSetting(){
 	$(".sf_filter").css("display", "none");
 	$("#btn-saveMyTag").css("display", "none");
 	$(".div_reviewList").css("display", "none");
 	$(".div_storeList").css("display", "block");
-	$("#btn-pasSetting").css("color", "white");
-	$("#btn-pasSetting").css("background-color", "#06a64f");
-	$("#btn-reviewSetting").css("color", "white");
-	$("#btn-reviewSetting").css("background-color", "#06a64f");
-	$("#btn-storeSetting").css("color", "white");
-	$("#btn-storeSetting").css("background-color", "#15571e");
+	$("#btn-pasSetting").removeClass("active");
+	$("#btn-reviewSetting").removeClass("active");
+	$("#btn-storeSetting").addClass("active");
 }
 
 
 function saveTag() {
-	checkedValues = [];
+	let checkedValues = [];
+	let close_or_eval = $("input:radio[name='close_or_eval']:checked").val(),
 	orderby = $("input:radio[name='orderby']:checked").val();
+	localStorage.setItem("close_or_eval", close_or_eval);
 	localStorage.setItem("orderby", orderby);
 	$("input:checkbox[name='tags']").each(function() {
 		if ($(this).prop("checked") == true) {
