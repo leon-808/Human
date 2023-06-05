@@ -69,10 +69,15 @@ function loadFoodDetails() {
             menuConcatenated="";
             for(var i=0;i<ar.length;i++){
 				var menuPart = ar[i].trim();
-				menuConcatenated += menuPart + "\n";				
+				var menuParts = menuPart.split('-');
+                var menuName = menuParts[0].trim();
+                var menuPrice = menuParts[1].trim();
+                menuConcatenated += menuName + " - " + menuPrice + "\n\n";			
 			}
 			
-            $('#rMenu').val(menuConcatenated);      
+            $('#rMenu').text(menuConcatenated);
+            var numLines = menuConcatenated.split('\n').length;
+            $('#rMenu').attr('rows', numLines);      
             $('#rTage').val(restaurant.goodPoints);
 
            checkOwner(function(check){
