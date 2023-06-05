@@ -70,7 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	<update id="ownerInset">
 		update review
-		set owner_comment=#{param3}
+		set rv_owner=#{param3}
 		where rv_primecode = #{param1} 
 		and rv_id=#{param2}
 	</update>

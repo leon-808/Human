@@ -14,5 +14,5 @@ public class ReviewDTO {
 	String rv_detail;
 	String rv_owner;
 	String rv_time;
-	String owner_comment;
+	String rv_owner_c;
 }

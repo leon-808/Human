@@ -41,8 +41,7 @@ $(document)
 	var ownerContent = $(this).closest('tr').find('.ownercontent').val();    
     var id = $(this).closest('tr').prev().prev().find('.customid').data('rvid');   
     var primecode =$('#rPrimecode').val();
-    ownerReview(ownerContent,id,primecode);
-    
+    ownerReview(ownerContent,id,primecode);    
 })
 
 //음식점 정보 가져오는 함수
@@ -212,7 +211,7 @@ function pagination(totalPages, currentPage, displayReviews){
     }).append(
         $('<a>', {
             href: '#',
-            text: '이전',
+            text: '<',
             class: currentPage === 1 ? 'disabled' : '',
             click: function () {
                 if (currentPage > 1) {
@@ -229,7 +228,7 @@ function pagination(totalPages, currentPage, displayReviews){
     }).append(
         $('<a>', {
             href: '#',
-            text: '다음',
+            text: '>',
             class: currentPage === totalPages ? 'disabled' : '',
             click: function () {
                 if (currentPage < totalPages) {
@@ -297,13 +296,14 @@ function reviewGet() {
 
                 for (let i = 0; i < pageReviews.length; i++) {
                     var time = pageReviews[i]['rvtime'].split(' ')[0];
-                    var content = pageReviews[i]['ownercomment']
+                    var content = pageReviews[i]['rvowner']
                     let str = '<tr>';
                     str += '<td width="300">' + pageReviews[i]['rvid'] + " | " + time + '</td>';
                     str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + pageReviews[i]['rvdetail'] + '</textarea></td></tr>';
                     str += '<tr><td height="10"></td></tr>'
-                    if(content){										
-						str += '<tr><td colspan=2 class="ownerc"><textarea readonly>'+content+'</textarea></td>'
+                    if(content){
+						str += '<tr><td><span>사장님 답글</span></td></tr>';										
+						str += '<tr><td class="ownerc"><textarea readonly>'+content+'</textarea></td>'
 					}  
                     str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';                                                      				
                     reviewTable.append(str);
@@ -316,14 +316,14 @@ function reviewGet() {
             // 리뷰가 5개 미만인 경우에는 페이지 네이션을 생성하지 않습니다.
             for (let i = 0; i < reviewdata.length; i++) {
                 var time = reviewdata[i]['rvtime'].split(' ')[0];
-                var content = reviewdata[i]['ownercomment'];
+                var content = reviewdata[i]['rvowner'];
                 
                 let str = '<tr>';
                 str += '<td width="300">' + reviewdata[i]['rvid'] + " | " + time + '</td>';
                 str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + reviewdata[i]['rvdetail'] + '</textarea></td></tr>';
                 str += '<tr><td height="10"></td></tr>'
-                if(content){										
-					str += '<tr><td colspan=2 class="ownerc"><textarea readonly>⤷ '+content+'</textarea></td>'
+                if(content){								
+					str += '<tr><td><span>사장님 답글</span></td><td class="ownerc" ><textarea class="ownerreviews" readonly> ⤷ '+content+'</textarea></td></tr>'
 				}
                 str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';				 
                 reviewTable.append(str);
@@ -362,7 +362,7 @@ function createPagination(totalPages, currentPage, displayReviews) {
     }).append(
         $('<a>', {
             href: '#',
-            text: '이전',
+            text: '<',
             class: currentPage === 1 ? 'disabled' : '',
             click: function () {
                 if (currentPage > 1) {
@@ -379,7 +379,7 @@ function createPagination(totalPages, currentPage, displayReviews) {
     }).append(
         $('<a>', {
             href: '#',
-            text: '다음',
+            text: '>',
             class: currentPage === totalPages ? 'disabled' : '',
             click: function () {
                 if (currentPage < totalPages) {
@@ -721,7 +721,7 @@ function checkReview(){
 	})	
 }
 
-//사장인지 체크하는 함수
+//사장인지 체크하는 함수 및 댓글 달게 하는 함수
 function checkOwner(){
 	var primecode = $('#rPrimecode').val();
 	var id = $('#name').val();	
@@ -772,7 +772,7 @@ function checkOwner(){
 				
 				                    for (let i = 0; i < pageReviews.length; i++) {
 				                        var time = pageReviews[i]['rvtime'].split(' ')[0];
-				                        var content = pageReviews[i]['ownercomment']
+				                        var content = pageReviews[i]['rvowner']
 				                        let str = '<tr>';
 				                        str += '<td width="300" class="customid" data-rvid="'+pageReviews[i]['rvid']+'">' + pageReviews[i]['rvid'] + " | " + time + '</td>';
 				                        str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + pageReviews[i]['rvdetail'] + '</textarea></td></tr>';
@@ -798,7 +798,7 @@ function checkOwner(){
 				                // 리뷰가 5개 미만인 경우에는 페이지 네이션을 생성하지 않습니다.
 				                for (let i = 0; i < reviewdata.length; i++) {
 				                    var time = reviewdata[i]['rvtime'].split(' ')[0];
-				                    var content = reviewdata[i]['ownercomment']
+				                    var content = reviewdata[i]['rvowner']
 				                    let str = '<tr>';
 									str += '<td width="300" class="customid" data-rvid="'+reviewdata[i]['rvid']+'">' + reviewdata[i]['rvid'] + " | " + time + '</td>';				                    str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + reviewdata[i]['rvdetail'] + '</textarea></td></tr>';
 				                    str += '<tr><td height="10"></td></tr>'
@@ -825,6 +825,7 @@ function checkOwner(){
 		}
 	})
 }
+
 //사장 리뷰 insert,update 함수
 function ownerReview(ownerContent,id,primecode){
 	$.ajax({
@@ -834,7 +835,7 @@ function ownerReview(ownerContent,id,primecode){
 		data :{
 			ownercontent:ownerContent,
 			id:id,
-			primecode:primecode
+			primecode:primecode,
 		},
 		success:function(data){
 			if(data=="ok"){
@@ -847,8 +848,6 @@ function ownerReview(ownerContent,id,primecode){
 		}
 	})
 }
-
-
 
 //태그 랭킹 함수
 function tagRanking(){

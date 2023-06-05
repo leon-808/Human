@@ -143,7 +143,6 @@ public class DetailPageController {
 			jo.put("rvtime", vdao.get(i).getRv_time());
 			jo.put("rvrname", vdao.get(i).getRv_r_name());
 			jo.put("raddress", vdao.get(i).getRv_address());
-			jo.put("ownercomment", vdao.get(i).getOwner_comment());
 			jo.put("reviewcount", reviewCount);
 
 			ja.put(jo);
@@ -215,7 +214,6 @@ public class DetailPageController {
 			jo.put("rvdetail", vdao.get(i).getRv_detail());
 			jo.put("rvowner", vdao.get(i).getRv_owner());
 			jo.put("rvtime", vdao.get(i).getRv_time());
-			jo.put("ownercomment", vdao.get(i).getOwner_comment());
 
 			ja.put(jo);
 		}
