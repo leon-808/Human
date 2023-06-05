@@ -40,7 +40,7 @@
 	    	<div id="food_categories" class="sf_filter">
 	    		<div style="display: flex;">
 		    		<h3 class="sf_title">카테고리</h3>
-		    		<label id="off_category" class="toggleSwitch off"><span>해제</span></label>
+		    		<label id="off_category" class="toggleSwitchOff"><span>해제</span></label>
 		    	</div>
 	    		<div class="sf_fcr">
 	    			<div class="each_fcr">
@@ -105,59 +105,63 @@
 	    	<div class="sf_filter">
 	    		<div style="display: flex;">
 		    		<h3 class="sf_title">사용자 선호도 정렬</h3>
-		    		<label id="off_orderby" class="toggleSwitch off"><span>해제</span></label>
+		    		<label id="off_orderby" class="toggleSwitchOff"><span>해제</span></label>
 		    		<button type="button" id="btn-saveMyTag">저장</button>
 		    	</div>
 		    	<div style="line-height: 40%"><br><br></div>
-		    	<input type="radio" id="often" class="btn-check" name="orderby" value="often">
-	    		<label for="often" class="toggleSwitch often"><span>자주 가는 맛집순</span></label>
-	    		<input type="radio" id="rare" class="btn-check" name="orderby" value="rare">
-	    		<label for="rare" class="toggleSwitch rare"><span>많이 가지 않은 맛집순</span></label>
+	    		<input type="radio" id="close" class="btn-check" name="close_or_eval" value="close" checked="checked">
+	    		<label for="close" class="toggleSwitch"><span>거리순</span></label>
+	    		<input type="radio" id="eval" class="btn-check" name="close_or_eval" value="eval">
+	    		<label for="eval" class="toggleSwitch"><span>평점순</span></label>
+		    	<input type="radio" id="been" class="btn-check" name="orderby" value="been">
+	    		<label for="been" class="toggleSwitch"><span>가봤던 맛집만</span></label>
+	    		<input type="radio" id="never" class="btn-check" name="orderby" value="never">
+	    		<label for="never" class="toggleSwitch"><span>안 가본 맛집만</span></label>
 	    	</div>
 	    	<div class="sf_filter">
 	    		<div style="display: flex;">
 		    		<h3 class="sf_title">맛집 태그</h3>
-		    		<label id="off_tags" class="toggleSwitch off"><span>해제</span></label>
+		    		<label id="off_tags" class="toggleSwitchOff"><span>해제</span></label>
 	    		</div>
 	    		<div class="tag_row">
 		    		<div class="tag_column">
 			    		<span class="tag_category">편의성</span>
 			    		<input type="checkbox" name="tags"  id="clean" class="btn-check" value="clean">
-						<label for="clean" class="toggleSwitch2 clean"><span>청결</span></label>
+						<label for="clean" class="toggleSwitch2"><span>청결</span></label>
 						<input type="checkbox" name="tags"  id="kind" class="btn-check" value="kind">
-						<label for="kind" class="toggleSwitch2 kind"><span>친절</span></label> 
+						<label for="kind" class="toggleSwitch2"><span>친절</span></label> 
 						<input type="checkbox" name="tags"  id="parking" class="btn-check" value="parking">
-						<label for="parking" class="toggleSwitch2 parking"><span>주차</span></label>
+						<label for="parking" class="toggleSwitch2"><span>주차</span></label>
 						<input type="checkbox" name="tags"  id="fast" class="btn-check" value="fast">
-						<label for="fast" class="toggleSwitch2 fast"><span>조리</span></label>
+						<label for="fast" class="toggleSwitch2"><span>조리</span></label>
 						<input type="checkbox" name="tags"  id="pack" class="btn-check" value="pack">
-						<label for="pack" class="toggleSwitch2 pack"><span>포장</span></label>
+						<label for="pack" class="toggleSwitch2"><span>포장</span></label>
 					</div>
 					<div class="tag_column">
 						<span class="tag_category">분위기</span>
 						<input type="checkbox" name="tags"  id="alone" class="btn-check" value="alone">
-						<label for="alone" class="toggleSwitch2 alone"><span>혼밥</span></label>
+						<label for="alone" class="toggleSwitch2"><span>혼밥</span></label>
 						<input type="checkbox" name="tags"  id="together" class="btn-check" value="together">
-						<label for="together" class="toggleSwitch2 together"><span>단체</span></label>
+						<label for="together" class="toggleSwitch2"><span>단체</span></label>
 						<input type="checkbox" name="tags"  id="focus" class="btn-check" value="focus">
-						<label for="focus" class="toggleSwitch2 focus"><span>집중</span></label>
+						<label for="focus" class="toggleSwitch2"><span>집중</span></label>
 						<input type="checkbox" name="tags"  id="talk" class="btn-check" value="talk">
-						<label for="talk" class="toggleSwitch2 talk"><span>대화</span></label>
+						<label for="talk" class="toggleSwitch2"><span>대화</span></label>
 						<input type="checkbox" name="tags"  id="photoplace" class="btn-check" value="photoplace">
-						<label for="photoplace" class="toggleSwitch2 photoplace"><span>사진</span></label>
+						<label for="photoplace" class="toggleSwitch2"><span>사진</span></label>
 					</div>
 					<div class="tag_column">
 						<span class="tag_category" style="margin-left: 10px;">맛과 가격</span>
 						<input type="checkbox" name="tags"  id="delicious" class="btn-check" value="delicious">
-						<label for="delicious" class="toggleSwitch2 delicious"><span>맛</span></label> 
+						<label for="delicious" class="toggleSwitch2"><span>맛</span></label> 
 						<input type="checkbox" name="tags"  id="lot" class="btn-check" value="lot">
-						<label for="lot" class="toggleSwitch2 lot"><span>양</span></label> 
+						<label for="lot" class="toggleSwitch2"><span>양</span></label> 
 						<input type="checkbox" name="tags"  id="cost" class="btn-check" value="cost">
-						<label for="cost" class="toggleSwitch2 cost"><span>가성비</span></label> 
+						<label for="cost" class="toggleSwitch2"><span>가성비</span></label> 
 						<input type="checkbox" name="tags"  id="portion" class="btn-check" value="portion">
-						<label for="portion" class="toggleSwitch2 portion"><span>알참</span></label>
+						<label for="portion" class="toggleSwitch2"><span>알참</span></label>
 						<input type="checkbox" name="tags"  id="satisfy" class="btn-check" value="satisfy">
-						<label for="satisfy" class="toggleSwitch2 satisfy"><span>만족</span></label>
+						<label for="satisfy" class="toggleSwitch2"><span>만족</span></label>
 					</div>
 				</div>
 	    	</div>

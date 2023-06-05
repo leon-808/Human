@@ -115,7 +115,7 @@ public class MainController {
 		String shortLocation = "/img/admin/restaurant/";
 		
 		String[] extensions = {
-				".bmp", ".jpg", ".jpeg", ".gif", ".png", ".webp", ".webm", ".jfif", ".pdf"
+				"bmp", "jpg", "jpeg", "gif", "png", "webp", "webm", "jfif", "pdf"
 		};
 		String originalExtension = bnd[0].getOriginalFilename().split("\\.")[1];
 		int acceptable = 0;
@@ -152,6 +152,7 @@ public class MainController {
 	public String filter_search(HttpServletRequest req) {
 		String words = req.getParameter("query");
 		String fc = req.getParameter("fc");
+		String ce = req.getParameter("ce");
 		String ob = req.getParameter("ob");
 		HttpSession session = req.getSession();
 		String id = String.valueOf(session.getAttribute("id"));
@@ -159,8 +160,10 @@ public class MainController {
 		if (req.getParameterValues("tags[]") != null) {
 			for (String s : req.getParameterValues("tags[]")) tags.add(s);
 		}
-		
-		String query = make_searchFilterQuery(words, fc, ob, id, tags);
+		double lat = Double.parseDouble(req.getParameter("lat"));
+		double lng = Double.parseDouble(req.getParameter("lng"));
+				
+		String query = make_searchFilterQuery(words, fc, ce, ob, id, tags, lat, lng);
 		System.out.println(query);
 //		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
 //		JSONArray ja = new JSONArray();
@@ -181,65 +184,106 @@ public class MainController {
 		return "스트링"; // ja.toString();
 	}
 	
-	public String make_searchFilterQuery(String words, String fc, String ob, 
-										 String id, ArrayList<String> tags) {
+	public String make_searchFilterQuery(String words, String fc, String ce, String ob, 
+										 String id, ArrayList<String> tags,
+										 double lat, double lng) {
 		StringBuilder query = new StringBuilder();
+		
 		query.append("""
-				select a.*
+				select *
 				from (
-					select *
-					from restaurant
+				""");
+		
+		if (ce.equals("close")) {
+			query.append(String.format("""
+						select a.*, abs((a.lat - %1$s) + (a.lng - %2$s)) as close
+					""", lat, lng));
+		}
+		else if (ce.equals("eval")) {
+			String temp = "\tselect a.*, ";
+			for (int i = 0; i < tags.size(); i++) {
+				if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
+				else temp += "c." + tags.get(i) + " + ";
+			}
+			query.append(temp);
+		}
+		
+		query.append("""
+					from (
+						select *
+						from restaurant
 				""");
 		
 		if (! words.equals("")) {
 			query.append(String.format("""
-						where (r_name like '%%%1$s%%'
-						or address like '%%%1$s%%')
+							where (r_name like '%%%1$s%%'
+							or address like '%%%1$s%%')
 					""", words));
 		}
 		
 		if (fc != null) {
-			if (words.equals("")) {
-				query.append(String.format("""
-				where category = '%1$s'
-			) a, review b, statistic c
-			""", fc));
-			}
-			else {
-				query.append(String.format("""
-				and category = '%1$s'
-			) a, review b, statistic c
-			""", fc));
-			}
-		}
-		else {
+			if (words.equals("")) query.append("		where ");
+			else query.append("		and ");
 			query.append(String.format("""
-		) a, review b, statistic c
-		""", fc));
+					category = '%1$s'
+					\t\t) a""",fc));
 		}
+		else query.append("\t\t) a");
 		
-		if (! ob.equals("")) {
-			query.append(String.format("""
-					where a.primecode = b.rv_primecode
-					and b.rv_id = '%1$s'
+		if (tags.size() != 0) query.append(", statistic c");
+		
+		if (ob != null) {
+			if (ob.equals("been")) query.append(String.format("""
+					, review b
+						where a.r_name = b.rv_r_name
+						and a.address = b.rv_address
+						and b.rv_id = '%1$s'
+					""", id));
+			if (ob.equals("never")) query.append(String.format("""
+					, (
+							  select *
+							  from review
+							  where rv_id = '%1%s') b
+						where a.r_name = b.rv_r_name(+)
+						and a.address = b.rv_address(+)
+						and (b.rv_id != '%1$s' 
+						or b.rv_id is null)
 					""", id));
 		}
 		
 		if (tags.size() != 0) {
+			if (ob != null) query.append("	and ");
+			else query.append("\n	where ");
 			query.append("""
-					and a.primecode = c.s_primecode
+					a.r_name = c.s_r_name
+						and a.address = c.s_address
 					""");
 			for (String s : tags) {
 				query.append(String.format("""
-						and c.%1$s > 0
+							and c.%1$s > 0
 						""", s));
 			}
 		}
 		
-		if (! ob.equals("")) {
-			if (ob.equals("often")) query.append("order by b.rv_visit desc");
-			else if (ob.equals("rare")) query.append("order by b.rv_visit asc");
+		if (ob != null) {
+			if (ob.equals("been")) {
+				query.append("""
+					\n\torder by b.rv_visit desc
+					""");
+			}
+			else if (ob.equals("never")) {
+				query.append(String.format("""
+					\n\torder by %1$s
+					""", ce));
+			}
 		}
+		else {
+			query.append(String.format("""
+				\n\torder by %1$s
+				""", ce));
+		}
+		
+		query.append(")\nwhere rownum <= 10");
 		
 		return query.toString();
 	}

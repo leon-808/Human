@@ -16,12 +16,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where id = #{param1} and pw =#{param2}
 	</select>
 	
-	<select id="get_name" resultType="string">
-		select name
-		from member
-		where id = #{param1} and pw =#{param2}
-	</select>
-
 	<select id="check_phone" resultType="_int">
 		select count(phone)
 		from member
