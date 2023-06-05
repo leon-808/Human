@@ -870,7 +870,7 @@ function ownerReview(ownerContent,id,primecode){
 	})
 }
 
-//태그 랭킹 함수
+//태그 랭킹 5위 함수
 function tagRanking(){
 	var rname = decodeURIComponent(window.location.pathname.split('/')[3]);
 	var address = decodeURIComponent(window.location.pathname.split('/').pop());
