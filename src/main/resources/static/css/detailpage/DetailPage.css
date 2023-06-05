@@ -393,3 +393,9 @@ a{
     font-size: 20px;
     cursor: pointer;
 }
+.ownercontent{
+	border:1px solid #393646;
+}
+.ownerc{
+	pointer-events: none;
+}

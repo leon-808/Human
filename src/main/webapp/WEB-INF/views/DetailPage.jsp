@@ -302,11 +302,6 @@
 		<br>
 		<img id="previewImgD" class="previewImgD" width="100"><br><br>
 	</div>
-	<div id="ownerReview" style="display: none;">
-		<input type="text" id="ownerId" value="<%= session.getAttribute("id") %>"readonly><br>
-		<textarea id="ownerRC"></textarea>
-		<button id="btnOwnerR">답글작성</button>
-	</div>
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>

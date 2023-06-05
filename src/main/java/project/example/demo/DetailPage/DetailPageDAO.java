@@ -23,5 +23,5 @@ public interface DetailPageDAO {
 	int checkReview(String rname,String address ,String id);
 	String imagedelete(String rv_r_name, String rv_address, String id);
 	int checkOwner(String primecode, String owner);
-	void ownerReview(String primecode, String id, String content, String x1);		
+	void ownerInset(String primecode, String id, String content);	
 }

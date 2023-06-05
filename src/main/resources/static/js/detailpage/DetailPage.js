@@ -17,7 +17,6 @@ $(document)
 .on('click','.reviewP',photoMax)
 .on('click','.reviewPhoto',photoMax)
 .on('click','.previewImgD',photoMax)
-.on('click','#btnOwnerR',ownerReview)
 .on('click','#review_table tr',function(){
 	var id=$(this).find('td:eq(0)').text();
 	var ids=id.split(" | ")	
@@ -30,6 +29,20 @@ $(document)
 .on('click','input[name="tagsD"]',function(e){
 	e.preventDefault();
 	return false;
+})
+.on('click','#btnowner',function() {
+    var ownerContent = $(this).closest('tr').find('.ownercontent').val();    
+    var id = $(this).closest('tr').prev().prev().find('.customid').data('rvid');   
+    var primecode =$('#rPrimecode').val();
+    ownerReview(ownerContent,id,primecode);
+})
+.on('click','#btnownerup',function(e){
+	e.stopPropagation();
+	var ownerContent = $(this).closest('tr').find('.ownercontent').val();    
+    var id = $(this).closest('tr').prev().prev().find('.customid').data('rvid');   
+    var primecode =$('#rPrimecode').val();
+    ownerReview(ownerContent,id,primecode);
+    
 })
 
 //음식점 정보 가져오는 함수
@@ -62,7 +75,7 @@ function loadFoodDetails() {
             $('#rMenu').val(menuConcatenated);      
             $('#rTage').val(restaurant.goodPoints);
 
-           //checkOwner();
+           checkOwner();
         },
         error: function() {
             console.log('음식상세정보를 불러오지 못했습니다.');
@@ -284,12 +297,15 @@ function reviewGet() {
 
                 for (let i = 0; i < pageReviews.length; i++) {
                     var time = pageReviews[i]['rvtime'].split(' ')[0];
+                    var content = pageReviews[i]['ownercomment']
                     let str = '<tr>';
-                    str += '<td width="300" id="customid" class="customid">' + pageReviews[i]['rvid'] + " | " + time + '</td>';
+                    str += '<td width="300">' + pageReviews[i]['rvid'] + " | " + time + '</td>';
                     str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + pageReviews[i]['rvdetail'] + '</textarea></td></tr>';
                     str += '<tr><td height="10"></td></tr>'
-                    str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';
-
+                    if(content){										
+						str += '<tr><td colspan=2 class="ownerc"><textarea readonly>'+content+'</textarea></td>'
+					}  
+                    str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';                                                      				
                     reviewTable.append(str);
                 }
             }
@@ -300,12 +316,16 @@ function reviewGet() {
             // 리뷰가 5개 미만인 경우에는 페이지 네이션을 생성하지 않습니다.
             for (let i = 0; i < reviewdata.length; i++) {
                 var time = reviewdata[i]['rvtime'].split(' ')[0];
+                var content = reviewdata[i]['ownercomment'];
+                
                 let str = '<tr>';
-                str += '<td width="300" id="customid" class="customid">' + reviewdata[i]['rvid'] + " | " + time + '</td>';
+                str += '<td width="300">' + reviewdata[i]['rvid'] + " | " + time + '</td>';
                 str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + reviewdata[i]['rvdetail'] + '</textarea></td></tr>';
                 str += '<tr><td height="10"></td></tr>'
-                str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';
-
+                if(content){										
+					str += '<tr><td colspan=2 class="ownerc"><textarea readonly>⤷ '+content+'</textarea></td>'
+				}
+                str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';				 
                 reviewTable.append(str);
             }
        	 }
@@ -701,7 +721,7 @@ function checkReview(){
 	})	
 }
 
-/*//사장인지 체크하는 함수
+//사장인지 체크하는 함수
 function checkOwner(){
 	var primecode = $('#rPrimecode').val();
 	var id = $('#name').val();	
@@ -717,7 +737,6 @@ function checkOwner(){
 		},
 		dataType:"text",
 		success:function(check){
-			console.log(check);
 			if(check=="사장"){
 				$('#review').hide();
 				
@@ -753,15 +772,22 @@ function checkOwner(){
 				
 				                    for (let i = 0; i < pageReviews.length; i++) {
 				                        var time = pageReviews[i]['rvtime'].split(' ')[0];
+				                        var content = pageReviews[i]['ownercomment']
 				                        let str = '<tr>';
-				                        str += '<td width="300">' + pageReviews[i]['rvid'] + " | " + time + '</td>';
+				                        str += '<td width="300" class="customid" data-rvid="'+pageReviews[i]['rvid']+'">' + pageReviews[i]['rvid'] + " | " + time + '</td>';
 				                        str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + pageReviews[i]['rvdetail'] + '</textarea></td></tr>';
 				                        str += '<tr><td height="10"></td></tr>'
 				                        if(check == '사장'){
-				                            str += '<tr><td><input type="button" value="답글작성" onclick="writeReply(' + pageReviews[i]['review_id'] + ')"></td></tr>';
+											if(!content){
+				                            	str += '<tr><td><textarea maxlength="1000" placeholder="답글을 달아주세요" rows=4 cols=30 class="ownercontent"></textarea></td></tr>';
+				                            	str += '<td><<button id="btnowner">답글달기</button></td></tr>'
+				                            }
 				                        }
-				                        str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';						                        
-				
+				                        if(content){
+											str += '<tr><td><textarea maxlength="1000" class="ownercontent" onclick="event.stopPropagation()">'+content+'</textarea></td></tr>'
+											str += '<td><button id="btnownerup">답글수정</button></td>'
+										}
+				                        str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';						                        										
 				                        reviewTable.append(str);
 				                    }
 				                }
@@ -772,58 +798,56 @@ function checkOwner(){
 				                // 리뷰가 5개 미만인 경우에는 페이지 네이션을 생성하지 않습니다.
 				                for (let i = 0; i < reviewdata.length; i++) {
 				                    var time = reviewdata[i]['rvtime'].split(' ')[0];
+				                    var content = reviewdata[i]['ownercomment']
 				                    let str = '<tr>';
-				                    str += '<td width="300" id="customid" class="customid">' + reviewdata[i]['rvid'] + " | " + time + '</td>';
-				                    str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + reviewdata[i]['rvdetail'] + '</textarea></td></tr>';
+									str += '<td width="300" class="customid" data-rvid="'+reviewdata[i]['rvid']+'">' + reviewdata[i]['rvid'] + " | " + time + '</td>';				                    str += '<td><textarea rows=4 cols=30 class="reviewcontent" readonly>' + reviewdata[i]['rvdetail'] + '</textarea></td></tr>';
 				                    str += '<tr><td height="10"></td></tr>'
 				                    if(check == '사장'){
-				                        str += '<tr><td><input type="button" value="답글작성" onclick="writeReply()"></td></tr>';
+										if(!content){
+											str += '<tr><td><textarea maxlength="1000" placeholder="답글을 달아주세요" rows=4 cols=30 class="ownercontent"></textarea></td>';
+											str += '<td><button id="btnowner">답글달기</button></td></tr>'
+										}										
 				                    }
+				                    if(content){										
+											str += '<tr><td><textarea class="ownercontent" onclick="event.stopPropagation()">'+content+'</textarea></td>'
+											str += '<td><button id="btnownerup">답글수정</button></td>'
+									}
 				                    str += '<tr><td style="border-top: 1px solid #CCCCCC;" colspan="3" height="10" ></td></tr>';								                    
-				
-				                    reviewTable.append(str);
+									
+				                    reviewTable.append(str);				                    				                    
 				                }
 				            }
+				            
+				            
 				        }
 				    })
 			}
 		}
 	})
 }
-
-function writeReply() {
-	var customid=$('#customid').val();
-	console.log(customid);
-	$('#ownerReview').dialog({
-                title: '리뷰',
-                modal: true,
-                width: 500,                
-    });
-}
-
-function ownerReview(){
-	var customid=$('.customid').val();
-	console.log(customid);
-	 $.ajax({
-		url:"/owner/review",
-		type:"post",
-		dataType:"text",
-		data:{
-			id:$('#name').val(),
-			content:$('#ownerRC').val(),
-			primecode:$('#rPrimecode').val(),
-			customid:$('.customid').val()
+//사장 리뷰 insert,update 함수
+function ownerReview(ownerContent,id,primecode){
+	$.ajax({
+		url:'/owner/insert',
+		type:'post',
+		dataType:'text',
+		data :{
+			ownercontent:ownerContent,
+			id:id,
+			primecode:primecode
 		},
 		success:function(data){
-			
 			if(data=="ok"){
-				alert("리뷰가 등록되었습니다.");
+				alert("답글이 작성되었습니다.")
+				return false;
+			}else{
+				alert("리뷰 안들어감");
 				return false;
 			}
 		}
-		
 	})
-}*/
+}
+
 
 
 //태그 랭킹 함수
@@ -858,8 +882,7 @@ function tagRanking(){
 	                 niceC : 0,
 	                 satisfactionC : 0
             };  
-            
-			
+            			
             for (let i = 0; i < tagtop.length; i++) {
                 var value = tagtop[i].tags;                
                 var values = value.split(',').map(tag => tag.trim());
@@ -900,8 +923,7 @@ function tagRanking(){
 				}
 			}					
 			
-			var categoryRanking = [];
-			
+			var categoryRanking = [];			
 			for (var category in categoryCounts) {
 			    if (categoryCounts.hasOwnProperty(category)) {
 			        categoryRanking.push({
@@ -909,8 +931,7 @@ function tagRanking(){
 			            count: categoryCounts[category]
 			        });
 			    }
-			}
-			
+			}			
 			categoryRanking.sort(function(a, b) {
 			    return b.count - a.count;
 			});	
@@ -951,7 +972,7 @@ function tagRanking(){
 				}else if(category =="satisfactionC"){
 					category="👍 \t만족"
 				}
-		
+				//랭킁 5등까지 나타나게..
 				if(i==0){
 					$('#tagTop1').val(category+" "+"(" +categoryRanking[0].count+')');
 				}else if(i==1){
