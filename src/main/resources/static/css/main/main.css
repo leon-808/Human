@@ -2,6 +2,9 @@
 body{
 	overflow: hidden;
 }
+label {
+	cursor: pointer;
+}
 .mapView {
     position: absolute;
     top: 0;
@@ -115,20 +118,23 @@ body{
 	margin: 0;
 }
 .alm_title {
-	padding: 5px 0 0 10px;
+	display: flex;
+	align-items: center;
 	height: 40px;
+	padding: 0px 0px 0px 10px;
 	background: #ddd;
 	line-height: 30px;
 	font-size: 18px;
 	font-weight: bold;
 }
+.alm_title span {
+	flex-grow: 1;
+}
 .alm_close {
-	position: absolute;
-	top: 12px;
-	right: 10px;
 	color: #888;
 	width: 17px;
 	height: 17px;
+	margin: 0px 10px 0px 20px;
 	background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');
 }
 .alm_body {
@@ -147,12 +153,19 @@ body{
 	right: 10px;
 	bottom: 60px;
 }
-.alm_suggest {
+.alm_suggest, .alm_though {
 	position: absolute;
 	left: 0px;
 	bottom: 0px;
 	width: 100%;
 	margin: 0 0 10px 0; 	
+}
+.alm_listBlock {
+	margin: 0 10px 0 10px;
+	font-size: 10px;
+}
+.alm_listBlock p {
+	margin: 10px 0 10px 0;
 }
 .top_sidebar {
     position: relative;
@@ -160,7 +173,6 @@ body{
     width: 350px;
     height: 150px;
     background-color: rgb(32, 208, 94);
-   /* background-color: #258fff; */
 }
 .header {
     position: relative;

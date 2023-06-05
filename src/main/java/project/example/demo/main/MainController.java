@@ -48,15 +48,9 @@ public class MainController {
 
 		for (RestaurantDTO r : rdto) {
 			JSONObject jo = new JSONObject();
-			jo.put("lat", r.getLat());
-			jo.put("lng", r.getLng());
-			jo.put("primecode", r.getPrimecode());
 			jo.put("r_name", r.getR_name());
-			jo.put("owner", r.getOwner());
 			jo.put("category", r.getCategory());
 			jo.put("address", r.getAddress());
-			jo.put("r_phone", r.getR_phone());
-			jo.put("r_photo", r.getR_photo());
 
 			ja.put(jo);
 		}

@@ -48,6 +48,13 @@ $(document)
 	return false;
 })
 
+.on("click", ".alm_though", function() {
+	thoughSuggestFlag = 1;
+	check_duplicateLocation(thoughLatLng);
+})
+
+
+
 $(".each_fcr").hover(function() {
 	$(this).css("background-image", "url('/img/main/FC_HoverRectangle.png')");
 	$(this).css("background-position", "center");
@@ -114,6 +121,7 @@ $("#gotoAdminRestaurant").click(function() {
 })
 
 
+
 let loginFlag = 0;
 
 function isLogin() {
@@ -153,8 +161,12 @@ let zoomControl = new kakao.maps.ZoomControl();
 let selfLat, selfLng;
 
 function geoPosition() {
-	lat = 36.81044107630051,
-	lng = 127.14647463417765;
+	lat = 36.784611945287246,
+	lng = 127.01593061114956;
+	
+	/*목록 작업중*/
+	/*lat = 36.81044107630051,
+	lng = 127.14647463417765;*/
 	selfLat = lat; selfLng = lng;
 	makeMap(lat, lng);
 	
@@ -199,7 +211,8 @@ function geoPosition() {
 	
 	isAdminSearch();
 	
-	/*if (navigator.geolocation) {
+	/* geolocation 도메인 미지원으로 인한 비활성화
+	if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(
 			function(position) {
 				lat = position.coords.latitude; 
@@ -329,7 +342,7 @@ function clickAddLocationButton() {
 		kakao.maps.event.addListener(addLocationMarker, "click", popUpAddLocationOverlay);
 		map.setLevel(1);
 		addLocationFlag = 1;
-		addLocationMarker.setMap(null);
+		wholeMarkersNull();
 	 	addLocationOverlay.setMap(null);
 	}
 	else {
@@ -341,12 +354,18 @@ function clickAddLocationButton() {
 		kakao.maps.event.removeListener(addLocationMarker, "click", popUpAddLocationOverlay);
 		map.setLevel(2);
 		addLocationFlag = 0;
-		addLocationMarker.setMap(null);
+		wholeMarkersNull();
 		addLocationOverlay.setMap(null);
 	}
 }
 
+let thoughSuggestFlag = 0;
+let thoughLatLng;
+
 function check_duplicateLocation(latLng) {
+	if (thoughLatLng != latLng) thoughSuggestFlag = 0;
+	thoughLatLng = latLng;
+	
 	let geocoder = new kakao.maps.services.Geocoder();
 	let lng = latLng.getLng(), lat = latLng.getLat(),
 	address = "";
@@ -368,14 +387,40 @@ function check_duplicateLocation(latLng) {
 				},
 				dataType: "json",
 				success: function(data) {
-					if (data.length != 0) {
-						alert("해당 위치에 이미 등록된 장소가 있습니다");
+					if (data.length != 0 && thoughSuggestFlag == 0) {
+						let list = "";
+						for (i = 0; i < data.length; i++) {
+							let html = 
+								`<div style="display: flex; align-items: center;">
+									<img src="/img/main/${data[i]["category"]}.png" style="width: 20px; height: 20px;">
+									<div class="alm_listBlock">
+										<p>${data[i]["r_name"]}</p>
+									</div>
+								</div>`;
+							list = list + html;
+						}
+												
+						let emptyContent = 
+						`<div class="alm_info">
+					 		<div class="alm_title">
+					 			<span>${data[0]["address"]}</span>
+					 			<div class="alm_close" onclick="closeOverlay()" title="닫기"></div>					 			
+					 		</div>
+						 	<div class="alm_body">
+						 		${list}
+					 			<div><button class="alm_though btn btn-primary">목록에 없는 제안하기</button></div>
+						 	</div>
+						 </div>`;
+						 
+ 						 addLocationOverlay.setContent(emptyContent);
+						 addLocationOverlay.setPosition(latLng);
+						 addLocationOverlay.setMap(map);
 					}
 					else {
 						let emptyContent = 
 						`<div class="alm_info">
 					 		<div class="alm_title">
-					 			신규 음식점 제안
+					 			<span>신규 음식점 제안</span>
 					 			<div class="alm_close" onclick="closeOverlay()" title="닫기"></div>
 					 		</div>
 						 	<div class="alm_body">
@@ -396,15 +441,15 @@ function check_duplicateLocation(latLng) {
 					 			<div class="alm_append">
 					 			</div>
 					 			<a class="alm_ceo" isCEO = 0>사장님이신가요?</a>
-					 			<div><button class="alm_suggest btn btn-primary" aors="">제안하기</button></div>
+					 			<button class="alm_suggest btn btn-primary" aors="">제안하기</button>
 						 	</div>
 						 </div>`;
-						 
-						 addLocationOverlay.setContent(emptyContent);
+					 
+  						 addLocationOverlay.setContent(emptyContent);
 						 addLocationOverlay.setPosition(latLng);
 						 addLocationOverlay.setMap(map);
+						 $("#r_name").val(dt_placename);
 					}
-					$("#r_name").val(dt_placename);
 					
 					if (addLocationMarker.getMap() != null && selectedKeywordMarker == null) {
 						$(".alm_suggest").attr("aors", "a");
@@ -653,6 +698,10 @@ function search() {
 					alert("검색어 또는 검색 조건을 하나라도 활성화해주세요");
 					return false;
 				}
+				else if (ce == "eval") {
+					alert("평점순 정렬을 위해선 최소한 하나 이상의 태그를 선택해주세요");
+					return false;
+				}
 			},
 			success: function(data) {
 				if (data.documents.length != 0) {
@@ -738,7 +787,6 @@ function rectSearch() {
 		let searchURL =
 		`https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy
 		&query=${query}&x=${lng}&y=${lat}&rect=${boundary}`;
-		console.log(searchURL);
 		$.ajax({
 			url: searchURL,
 			type: "get",
@@ -1049,12 +1097,6 @@ function toggleBarandMap() {
 function clearMarkers() {
 	markersNuller(keywordMarkers);
 	addLocationMarker.setMap(null);
-}
-
-
-
-function clickCurrentLocaitonButton() {
-	
 }
 
 
