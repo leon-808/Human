@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="project.example.demo.DetailPage.DetailPageDAO">
+	<select id="getRDetail" resultType="project.example.demo.dto.RestaurantDTO">
+		select *
+		from restaurant
+		where r_name = #{param1}
+		and address = #{param2}
+	</select>	
+	<select id="getReview" resultType="project.example.demo.dto.ReviewDTO">
+		select *
+		from review
+		where rv_r_name = #{param1}
+		and rv_address = #{param2}
+		order by rv_time desc
+	</select>
+	<insert id="reviewInsert">
+	    insert into review(rv_primecode,rv_r_name,rv_address, rv_id, rv_photo, rv_visit,tags, rv_detail, rv_time)
+	    values(#{param1}, #{param2}, #{param3}, #{param4}, #{param5}, #{param6}, #{param7}, #{param8}, to_char(sysdate,'YYYY-MM-DD HH:mi:ss'))
+	</insert>
+	<update id="reviewUpdate">
+		update review 
+		set rv_photo=#{param4},
+		tags=#{param5},
+		rv_detail=#{param6}
+		where rv_r_name=#{param1} and rv_address=#{param2} and rv_id=#{param3}
+	</update>
+	<delete id="reviewDelete">
+		delete
+		from review
+		where rv_r_name=#{param1}
+		and rv_address=#{param2}
+		and rv_id=#{param3}
+	</delete>
+	<select id="getMyReview" resultType="project.example.demo.dto.ReviewDTO">
+		select *
+		from review
+		where rv_r_name=#{param1}
+		and rv_address=#{param2}
+		and rv_id=#{param3}
+		order by rv_time
+	</select>
+	<select id="reviewAllCount" resultType="int">
+		select count(*)
+		from review
+		where rv_r_name = #{param1}
+		and rv_address = #{param2}
+	</select>
+	<select id="checkReview" resultType="int">
+		select count(*)
+		from review
+		where rv_r_name = #{param1}
+		and rv_address = #{param2}
+		and rv_id = #{param3}
+	</select>
+	<select id="tagTop" resultType="project.example.demo.dto.ReviewDTO">
+		select *
+		from review
+		where rv_r_name=#{param1}
+		and rv_address = #{param2}
+	</select>
+	<select id="checkOwner" resultType="int">
+		select count(*)
+		from admin_review
+		where adrw_primecode=#{param1}
+		and adrw_id = #{param2}
+	</select>
+	<update id="ownerInset">
+		update review
+		set rv_owner=#{param3}
+		where rv_primecode = #{param1} 
+		and rv_id=#{param2}
+	</update>
+</mapper>
