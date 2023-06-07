@@ -367,7 +367,7 @@ body{
 .fc_img {
 	margin: 0 0 0 3px;
 }
-.toggleSwitch.off { 
+.toggleSwitchOff { 
 	width: 70px;
 	height: 25px;
 	text-align: center;
@@ -380,12 +380,11 @@ body{
 	border: 2px solid #ffaa55;
 	color: #ffaa55;
 }
-.toggleSwitch.off.active {
+.toggleSwitchOff.active {
 	color:#ffffff;
 	background: #ffaa55;
 }
-.toggleSwitch.often,
-.toggleSwitch.rare {
+.toggleSwitch {
 	width: 150px;
 	height: 25px;
 	text-align: center;
@@ -398,8 +397,7 @@ body{
 	border: 2px solid #55aaff;
 	color: #55aaff;
 }
-.toggleSwitch.often.active,
-.toggleSwitch.rare.active {
+.toggleSwitch.active {
 	color:#ffffff;
 	background: #55aaff;
 }
@@ -428,21 +426,7 @@ body{
   border: 2px solid #68d98a;
   color: #68d98a;	
 }
-.toggleSwitch2.clean.active,
-.toggleSwitch2.alone.active,
-.toggleSwitch2.delicious.active,
-.toggleSwitch2.kind.active,
-.toggleSwitch2.together.active,
-.toggleSwitch2.lot.active,
-.toggleSwitch2.parking.active,
-.toggleSwitch2.focus.active, 
-.toggleSwitch2.cost.active, 
-.toggleSwitch2.fast.active,
-.toggleSwitch2.talk.active,
-.toggleSwitch2.portion.active,
-.toggleSwitch2.pack.active,
-.toggleSwitch2.photoplace.active,
-.toggleSwitch2.satisfy.active  {      
+.toggleSwitch2.active  {      
   color:#ffffff;
   background: #68d98a;
 }
@@ -559,10 +543,8 @@ body{
     background-color: #06a64f;
     color:white;
     border: none;
-  
 }
-.btn-userSetting.pas{
-	color:white;
+.btn-userSetting.active {
 	background-color: #15571e;
 }
 #btn-saveMyTag {

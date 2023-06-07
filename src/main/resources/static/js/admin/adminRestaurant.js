@@ -9,7 +9,7 @@ $(document)
 	document.location = "/main";
 })
 
-let addPage = 0, pageNum = 0, start = 1, end = 10;
+let rownum = 0, start = 1, end = 10;
 
 function getList() {
     $.ajax({
@@ -22,51 +22,27 @@ function getList() {
         dataType: "json",
         success: function (data) {
             if (data.length != 0) {
-				if (addPage == 0) {
-		            for (i = 0; i < data.length; i++) {
-						let localURL = data[i]["adrt_localurl"];
-						if (localURL == undefined) localURL = "/img/admin/No-image.jpg";
-		                html = [];
-		                html.push(
-		                    "<tr><th scope='row'>", pageNum + 1, "</th>",
-		                    "<td>",data[i]["adrt_r_name"],"</td>",
-		                    "<td>",data[i]["adrt_primecode"],"</td>",
-		                    "<td>",data[i]["adrt_category"],"</td>",
-		                    "<td><img src='",localURL,"' class='fileView'></td>",
-		                    "<td>",data[i]["adrt_owner"],"</td>",
-		                   	"<td>",
-		                   	"<button class='btnSearch btn btn-secondary btn-sm'>조회</button>&nbsp;",
-		                   	'<button class="btnOk btn btn-secondary btn-sm">승인</button>&nbsp;',
-		                    '<button class="btnCancel btn btn-secondary btn-sm">거부</button></td>',
-		                    "<td hidden>",data[i]["adrt_address"],"</td></tr>"
-		                );
-		                $("#tbl_adrtRestaurant").append(html.join(""));
-		                pageNum++;
-		            }
-		        }
-		        else {
-		            for (i = 0; i < data.length; i++) {
-						let localURL = data[i]["adrt_localurl"];
-						if (localURL == undefined) localURL = "/img/admin/No-image.jpg";
-		                html = [];
-		                html.push(
-		                    "<tr><th scope='row'>", pageNum + 1, "</th>",
-		                    "<td>",data[i]["adrt_r_name"],"</td>",
-		                    "<td>",data[i]["adrt_primecode"],"</td>",
-		                    "<td>",data[i]["adrt_category"],"</td>",
-		                    "<td><img src='",localURL,"' class='fileView'></td>",
-		                    "<td>",data[i]["adrt_owner"],"</td>",
-		                   	"<td>",
-		                   	"<button class='btnSearch btn btn-secondary btn-sm'>조회</button>&nbsp;",
-		                   	'<button class="btnOk btn btn-secondary btn-sm">승인</button>&nbsp;',
-		                    '<button class="btnCancel btn btn-secondary btn-sm">거부</button></td>',
-		                    "<td hidden>",data[i]["adrt_address"],"</td></tr>"
-		                );
-		                $("#tbl_adrtRestaurant").append(html.join(""));
-		                pageNum++;
-		            }
-				}
-	            addPage = 1; start += 10; end += 10;
+	            for (i = 0; i < data.length; i++) {
+					let localURL = data[i]["adrt_localurl"];
+					if (localURL == undefined) localURL = "/img/admin/No-image.jpg";
+	                html = [];
+	                html.push(
+	                    "<tr><th scope='row'>", rownum + 1, "</th>",
+	                    "<td>",data[i]["adrt_r_name"],"</td>",
+	                    "<td>",data[i]["adrt_primecode"],"</td>",
+	                    "<td>",data[i]["adrt_category"],"</td>",
+	                    "<td><img src='",localURL,"' class='fileView'></td>",
+	                    "<td>",data[i]["adrt_owner"],"</td>",
+	                   	"<td>",
+	                   	"<button class='btnSearch btn btn-secondary btn-sm'>조회</button>&nbsp;",
+	                   	'<button class="btnOk btn btn-secondary btn-sm">승인</button>&nbsp;',
+	                    '<button class="btnCancel btn btn-secondary btn-sm">거부</button></td>',
+	                    "<td hidden>",data[i]["adrt_address"],"</td></tr>"
+	                );
+	                $("#tbl_adrtRestaurant").append(html.join(""));
+	                rownum++;
+	            }
+	            start += 10; end += 10;
             }
         }
     })
