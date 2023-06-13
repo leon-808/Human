@@ -741,7 +741,7 @@ function checkReview(){
 	})	
 }
 
-//사장인지 체크하는 함수 및 댓글 달게 하는 함수
+//사장인지 체크하는 함수
 function checkOwner(callback){
 	var primecode = $('#rPrimecode').val();
 	var id = $('#name').val();	

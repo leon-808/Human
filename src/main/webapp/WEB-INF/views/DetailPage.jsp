@@ -8,7 +8,6 @@
 </head>
 <link href="/css/detailpage/DetailPage.css" rel="stylesheet">
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
 <body>
 <section>
 	<div id="restaurantImg" class="restaurantImg">
