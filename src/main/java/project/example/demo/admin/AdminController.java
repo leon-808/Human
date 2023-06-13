@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import project.example.demo.dto.AdminRestaurantDTO;
+import project.example.demo.DTO.AdminRestaurantDTO;
 
 @Controller
 public class AdminController {
