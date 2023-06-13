@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import project.example.demo.dto.AdminRestaurantDTO;
+import project.example.demo.DTO.AdminRestaurantDTO;
 
 @Mapper
 public interface AdminRestaurantDAO {

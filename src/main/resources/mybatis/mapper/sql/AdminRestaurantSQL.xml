@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="project.example.demo.admin.AdminRestaurantDAO">
-	<select id="adminRestaurantList" resultType="project.example.demo.dto.AdminRestaurantDTO">
+	<select id="adminRestaurantList" resultType="project.example.demo.DTO.AdminRestaurantDTO">
 		select *
 		from (
 			select a.*, rownum r

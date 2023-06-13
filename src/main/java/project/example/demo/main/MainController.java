@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,11 +16,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import ch.qos.logback.classic.Logger;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import project.example.demo.dto.MemberDTO;
-import project.example.demo.dto.RestaurantDTO;
+import project.example.demo.DTO.RestaurantDTO;
 
 @Controller
 public class MainController {
@@ -48,15 +45,9 @@ public class MainController {
 
 		for (RestaurantDTO r : rdto) {
 			JSONObject jo = new JSONObject();
-			jo.put("lat", r.getLat());
-			jo.put("lng", r.getLng());
-			jo.put("primecode", r.getPrimecode());
 			jo.put("r_name", r.getR_name());
-			jo.put("owner", r.getOwner());
 			jo.put("category", r.getCategory());
 			jo.put("address", r.getAddress());
-			jo.put("r_phone", r.getR_phone());
-			jo.put("r_photo", r.getR_photo());
 
 			ja.put(jo);
 		}
@@ -87,9 +78,9 @@ public class MainController {
 	
 	@PostMapping("/suggest/alm/ceo")
 	@ResponseBody
-	public String suggest_alm(HttpServletRequest req,
-			@RequestPart(value = "restaurant") RestaurantDTO rdto,
-			@RequestPart(value = "bnd") MultipartFile[] bnd) {
+	public String suggest_alm (@RequestPart(value = "restaurant") RestaurantDTO rdto,
+		   					   @RequestPart(value = "bnd") MultipartFile[] bnd,
+		   					   HttpServletRequest req) {
 		String message = "proceed";
 
 		double lat = rdto.getLat();

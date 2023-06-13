@@ -1,4 +1,4 @@
-package project.example.demo.dto;
+package project.example.demo.DTO;
 
 import lombok.Data;
 
@@ -14,5 +14,4 @@ public class ReviewDTO {
 	String rv_detail;
 	String rv_owner;
 	String rv_time;
-	String rv_owner_c;
 }
