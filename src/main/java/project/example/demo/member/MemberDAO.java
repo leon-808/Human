@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import project.example.demo.dto.MemberDTO;
+import project.example.demo.DTO.MemberDTO;
 
 @Mapper
 public interface MemberDAO {

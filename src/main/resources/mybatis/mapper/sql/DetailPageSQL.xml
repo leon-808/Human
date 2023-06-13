@@ -3,75 +3,179 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="project.example.demo.DetailPage.DetailPageDAO">
-	<select id="getRDetail" resultType="project.example.demo.dto.RestaurantDTO">
+<mapper namespace="project.example.demo.detail.DetailPageDAO">
+	<select id="get_restaurant_detail" resultType="project.example.demo.DTO.RestaurantDTO">
 		select *
-		from restaurant
+		from restaurant 
 		where r_name = #{param1}
 		and address = #{param2}
-	</select>	
-	<select id="getReview" resultType="project.example.demo.dto.ReviewDTO">
-		select *
-		from review
-		where rv_r_name = #{param1}
-		and rv_address = #{param2}
-		order by rv_time desc
 	</select>
-	<insert id="reviewInsert">
-	    insert into review(rv_primecode,rv_r_name,rv_address, rv_id, rv_photo, rv_visit,tags, rv_detail, rv_time)
-	    values(#{param1}, #{param2}, #{param3}, #{param4}, #{param5}, #{param6}, #{param7}, #{param8}, to_char(sysdate,'YYYY-MM-DD HH:mi:ss'))
-	</insert>
-	<update id="reviewUpdate">
-		update review 
-		set rv_photo=#{param4},
-		tags=#{param5},
-		rv_detail=#{param6}
-		where rv_r_name=#{param1} and rv_address=#{param2} and rv_id=#{param3}
+	<update id="update_info">
+		update restaurant
+		set r_phone = #{param3},
+		r_detail = #{param4}
+		where r_name = #{param1}
+		and address = #{param2}
 	</update>
-	<delete id="reviewDelete">
-		delete
-		from review
-		where rv_r_name=#{param1}
-		and rv_address=#{param2}
-		and rv_id=#{param3}
-	</delete>
-	<select id="getMyReview" resultType="project.example.demo.dto.ReviewDTO">
+	<update id="update_menu">
+		update restaurant
+		set menu = #{param3}
+		where r_name = #{param1}
+		and address = #{param2}
+	</update>
+	<select id="tag_top" resultType="project.example.demo.DTO.StatisticDTO">
 		select *
-		from review
-		where rv_r_name=#{param1}
-		and rv_address=#{param2}
-		and rv_id=#{param3}
-		order by rv_time
+		from ( select * 
+		       from (
+		            select clean, kind, parking, fast, pack, alone, together, focus, talk, photoplace,
+		            delicious, portion, cost, lot, satisfy
+		            from statistic
+		            where s_r_name = #{param1}
+		            and s_address = #{param2}
+		        )
+		        unpivot (tag_count for tags in (clean, kind, parking, fast, pack, alone, together,
+		        focus, talk, photoplace, delicious, portion, cost, lot, satisfy))
+		        order by tag_count desc
+		)
+		where rownum <![CDATA[<=]]> 5
 	</select>
-	<select id="reviewAllCount" resultType="int">
-		select count(*)
-		from review
-		where rv_r_name = #{param1}
-		and rv_address = #{param2}
-	</select>
-	<select id="checkReview" resultType="int">
+	<select id="check_mine" resultType="_int">
 		select count(*)
 		from review
 		where rv_r_name = #{param1}
 		and rv_address = #{param2}
 		and rv_id = #{param3}
 	</select>
-	<select id="tagTop" resultType="project.example.demo.dto.ReviewDTO">
-		select *
+	<select id="get_owner" resultType="string">
+		select owner
+		from restaurant
+		where r_name = #{param1}
+		and address = #{param2}
+	</select>
+	<select id="get_primecode" resultType="string">
+		select primecode
+		from restaurant
+		where r_name = #{param1}
+		and address = #{param2}
+	</select>
+	<select id="get_origin_tags" resultType="string">
+		select tags
 		from review
-		where rv_r_name=#{param1}
+		where rv_r_name = #{param1}
 		and rv_address = #{param2}
+		and rv_id = #{param3}
 	</select>
-	<select id="checkOwner" resultType="int">
-		select count(*)
-		from admin_review
-		where adrw_primecode=#{param1}
-		and adrw_id = #{param2}
+	<select id="get_origin_fileURL" resultType="string">
+		select rv_photo
+		from review
+		where rv_r_name = #{param1}
+		and rv_address = #{param2}
+		and rv_id = #{param3}
 	</select>
-	<update id="ownerInset">
+	<insert id="review_insert">
+		insert into review
+		values (#{param1}, #{param2}, #{param3}, #{param4}, 1, null, #{param5}, 
+		#{param6}, to_char(sysdate,'YYYY-MM-DD HH24:mi:ss'), null)
+	</insert>
+	<update id="review_update">
 		update review
-		set rv_owner=#{param3}
-		where rv_primecode = #{param1} 
-		and rv_id=#{param2}
+		set 
+			rv_primecode = #{param1},
+			tags = #{param5},
+			rv_detail = #{param6},
+			rv_time = to_char(sysdate,'YYYY-MM-DD HH24:mi:ss')
+		where rv_r_name = #{param2}
+		and rv_address = #{param3}
+		and rv_id = #{param4}
+	</update>
+	<insert id="review_insert_photo">
+		insert into review
+		values (#{param1}, #{param2}, #{param3}, #{param4}, 1, #{param5}, #{param6},
+		#{param7}, to_char(sysdate,'YYYY-MM-DD HH24:mi:ss'), null)
+	</insert>
+	<update id="review_update_photo">
+		update review
+		set 
+			rv_primecode = #{param1},
+			rv_photo = #{param5},
+			tags = #{param6},
+			rv_detail = #{param7},
+			rv_time = to_char(sysdate,'YYYY-MM-DD HH24:mi:ss')
+		where rv_r_name = #{param2}
+		and rv_address = #{param3}
+		and rv_id = #{param4}
+	</update>
+	<update id="update_statistic">
+		update statistic
+		set
+			${param3}
+		where s_r_name = #{param1}
+		and s_address = #{param2}
+	</update>
+	<select id="count_photoList" resultType="_int">
+		select count(rv_photo)
+		from review
+		where rv_r_name = #{param1}
+		and rv_address = #{param2}
+		and rv_photo is not null
+	</select>
+	<select id="get_photoList" resultType="project.example.demo.DTO.ReviewDTO">
+		select *
+		from (
+			select a.*, rownum r
+			from (
+				select rv_photo, rv_time
+				from review
+				where rv_r_name = #{param1}
+				and rv_address = #{param2}
+				order by rv_time desc
+			) a
+			where rownum <![CDATA[<=]]> #{param4}
+		)
+		where r <![CDATA[>=]]> #{param3}
+	</select>
+	<select id="get_review" resultType="project.example.demo.DTO.ReviewDTO">
+		select rv_visit, rv_photo, tags, rv_detail, rv_time, rv_owner
+		from review
+		where rv_r_name = #{param1}
+		and rv_address = #{param2}
+		and rv_id = #{param3}
+	</select>
+	<delete id="review_delete">
+		delete from review
+		where rv_r_name = #{param1}
+		and rv_address = #{param2}
+		and rv_id = #{param3} 
+	</delete>
+	<select id="count_reviewList" resultType="_int">
+		select count(*)
+		from review
+		where rv_r_name = #{param1}
+		and rv_address = #{param2}
+		and rv_id ${param3}
+	</select>
+	<select id="get_reviewList" resultType="project.example.demo.DTO.ReviewDTO">
+		select *
+		from (
+			select a.*, rownum r
+			from (
+				select rv_id, rv_visit, rv_photo, tags, rv_detail, rv_owner, rv_time
+				from review
+				where rv_r_name = #{param1}
+				and rv_address = #{param2}
+				and rv_id ${param3}
+				order by rv_time desc
+			) a
+			where rownum <![CDATA[<=]]> #{param5}
+		)
+		where r <![CDATA[>=]]> #{param4}
+	</select>
+	<update id="update_review_ceo">
+		update review
+		set
+			rv_owner = #{param4}
+		where rv_r_name = #{param1}
+		and rv_address = #{param2}
+		and rv_id = #{param3}
 	</update>
 </mapper>
