@@ -45,8 +45,20 @@ function check_duplicateID() {
 }
 
 function check_phone() {
-	phone = $(this).val().replace(/[^0-9]/g, "");
+	
+	let phone = $(this).val().replace(/[^0-9]/g, "");
 	$(this).val(phone);
+	if ($(this).val().length == 10) {
+		let ten = $(this).val();
+		ten = ten.slice(0, 3) + "-" + ten.slice(3, 6) + "-" + ten.slice(6);
+		$("label[for='input_phone']").html(ten);
+	}
+	else if ($(this).val().length == 11) {
+		let ele = $(this).val();
+		ele = ele.slice(0, 3) + "-" + ele.slice(3, 7) + "-" + ele.slice(7);
+		$("label[for='input_phone']").html(ele);
+	}
+	else $("label[for='input_phone']").html("");
 	
 	$.ajax({
 		url: "/check/phone",

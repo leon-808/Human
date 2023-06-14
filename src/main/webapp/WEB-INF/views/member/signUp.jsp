@@ -71,7 +71,9 @@
 				</h3>
 				<span class="box int_mobile">
 					<input type="tel" id="input_phone" class="int" maxlength="12" placeholder="'-' 제외 번호만 입력">
-				</span> <span class="error_box" id="error_inputPhone"></span>
+				</span>
+				<span class="error_box" id="error_inputPhone"></span>
+				<label for="input_phone" style="margin: 0 0 0 20px;"></label>
 			</div>
 
 			<!-- GENDER -->
