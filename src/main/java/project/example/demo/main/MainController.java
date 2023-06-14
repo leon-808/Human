@@ -155,24 +155,21 @@ public class MainController {
 		double lng = Double.parseDouble(req.getParameter("lng"));
 				
 		String query = make_searchFilterQuery(words, fc, ce, ob, id, tags, lat, lng);
+		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
+		JSONArray ja = new JSONArray();
 		System.out.println(query);
-//		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
-//		JSONArray ja = new JSONArray();
-//		
-//		for (RestaurantDTO r : rdto) {
-//			JSONObject jo = new JSONObject();
-//			jo.put("lat", r.getLat());
-//			jo.put("lng", r.getLng());
-//			jo.put("r_name", r.getR_name());
-//			jo.put("category", r.getCategory());
-//			jo.put("address", r.getAddress());
-//			jo.put("r_phone", r.getR_phone());
-//			jo.put("r_photo", r.getR_photo());
-//			
-//			ja.put(jo);
-//		}
-				
-		return "스트링"; // ja.toString();
+		for (RestaurantDTO r : rdto) {
+			JSONObject jo = new JSONObject();
+			jo.put("lat", r.getLat());
+			jo.put("lng", r.getLng());
+			jo.put("r_name", r.getR_name());
+			jo.put("category", r.getCategory());
+			jo.put("address", r.getAddress());
+			jo.put("r_phone", r.getR_phone());
+			jo.put("r_photo", r.getR_photo());
+			ja.put(jo);
+		}
+		return ja.toString();
 	}
 	
 	public String make_searchFilterQuery(String words, String fc, String ce, String ob, 
@@ -234,7 +231,7 @@ public class MainController {
 					, (
 							  select *
 							  from review
-							  where rv_id = '%1%s') b
+							  where rv_id = '%1$s') b
 						where a.r_name = b.rv_r_name(+)
 						and a.address = b.rv_address(+)
 						and (b.rv_id != '%1$s' 
@@ -256,23 +253,9 @@ public class MainController {
 			}
 		}
 		
-		if (ob != null) {
-			if (ob.equals("been")) {
-				query.append("""
-					\n\torder by b.rv_visit desc
-					""");
-			}
-			else if (ob.equals("never")) {
-				query.append(String.format("""
-					\n\torder by %1$s
-					""", ce));
-			}
-		}
-		else {
-			query.append(String.format("""
-				\n\torder by %1$s
-				""", ce));
-		}
+		query.append(String.format("""
+			\torder by %1$s
+			""", ce));
 		
 		query.append(")\nwhere rownum <= 10");
 		

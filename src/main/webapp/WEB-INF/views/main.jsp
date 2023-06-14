@@ -22,11 +22,6 @@
 				    autocomplete="off" placeholder="장소, 주소 검색">
 				    <button id="search_button">검색</button>
 				</div>
-		        <div class="header_subarea">
-				 	<button type="button" class="btn btn-success" id="btn-myPage">마이페이지</button>	
-				  	<button type="button" id="challenge" class="btn btn-danger" data-bs-toggle="tooltip" 
-				  	data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>
-				</div>
 		    </div>
 	    </div>
 	    <div class="middle_sidebar">
@@ -109,7 +104,7 @@
 		    		<button type="button" id="btn-saveMyTag">저장</button>
 		    	</div>
 		    	<div style="line-height: 40%"><br><br></div>
-	    		<input type="radio" id="close" class="btn-check" name="close_or_eval" value="close" checked="checked">
+	    		<input type="radio" id="close" class="btn-check" name="close_or_eval" value="close">
 	    		<label for="close" class="toggleSwitch"><span>거리순</span></label>
 	    		<input type="radio" id="eval" class="btn-check" name="close_or_eval" value="eval">
 	    		<label for="eval" class="toggleSwitch"><span>평점순</span></label>
@@ -206,7 +201,7 @@
 				  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-footer">
-				  <button type="button" id="gotoAdminRestaurant" class="btn btn-primary">업체 등록 관리</button>
+				  <button type="button" id="goto_admin_restaurant" class="btn btn-primary">업체 등록 관리</button>
 				  <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
 				</div>
 		    </div>

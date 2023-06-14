@@ -37,6 +37,7 @@ $(document)
 
 
 
+
 .on("click", "#currentLocationButton", function() {
 	map.panTo(new kakao.maps.LatLng(selfLat, selfLng));
 })
@@ -51,6 +52,12 @@ $(document)
 .on("click", ".alm_though", function() {
 	thoughSuggestFlag = 1;
 	check_duplicateLocation(thoughLatLng);
+})
+
+.on("click", ".alm_listBlock", function() {
+	let r_name = $(this).find("p").eq(0).text();
+	let address = $(this).find("p").eq(1).text();
+	window.open(`/restaurant/detail/${r_name}/${address}`, "_blank");
 })
 
 
@@ -116,7 +123,7 @@ $(".eraserIcon").hover(function() {
 	$(this).css("background-position-x", "-80px");
 })
 
-$("#gotoAdminRestaurant").click(function() {
+$("#goto_admin_restaurant").click(function() {
 	document.location = "/admin/restaurant";
 })
 
@@ -135,7 +142,7 @@ function isLogin() {
 				if (isLogin == "true") loginFlag = 1;
 				else if (isLogin == "admin") loginFlag = 2;
 				checkTag();
-			}	
+			}
 		}
 	})
 }
@@ -147,6 +154,12 @@ function createUI(isLogin) {
 	$("#button_log").html("로그아웃");
 	$(".middle_sideMessage").css("display", "none");
 	$(".sf_filter").css("display", "block");
+	$(".header").append(`
+		<div class="header_subarea">
+		 	<button type="button" class="btn btn-success" id="btn-myPage">마이페이지</button>	
+		  	<button type="button" id="challenge" class="btn btn-danger" data-bs-toggle="tooltip" 
+		  	data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>
+		</div>`);
 	if (isLogin == "admin") {
 		$(".header_title").append(`
 		<button id="button_manage" class="btn btn-dark" data-bs-toggle="modal"
@@ -392,9 +405,10 @@ function check_duplicateLocation(latLng) {
 						for (i = 0; i < data.length; i++) {
 							let html = 
 								`<div style="display: flex; align-items: center;">
-									<img src="/img/main/${data[i]["category"]}.png" style="width: 20px; height: 20px;">
+									<img src="/img/main/${data[i]["category"]}.png" class="alm_blockimg">
 									<div class="alm_listBlock">
 										<p>${data[i]["r_name"]}</p>
+										<p>${data[i]["address"]}</p>
 									</div>
 								</div>`;
 							list = list + html;
@@ -664,10 +678,11 @@ function search() {
 	let tags = [];
 	
 	fc = $("input:radio[name='fc']:checked").val();
-	if (fc != null) sf_count++; 
+	if (fc != undefined) sf_count++; 
 	ce = $("input:radio[name='close_or_eval']:checked").val();
+	if (ce != undefined) sf_count++;
 	ob = $("input:radio[name='orderby']:checked").val();
-	if (ob != null) sf_count++;
+	if (ob != undefined) sf_count++;
 	
 	$("input:checkbox[name='tags']").each(function() {
 		if ($(this).prop("checked") == true) {
@@ -742,7 +757,17 @@ function search() {
 				}
 			},
 			success: function(data) {
-				
+				if (data.length != 0) {
+					let bounds = new kakao.maps.LatLngBounds();
+					for (i = 0; i < data.length; i++) {
+						let d = data[i];
+						displayDetailMarker(d);
+						bounds.extend(new kakao.maps.LatLng(d.lat, d.lng));
+					}
+					map.setBounds(bounds);
+					map.setCenter(new kakao.maps.LatLng(data[0].lat, data[0].lng));
+				}
+				else alert("검색하신 결과에 맞는 맛집이 없습니다");
 			}
 		})
 	}
@@ -883,7 +908,7 @@ function displayKeywordMarker(data) {
 		 	<div class="dt_info">
 		 		<div class="dt_title">
 		 			<span class="dt_placename">${data.place_name}</span>
-		 			<div class="alm_close" onclick="closeOverlay()" title="닫기"></div>
+	 				<div class="alm_close" onclick="closeOverlay()" title="닫기"></div>
 		 		</div>
 			 	<div class="alm_body">
 		 			<p>도로명 주소: ${data.road_address_name}</p>
@@ -981,26 +1006,29 @@ let selectedDetailMarker = null,
 openedDetailOverlay = null;
 
 function displayDetailMarker(data) {
+	let r_name = data.r_name,
+	category = data.category,
+	address = data.address,
+	r_phone = data.r_phone;
+	
+	if (r_phone == undefined) r_phone = "미등록";
+	
 	let imageSrc = 	"/img/main/" + category + ".png",
+	hoverSrc = "/img/main/" + category + "Act.png",
 	imageSize = new kakao.maps.Size(30, 30),
 	imageOption = {offset: new kakao.maps.Point(20, 20)},
-	markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+	markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
+	hoverImage = new kakao.maps.MarkerImage(hoverSrc, imageSize, imageOption);
 	
 	let detailMarker = new kakao.maps.Marker({
 		clickable: true,
 		map: map,
-		position: new kakao.maps.LatLng(data["lng"], data["lat"]),
+		position: new kakao.maps.LatLng(data.lat, data.lng),
 		image: markerImage
 	}),
 	detailOverlay = new kakao.maps.CustomOverlay({
 		clickable: true
-	});
-	
-	let r_name = data["r_name"],
-	category = data["category"],
-	address = data["address"],
-	r_phone = data["r_phone"];
-	
+	}),	
 	infowindow = new kakao.maps.InfoWindow({
 		content: `<div class="iw_placename">${address}</div>`
 	});
@@ -1013,31 +1041,50 @@ function displayDetailMarker(data) {
 		let detailContent = `
 		 	<div class="dt_info">
 		 		<div class="dt_title">
-		 			<span class="dt_placename">${r_name}</span>
+		 			<span id="dt_r_name" class="dt_placename">${r_name}</span>
 		 			<div class="alm_close" onclick="closeOverlay()" title="닫기"></div>
 		 		</div>
 			 	<div class="alm_body">
-		 			<p>주소: ${address}</p>
+		 			<p id="dt_address">주소: ${address}</p>
 		 			<p>전화번호: ${r_phone}</p>
-		 			<button class="btn btn-primary">상세보기</button>
-		 			<button class="btn btn-primary">리뷰보기</button>
+		 			<div style="display: flex; justify-content: center;">
+			 			<button id="goto_detail" class="btn btn-primary detail_button"
+			 			onclick="goto_detail()">상세보기</button>
+			 			<button id="goto_review" class="btn btn-primary detail_button"
+			 			onclick="goto_review()">리뷰보기</button>
+			 		</div>
 		 		</div>
 		 	</div>`;
 		 map.setCenter(detailMarker.getPosition());
 		 detailOverlay.setContent(detailContent);
 		 detailOverlay.setPosition(detailMarker.getPosition());
 		 detailOverlay.setMap(map);
-		 openedAddressOverlay = detailOverlay;
+		 openedDetailOverlay = detailOverlay;
 	});
 	
-	kakao.maps.event.addListener(addressMarker, "mouseover", function() {
-		infowindow.open(map, addressMarker);
+	kakao.maps.event.addListener(detailMarker, "mouseover", function() {
+		infowindow.open(map, detailMarker);
+		detailMarker.setImage(hoverImage);
 	})
-	kakao.maps.event.addListener(addressMarker, "mouseout", function() {
+	kakao.maps.event.addListener(detailMarker, "mouseout", function() {
 		infowindow.close();
+		detailMarker.setImage(markerImage);
 	})
 		
 	detailMarkers.push(detailMarker);
+}
+
+function goto_detail() {
+	let r_name = $("#dt_r_name").text();
+	let address = $("#dt_address").text().split(":")[1].trim();
+	window.open(`/restaurant/detail/${r_name}/${address}`, "_blank");
+}
+
+function goto_review() {
+	let r_name = $("#dt_r_name").text();
+	let address = $("#dt_address").text().split(":")[1].trim();
+	localStorage.setItem("goto_review", true);
+	window.open(`/restaurant/detail/${r_name}/${address}`, "_blank");
 }
 
 
@@ -1067,6 +1114,12 @@ function offCategory() {
 }
 
 function offOrderby() {
+	$("input:radio[name='close_or_eval']").each(function() {
+		$(this).prop("checked", false);
+		let id = $(this).attr("id");
+		$(`label[for='${id}']`).removeClass("active");
+	})
+	
 	$("input:radio[name='orderby']").each(function() {
 		$(this).prop("checked", false);
 		let id = $(this).attr("id");
@@ -1106,7 +1159,7 @@ function showMyData() {
 		$(".top_sidebar").empty();
 		$(".top_sidebar").append(
 		`<div class="profil" role="banner">
-			<span class="profil img"><img src="/img/main/profil.jpg"
+			<span class="profil img"><img src="/img/main/Profile.jpg"
 				width="85" height="85"></span>
 			<div class="profil info">
 				<span id="profil_user_name"></span>님 안녕하세요
@@ -1128,6 +1181,14 @@ function showMyData() {
 		</div>`);
 		$("#food_categories").css("display", "none");
 		$("#btn-saveMyTag").css("display", "block");
+		
+		$("input:radio").each(function() {
+			$(this).prop("checked", false);
+		})
+		$("input:checkbox").each(function() {
+			$(this).prop("checked", false);
+		});
+		
 		checkTag();
 		get_userName();
 		get_userReviewCount();
@@ -1139,27 +1200,33 @@ function checkTag() {
 	let ce = localStorage.getItem("close_or_eval"),
 	orderby = localStorage.getItem("orderby");
 	
-	if (ce != null && orderby != null) {
+	$("input:radio").prop("checked", false);
+			
+	if (ce != "undefined" && ce != undefined) {
 		$(`input:radio[value='${ce}']`).prop("checked", true);
-		$(`input:radio[value='${orderby}']`).prop("checked", true);
+	}
+	else {
+		$("input:radio[value='close']").prop("checked", true);
+		$("label[for='close']").addClass("active");
+	}
+	
+	if (orderby != "undefined") $(`input:radio[value='${orderby}']`).prop("checked", true);
 		
-		let checkedRadio = $("input[type='radio']:checked");
-		if (checkedRadio.length > 0) {
-			let checkedRadioId = checkedRadio.attr("id");
-			$(`label[for='${checkedRadioId}']`).addClass("active");
-		}
-		
-		let storedValues = localStorage.getItem("tags");
-		if (storedValues) {
-			checkedValues = JSON.parse(storedValues);
-			$("input:checkbox[name='tags']").each(function() {
-				let value = $(this).val();
-				if (checkedValues.includes(value)) {
-					$(this).prop("checked", true);
-					$(`label[for='${this.id}']`).addClass("active");
-				}
-			});
-		}
+	$("input[type='radio']:checked").each(function() {
+		let id = $(this).attr("id");
+		$(`label[for='${id}']`).addClass("active");
+	});
+	
+	let storedValues = localStorage.getItem("tags");
+	if (storedValues) {
+		checkedValues = JSON.parse(storedValues);
+		$("input:checkbox[name='tags']").each(function() {
+			let value = $(this).val();
+			if (checkedValues.includes(value)) {
+				$(this).prop("checked", true);
+				$(`label[for='${this.id}']`).addClass("active");
+			}
+		});
 	}
 }
 
@@ -1172,6 +1239,14 @@ function gotoMain() {
 	if (loginFlag == 2) manageButton = 
 	`<button id='button_manage' class='btn btn-dark' data-bs-toggle='modal' 
 	data-bs-target='#manageModal'>관리</button>`
+	
+	let header_subarea = "";
+	if (loginFlag >= 1) header_subarea = `
+	    <div class="header_subarea">
+		 	<button type="button" class="btn btn-success" id="btn-myPage">마이페이지</button>	
+		  	<button type="button" id="challenge" class="btn btn-danger" data-bs-toggle="tooltip" 
+		  	data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>
+		</div>`;
 	
 	$(".top_sidebar").append(`
 		<div class="header" role="banner">
@@ -1186,11 +1261,7 @@ function gotoMain() {
 			    autocomplete="off" placeholder="장소, 주소 검색">
 			    <button id="search_button">검색</button>
 			</div>
-		    <div class="header_subarea">
-			 	<button type="button" class="btn btn-success" id="btn-myPage">마이페이지</button>	
-			  	<button type="button" id="challenge" class="btn btn-danger" data-bs-toggle="tooltip" 
-			  	data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>
-			</div>
+			${header_subarea}
 		</div>`);
 }
 
@@ -1222,25 +1293,21 @@ function get_userReviewCount() {
 
 function get_userGrade(count) {
 	if (count <= 5) {
-		// 은색 배경
 		$(".btn-userGrade").text("맛보기");
 		$(".btn-userGrade").css("color", "#ffffff");
 		$(".btn-userGrade").addClass("silver-background");
 	}
 	else if (count >= 10 && count < 15) {
-		// 금색 배경
 		$(".btn-userGrade").text("맛돌이");
 		$(".btn-userGrade").css("color", "#ffffff");
 		$(".btn-userGrade").addClass("gold-background");
 	}
 	else if (count >= 15 && count < 20) {
-		// 플래티넘 배경
 		$(".btn-userGrade").text("맛고수");
 		$(".btn-userGrade").css("color", "#ffffff");
 		$(".btn-userGrade").addClass("platinum-background");
 	}
 	else if (count >= 20) {
-		// 다이아몬드 배경
 		$(".btn-userGrade").text("미식가");
 		$(".btn-userGrade").css("color", "#808080");
 		$(".btn-userGrade").addClass("diamond-background");
@@ -1286,9 +1353,10 @@ function showStoreSetting(){
 
 
 function saveTag() {
-	let checkedValues = [];
 	let close_or_eval = $("input:radio[name='close_or_eval']:checked").val(),
-	orderby = $("input:radio[name='orderby']:checked").val();
+	orderby = $("input:radio[name='orderby']:checked").val(),
+	checkedValues = [];
+	
 	localStorage.setItem("close_or_eval", close_or_eval);
 	localStorage.setItem("orderby", orderby);
 	$("input:checkbox[name='tags']").each(function() {
