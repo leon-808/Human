@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="project.example.demo.main.MainDAO">
-	<select id="check_duplicateLocation" resultType="project.example.demo.DTO.RestaurantDTO">
+	<select id="check_duplicateLocation" resultType="project.example.demo.dto.RestaurantDTO">
 		select r_name, category, address
 		from restaurant
 		where address = #{param1}
@@ -47,7 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where adrt_primecode = #{param1}
 	</select>
 	
-	<select id="get_searchFilterLIst" resultType="project.example.demo.DTO.RestaurantDTO">
+	<select id="get_searchFilterLIst" resultType="project.example.demo.dto.RestaurantDTO">
 		${param1}
 	</select>
 
