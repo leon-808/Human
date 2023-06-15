@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import project.example.demo.DTO.RestaurantDTO;
-import project.example.demo.DTO.ReviewDTO;
-import project.example.demo.DTO.StatisticDTO;
+import project.example.demo.dto.RestaurantDTO;
+import project.example.demo.dto.ReviewDTO;
+import project.example.demo.dto.StatisticDTO;
 
 @Mapper
 public interface DetailPageDAO {

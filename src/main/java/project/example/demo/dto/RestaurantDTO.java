@@ -1,4 +1,4 @@
-package project.example.demo.DTO;
+package project.example.demo.dto;
 
 import lombok.Data;
 
@@ -15,4 +15,6 @@ public class RestaurantDTO {
 	String r_detail;
 	String menu;
 	String r_photo;
+	
+	int eval;
 }

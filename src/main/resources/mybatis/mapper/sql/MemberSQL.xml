@@ -46,7 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where id = #{param1} and name = #{param2} and phone = #{param3}
 	</update>
 	
-	<select id="get_signupInfo" resultType="project.example.demo.DTO.MemberDTO">
+	<select id="get_signupInfo" resultType="project.example.demo.dto.MemberDTO">
 		select *
 		from member
 		where id = #{param1}

@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import project.example.demo.DTO.RestaurantDTO;
+import project.example.demo.dto.RestaurantDTO;
 
 @Controller
 public class MainController {
@@ -153,11 +153,18 @@ public class MainController {
 		}
 		double lat = Double.parseDouble(req.getParameter("lat"));
 		double lng = Double.parseDouble(req.getParameter("lng"));
+		double swLat = 0, swLng = 0, neLat = 0, neLng = 0;
+		if (req.getParameter("swLat") != null && req.getParameter("swLng") != null
+			&& req.getParameter("neLat") != null && req.getParameter("neLng") != null) {
+			swLat = Double.parseDouble(req.getParameter("swLat"));
+			swLng = Double.parseDouble(req.getParameter("swLng"));
+			neLat = Double.parseDouble(req.getParameter("neLat"));
+			neLng = Double.parseDouble(req.getParameter("neLng"));					
+		}
 				
-		String query = make_searchFilterQuery(words, fc, ce, ob, id, tags, lat, lng);
+		String query = make_searchFilterQuery(words, fc, ce, ob, id, tags, lat, lng, swLat, swLng, neLat, neLng);
 		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
 		JSONArray ja = new JSONArray();
-		System.out.println(query);
 		for (RestaurantDTO r : rdto) {
 			JSONObject jo = new JSONObject();
 			jo.put("lat", r.getLat());
@@ -167,6 +174,7 @@ public class MainController {
 			jo.put("address", r.getAddress());
 			jo.put("r_phone", r.getR_phone());
 			jo.put("r_photo", r.getR_photo());
+			jo.put("eval", r.getEval());
 			ja.put(jo);
 		}
 		return ja.toString();
@@ -174,7 +182,8 @@ public class MainController {
 	
 	public String make_searchFilterQuery(String words, String fc, String ce, String ob, 
 										 String id, ArrayList<String> tags,
-										 double lat, double lng) {
+										 double lat, double lng, double swLat, double swLng,
+										 double neLat, double neLng) {
 		StringBuilder query = new StringBuilder();
 		
 		query.append("""
@@ -182,18 +191,33 @@ public class MainController {
 				from (
 				""");
 		
-		if (ce.equals("close")) {
-			query.append(String.format("""
-						select a.*, abs((a.lat - %1$s) + (a.lng - %2$s)) as close
-					""", lat, lng));
-		}
-		else if (ce.equals("eval")) {
-			String temp = "\tselect a.*, ";
-			for (int i = 0; i < tags.size(); i++) {
-				if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
-				else temp += "c." + tags.get(i) + " + ";
+		if (ce != null) {
+			if (ce.equals("close")) {
+				query.append(String.format("""
+							select a.*, abs((a.lat - %1$s) + (a.lng - %2$s)) as close
+						""", lat, lng));
 			}
-			query.append(temp);
+			else if (ce.equals("eval")) {
+				String temp = "\tselect a.*, ";
+				if (tags.size() == 0) {
+					String[] temporalTags = {
+						"clean", "kind", "parking", "fast", "pack", "alone", "together",
+						"focus", "talk", "photoplace", "delicious", "portion", "cost",
+						"lot", "satisfy"
+					};
+					for (int i = 0; i < temporalTags.length; i++) {
+						if (i == temporalTags.length - 1) temp += "c." + temporalTags[i] + " as eval\n";
+						else temp += "c." + temporalTags[i] + " + ";
+					}
+				}
+				else {
+					for (int i = 0; i < tags.size(); i++) {
+						if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
+						else temp += "c." + tags.get(i) + " + ";
+					}
+				}
+				query.append(temp);
+			}
 		}
 		
 		query.append("""
@@ -218,7 +242,7 @@ public class MainController {
 		}
 		else query.append("\t\t) a");
 		
-		if (tags.size() != 0) query.append(", statistic c");
+		if (ce != null && ce.equals("eval")) query.append(", statistic c");
 		
 		if (ob != null) {
 			if (ob.equals("been")) query.append(String.format("""
@@ -239,25 +263,57 @@ public class MainController {
 					""", id));
 		}
 		
-		if (tags.size() != 0) {
+		if (ce != null && ce.equals("eval")) {
 			if (ob != null) query.append("	and ");
 			else query.append("\n	where ");
 			query.append("""
 					a.r_name = c.s_r_name
 						and a.address = c.s_address
 					""");
-			for (String s : tags) {
-				query.append(String.format("""
-							and c.%1$s > 0
-						""", s));
+			if (tags.size() != 0) {
+				for (String s : tags) {
+					query.append(String.format("""
+								and c.%1$s > 0
+							""", s));
+				}
 			}
 		}
 		
-		query.append(String.format("""
-			\torder by %1$s
-			""", ce));
+		if (swLat != 0 && swLng != 0 && neLat != 0 && neLng != 0) {
+			if (ob == null && ce == null) {
+				query.append(String.format("""
+						\n\twhere a.lat >= %1$s
+							and a.lat <= %2$s
+							and a.lng >= %3$s
+							and a.lng <= %4$s
+						""", swLat, neLat, swLng, neLng));
+			}
+			else if (ob != null || ce != null) {
+				query.append(String.format("""
+						\tand a.lat >= %1$s
+							and a.lat <= %2$s
+							and a.lng >= %3$s
+							and a.lng <= %4$s
+						""", swLat, neLat, swLng, neLng));
+			}
+		}
+		
+		if (ce != null) {
+			if (ce.equals("close")) {
+				query.append(String.format("""
+						\torder by %1$s
+						""", ce));
+			}
+			else if (ce.equals("eval")) {
+				query.append(String.format("""
+						\torder by %1$s desc
+						""", ce));
+			}
+		}
 		
 		query.append(")\nwhere rownum <= 10");
+		if (ce != null && ce.equals("eval"))
+			query.append("\nand eval > 0");
 		
 		return query.toString();
 	}
