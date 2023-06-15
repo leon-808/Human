@@ -216,7 +216,7 @@ function came_from_main() {
 		let offset = $("#restaurant_reviewPhoto").offset();
 		$("html, body").animate({
 			scrollTop: offset.top
-		}, 1000);
+		}, 500);
 		localStorage.removeItem("goto_review");
 	}
 }
@@ -264,6 +264,8 @@ function check_mine() {
 	})
 }
 
+let origin_myPhoto = null;
+
 function get_myReview() {
 	$("#my_review").append(`
 		${review_string}
@@ -299,7 +301,12 @@ function get_myReview() {
 			$("label[for='review_imageUpload']").css("display", "none");
 			$("#review_beforePreview").css("display", "inline-block");
 			$("label[for='review_beforePreview']").css("display", "inline-block");
-			$("#review_beforePreview").attr("src", d.rv_photo);
+			
+			if (d.rv_photo == undefined) $("#review_beforePreview").attr("src", "/img/admin/No-Image.jpg");
+			else {
+				origin_myPhoto = d.rv_photo;
+				$("#review_beforePreview").attr("src", d.rv_photo);
+			}
 			
 			if ($("#review_beforePreview").attr("src") != "") {
 				$("#review_beforePreview").css("margin", "0px");
@@ -429,7 +436,7 @@ function get_photoList() {
 				for (i = 0; i < data.length - 1; i++) {
 					let src = data[i]["rv_photo"];
 					$("#reviewPhoto_list").append(`
-					<img src="${src}" class="photo_modal">`);
+					<img src="${src}" class="">`);
 				}
 				
 				let count = data[data.length - 1]["count"];
@@ -499,11 +506,10 @@ function get_reviewList() {
 					let d = data[i];
 					let html = "";
 					let ownerTag = "";
-					if (d.rv_owner != undefined) 
-					ownerTag = `
-					<img src="/img/detail/OwnerCommented.png">`;
+					if (d.rv_owner != undefined) ownerTag = `<img src="/img/detail/OwnerCommented.png">`;
+					if (d.rv_photo == undefined) d.rv_photo = "/img/admin/No-Image.jpg";
 					html = `
-					<div>
+					<div style="margin: 0 0 10px 0;">
 						<img src="${d.rv_photo}" class="photo_modal">
 						<p class="review_modal">${d.rv_detail.substring(0,50)}&emsp;...</p>
 						<p class="modal_id">${d.rv_id}</p>
@@ -595,9 +601,10 @@ function review_modal() {
 		success: function(data) {
 			$("#review_modal_content").empty();
 			let d = data[0];
+			if (d.rv_photo == undefined) d.rv_photo = "/img/admin/No-Image.jpg";
 			html = `
 			<p id="rvm_id" writter="${rv_id}">작성자: ${rv_id}</p>
-			<img src="${d.rv_photo}" class="rvm_image">
+			<img src="${d.rv_photo}" class="rvm_image photo_modal">
 			<textarea type="text" maxlength="300" class="rvm_textarea" readonly>${d.rv_detail}</textarea>`;
 			
 			let tags = d.tags.split(",");
@@ -790,9 +797,12 @@ function review_submit(){
 	let photo = $('#review_imageUpload')[0].files;
 	let photoSize = 0;
 	
-	if (photo.length != 0)  {
-		for (i = 0; i < photo.length; i++) formData.append('photo', photo[i]);
-		photoSize = $('#review_imageUpload')[0].files[0].size;
+	if (origin_myPhoto != null || photo.length != 0)  {
+		if (photo.length != 0) {
+			formData.append('photo', photo[0]);
+			photoSize = photo[0].size;
+		}
+		
 		$.ajax({
 			url: "/review/submit/photo",
 			type: "post",
@@ -819,7 +829,7 @@ function review_submit(){
 					alert("지원하지 않는 이미지 파일입니다 이미지를 변경해주세요");
 				}
 				else {
-					alert("리뷰가 등록되었습니다");
+					alert("리뷰가 등록되었습니다 포토");
 					window.location.reload();
 				}
 			},
@@ -848,7 +858,7 @@ function review_submit(){
 					alert("지원하지 않는 이미지 파일입니다 이미지를 변경해주세요");
 				}
 				else {
-					alert("리뷰가 등록되었습니다");
+					alert("리뷰가 등록되었습니다 포토없음");
 					window.location.reload();
 				}
 			},

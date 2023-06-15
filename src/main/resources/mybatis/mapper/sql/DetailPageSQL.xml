@@ -90,7 +90,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</update>
 	<insert id="review_insert_photo">
 		insert into review
-		values (#{param1}, #{param2}, #{param3}, #{param4}, 1, #{param5}, #{param6},
+		values (#{param1, jdbcType=VARCHAR}, #{param2}, #{param3}, #{param4}, 1, #{param5}, #{param6},
 		#{param7}, to_char(sysdate,'YYYY-MM-DD HH24:mi:ss'), null)
 	</insert>
 	<update id="review_update_photo">
@@ -128,6 +128,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				from review
 				where rv_r_name = #{param1}
 				and rv_address = #{param2}
+				and rv_photo is not null
 				order by rv_time desc
 			) a
 			where rownum <![CDATA[<=]]> #{param4}

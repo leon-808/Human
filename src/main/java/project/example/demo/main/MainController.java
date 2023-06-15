@@ -155,21 +155,21 @@ public class MainController {
 		double lng = Double.parseDouble(req.getParameter("lng"));
 				
 		String query = make_searchFilterQuery(words, fc, ce, ob, id, tags, lat, lng);
-		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
-		JSONArray ja = new JSONArray();
 		System.out.println(query);
-		for (RestaurantDTO r : rdto) {
-			JSONObject jo = new JSONObject();
-			jo.put("lat", r.getLat());
-			jo.put("lng", r.getLng());
-			jo.put("r_name", r.getR_name());
-			jo.put("category", r.getCategory());
-			jo.put("address", r.getAddress());
-			jo.put("r_phone", r.getR_phone());
-			jo.put("r_photo", r.getR_photo());
-			ja.put(jo);
-		}
-		return ja.toString();
+//		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
+//		JSONArray ja = new JSONArray();
+//		for (RestaurantDTO r : rdto) {
+//			JSONObject jo = new JSONObject();
+//			jo.put("lat", r.getLat());
+//			jo.put("lng", r.getLng());
+//			jo.put("r_name", r.getR_name());
+//			jo.put("category", r.getCategory());
+//			jo.put("address", r.getAddress());
+//			jo.put("r_phone", r.getR_phone());
+//			jo.put("r_photo", r.getR_photo());
+//			ja.put(jo);
+//		}
+		return "스트링"; // ja.toString();
 	}
 	
 	public String make_searchFilterQuery(String words, String fc, String ce, String ob, 
@@ -182,18 +182,20 @@ public class MainController {
 				from (
 				""");
 		
-		if (ce.equals("close")) {
-			query.append(String.format("""
-						select a.*, abs((a.lat - %1$s) + (a.lng - %2$s)) as close
-					""", lat, lng));
-		}
-		else if (ce.equals("eval")) {
-			String temp = "\tselect a.*, ";
-			for (int i = 0; i < tags.size(); i++) {
-				if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
-				else temp += "c." + tags.get(i) + " + ";
+		if (ce != null) {
+			if (ce.equals("close")) {
+				query.append(String.format("""
+							select a.*, abs((a.lat - %1$s) + (a.lng - %2$s)) as close
+						""", lat, lng));
 			}
-			query.append(temp);
+			else if (ce.equals("eval")) {
+				String temp = "\tselect a.*, ";
+				for (int i = 0; i < tags.size(); i++) {
+					if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
+					else temp += "c." + tags.get(i) + " + ";
+				}
+				query.append(temp);
+			}
 		}
 		
 		query.append("""
