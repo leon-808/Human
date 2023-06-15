@@ -174,12 +174,8 @@ let zoomControl = new kakao.maps.ZoomControl();
 let selfLat, selfLng;
 
 function geoPosition() {
-	lat = 36.784611945287246,
-	lng = 127.01593061114956;
-	
-	/*목록 작업중*/
-	/*lat = 36.81044107630051,
-	lng = 127.14647463417765;*/
+	lat = 36.81044107630051,
+	lng = 127.14647463417765;
 	selfLat = lat; selfLng = lng;
 	makeMap(lat, lng);
 	
@@ -757,7 +753,7 @@ function search() {
 				}
 			},
 			success: function(data) {
-				if (data.length != 0) {
+				/*if (data.length != 0) {
 					let bounds = new kakao.maps.LatLngBounds();
 					for (i = 0; i < data.length; i++) {
 						let d = data[i];
@@ -767,7 +763,7 @@ function search() {
 					map.setBounds(bounds);
 					map.setCenter(new kakao.maps.LatLng(data[0].lat, data[0].lng));
 				}
-				else alert("검색하신 결과에 맞는 맛집이 없습니다");
+				else alert("검색하신 결과에 맞는 맛집이 없습니다");*/
 			}
 		})
 	}
@@ -775,20 +771,20 @@ function search() {
 
 function rectSearch() {
 	let sf_count = 0;
-	$("input:radio[name='fc']").each(function() {
-		if ($(this).prop("checked") == true) {
-			sf_category = $(this).val();
-			sf_count++; return false;
-		}
-	});
-	$("input:radio[name='orderby']").each(function() {
-		if ($(this).prop("checked") == true) {
-			sf_count++; return false;
-		}
-	});
+	let query, fc, ce, ob;
+	let tags = [];
+	
+	fc = $("input:radio[name='fc']:checked").val();
+	if (fc != undefined) sf_count++; 
+	ce = $("input:radio[name='close_or_eval']:checked").val();
+	if (ce != undefined) sf_count++;
+	ob = $("input:radio[name='orderby']:checked").val();
+	if (ob != undefined) sf_count++;
+	
 	$("input:checkbox[name='tags']").each(function() {
 		if ($(this).prop("checked") == true) {
-			sf_count++; return false;
+			tags.push($(this).val());
+			sf_count++;
 		}
 	});
 	
@@ -807,7 +803,7 @@ function rectSearch() {
 		
 	wholeMarkersNull();
 			
-	if (sf_count == 0) {
+	if (sf_count == 0 || loginFlag == 0) {
 		let query = encodeURI($("#search_input").val());
 		let searchURL =
 		`https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy
@@ -843,7 +839,46 @@ function rectSearch() {
 		})
 	}
 	else if (sf_count != 0) { 
+		let query = $("#search_input").val();
+		let bounds = map.getBounds(),
+		swLat = bounds.getSouthWest().getLat(),
+		swLng = bounds.getSouthWest().getLng(),
+		neLat = bounds.getNorthEast().getLat(),
+		neLng = bounds.getNorthEast().getLng();
 		
+		$.ajax({
+			url: "/main/filter/search",
+			type: "post",
+			data: {
+				query: query,
+				fc: fc,
+				ce: ce,
+				ob: ob,
+				tags: tags,
+				lat: lat,
+				lng: lng
+			},
+			dataType: "json",
+			beforeSend: function() {
+				if (ce == "eval" && tags.length == 0) {
+					alert("평점순 정렬을 위해선 최소한 하나 이상의 태그를 선택해주세요");
+					return false;
+				}
+			},
+			success: function(data) {
+				/*if (data.length != 0) {
+					let bounds = new kakao.maps.LatLngBounds();
+					for (i = 0; i < data.length; i++) {
+						let d = data[i];
+						displayDetailMarker(d);
+						bounds.extend(new kakao.maps.LatLng(d.lat, d.lng));
+					}
+					map.setBounds(bounds);
+					map.setCenter(new kakao.maps.LatLng(data[0].lat, data[0].lng));
+				}
+				else alert("검색하신 결과에 맞는 맛집이 없습니다");*/
+			}
+		})
 	}	 
 }
 
@@ -1113,13 +1148,7 @@ function offCategory() {
 	})
 }
 
-function offOrderby() {
-	$("input:radio[name='close_or_eval']").each(function() {
-		$(this).prop("checked", false);
-		let id = $(this).attr("id");
-		$(`label[for='${id}']`).removeClass("active");
-	})
-	
+function offOrderby() {	
 	$("input:radio[name='orderby']").each(function() {
 		$(this).prop("checked", false);
 		let id = $(this).attr("id");

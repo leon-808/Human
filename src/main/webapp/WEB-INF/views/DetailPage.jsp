@@ -87,7 +87,7 @@
 <!-- 포토 모달 -->
 <button id="photoModal_button" data-bs-toggle="modal" 
 data-bs-target="#photo_modal" style="display:none"></button>
-<div id="photo_modal" class="modal fade" tabindex="-1">
+<div id="photo_modal" class="modal fade">
 	<div class="modal-dialog modal-dialog-centered ">
 		<div class="modal-content">
 			<img id="photomodal_img" src="">
@@ -96,9 +96,9 @@ data-bs-target="#photo_modal" style="display:none"></button>
 </div>
 
 <!-- 리뷰 모달 -->
-<button id="reviewModal_button" data-bs-toggle="modal" 
+<button id="reviewModal_button" data-bs-toggle="modal"
 data-bs-target="#review_modal" style="display:none"></button>
-<div id="review_modal" class="modal fade" tabindex="-1">
+<div id="review_modal"class="modal fade">
 	<div class="modal-dialog modal-dialog-centered ">
 		<div id="review_modal_content" class="modal-content">
 		</div>
