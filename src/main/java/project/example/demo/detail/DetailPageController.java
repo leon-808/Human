@@ -24,9 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import project.example.demo.DTO.RestaurantDTO;
-import project.example.demo.DTO.ReviewDTO;
-import project.example.demo.DTO.StatisticDTO;
+import project.example.demo.dto.RestaurantDTO;
+import project.example.demo.dto.ReviewDTO;
+import project.example.demo.dto.StatisticDTO;
 
 @Controller
 public class DetailPageController {
