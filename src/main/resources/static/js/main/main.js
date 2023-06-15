@@ -709,10 +709,6 @@ function search() {
 					alert("검색어 또는 검색 조건을 하나라도 활성화해주세요");
 					return false;
 				}
-				else if (ce == "eval") {
-					alert("평점순 정렬을 위해선 최소한 하나 이상의 태그를 선택해주세요");
-					return false;
-				}
 			},
 			success: function (data) {
 				if (data.documents.length != 0) {
@@ -746,18 +742,33 @@ function search() {
 				lng: lng
 			},
 			dataType: "json",
-			beforeSend: function () {
-				if (ce == "eval" && tags.length == 0) {
-					alert("평점순 정렬을 위해선 최소한 하나 이상의 태그를 선택해주세요");
-					return false;
-				}
-			},
 			success: function (data) {
 				if (data.length != 0) {
+					let tempAry = [];
+					for (i = 0; i < data.length; i++) {
+						let d = data[i];
+						tempAry.push(d.eval);
+					}
+					tempAry.sort(function (a, b) {
+						return b - a;
+					});
+					let indexAry = [];
+					let tempNum = 0, index = 1;
+					for (i = 0; i < tempAry.length; i++) {
+						if (i == 0) {
+							tempNum = tempAry[0];
+							indexAry.push(index);
+						}
+						else {
+							if (tempNum > tempAry[i]) index++;
+							tempNum = tempAry[i];
+							indexAry.push(index);
+						}
+					}
 					let bounds = new kakao.maps.LatLngBounds();
 					for (i = 0; i < data.length; i++) {
 						let d = data[i];
-						displayDetailMarker(d);
+						displayDetailMarker(d, indexAry[i], ce);
 						bounds.extend(new kakao.maps.LatLng(d.lat, d.lng));
 					}
 					map.setBounds(bounds);
@@ -804,7 +815,7 @@ function rectSearch() {
 	wholeMarkersNull();
 
 	if (sf_count == 0 || loginFlag == 0) {
-		let query = encodeURI($("#search_input").val());
+		query = encodeURI($("#search_input").val());
 		let searchURL =
 			`https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy
 		&query=${query}&x=${lng}&y=${lat}&rect=${boundary}`;
@@ -839,7 +850,7 @@ function rectSearch() {
 		})
 	}
 	else if (sf_count != 0) {
-		let query = $("#search_input").val();
+		query = $("#search_input").val();
 		let bounds = map.getBounds(),
 			swLat = bounds.getSouthWest().getLat(),
 			swLng = bounds.getSouthWest().getLng(),
@@ -856,27 +867,42 @@ function rectSearch() {
 				ob: ob,
 				tags: tags,
 				lat: lat,
-				lng: lng
+				lng: lng,
+				swLat: swLat,
+				swLng: swLng,
+				neLat: neLat,
+				neLng: neLng
 			},
 			dataType: "json",
-			beforeSend: function () {
-				if (ce == "eval" && tags.length == 0) {
-					alert("평점순 정렬을 위해선 최소한 하나 이상의 태그를 선택해주세요");
-					return false;
-				}
-			},
 			success: function (data) {
-				/*if (data.length != 0) {
-					let bounds = new kakao.maps.LatLngBounds();
+				if (data.length != 0) {
+					let tempAry = [];
 					for (i = 0; i < data.length; i++) {
 						let d = data[i];
-						displayDetailMarker(d);
-						bounds.extend(new kakao.maps.LatLng(d.lat, d.lng));
+						tempAry.push(d.eval);
 					}
-					map.setBounds(bounds);
-					map.setCenter(new kakao.maps.LatLng(data[0].lat, data[0].lng));
+					tempAry.sort(function (a, b) {
+						return b - a;
+					});
+					let indexAry = [];
+					let tempNum = 0, index = 1;
+					for (i = 0; i < tempAry.length; i++) {
+						if (i == 0) {
+							tempNum = tempAry[0];
+							indexAry.push(index);
+						}
+						else {
+							if (tempNum > tempAry[i]) index++;
+							tempNum = tempAry[i];
+							indexAry.push(index);
+						}
+					}
+					for (i = 0; i < data.length; i++) {
+						let d = data[i];
+						displayDetailMarker(d, indexAry[i], ce);
+					}
 				}
-				else alert("검색하신 결과에 맞는 맛집이 없습니다");*/
+				else alert("검색하신 결과에 맞는 맛집이 없습니다");
 			}
 		})
 	}
@@ -1040,17 +1066,24 @@ let detailMarkers = [];
 let selectedDetailMarker = null,
 	openedDetailOverlay = null;
 
-function displayDetailMarker(data) {
+function displayDetailMarker(data, index, flag) {
 	let r_name = data.r_name,
 		category = data.category,
 		address = data.address,
 		r_phone = data.r_phone;
-
 	if (r_phone == undefined) r_phone = "미등록";
 
-	let imageSrc = "/img/main/" + category + ".png",
-		hoverSrc = "/img/main/" + category + "Act.png",
-		imageSize = new kakao.maps.Size(30, 30),
+	let imageSrc = null, hoverSrc = null;
+	if (flag == "close") {
+		imageSrc = "/img/main/" + category + ".png";
+		hoverSrc = "/img/main/" + category + "Act.png";
+	}
+	else if (flag == "eval") {
+		imageSrc = "/img/main/Pin" + index + ".png";
+		hoverSrc = "/img/main/Pin" + index + "Act.png";
+	}
+
+	let imageSize = new kakao.maps.Size(30, 30),
 		imageOption = { offset: new kakao.maps.Point(20, 20) },
 		markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
 		hoverImage = new kakao.maps.MarkerImage(hoverSrc, imageSize, imageOption);
@@ -1065,7 +1098,7 @@ function displayDetailMarker(data) {
 			clickable: true
 		}),
 		infowindow = new kakao.maps.InfoWindow({
-			content: `<div class="iw_placename">${address}</div>`
+			content: `<div class="iw_placename">${r_name}</div>`
 		});
 
 	kakao.maps.event.addListener(detailMarker, "click", function () {
@@ -1100,11 +1133,12 @@ function displayDetailMarker(data) {
 	kakao.maps.event.addListener(detailMarker, "mouseover", function () {
 		infowindow.open(map, detailMarker);
 		detailMarker.setImage(hoverImage);
-	})
+	});
+
 	kakao.maps.event.addListener(detailMarker, "mouseout", function () {
 		infowindow.close();
 		detailMarker.setImage(markerImage);
-	})
+	});
 
 	detailMarkers.push(detailMarker);
 }

@@ -31,12 +31,12 @@ public class MainController {
 	public String main_page() {
 		return "main";
 	}
-		
+
 	@GetMapping("/main/search/{query}")
 	public String detail(@PathVariable("query") String query) {
 		return "main";
 	}
-	
+
 	@PostMapping("/check/duplicateLocation")
 	@ResponseBody
 	public String check_duplicateLocation(HttpServletRequest req) {
@@ -55,12 +55,12 @@ public class MainController {
 		}
 		return ja.toString();
 	}
-	
+
 	@PostMapping("/suggest/alm/user")
 	@ResponseBody
-	public String suggest_alm (@RequestPart(value = "restaurant") RestaurantDTO rdto) {
+	public String suggest_alm(@RequestPart(value = "restaurant") RestaurantDTO rdto) {
 		String message = "proceed";
-		
+
 		double lat = rdto.getLat();
 		double lng = rdto.getLng();
 		String primecode = null;
@@ -69,20 +69,21 @@ public class MainController {
 		String address = rdto.getAddress().replace("\"", "");
 		String owner = null;
 		String localURL = null;
-		
+
 		int duplicate = mdao.check_duplicateRequest(r_name, address);
-		if (duplicate == 0) 
+		if (duplicate == 0)
 			mdao.restaurant_approval_request(lat, lng, primecode, r_name, owner, category, address, localURL);
-		else message = "duplicate";
-		
+		else
+			message = "duplicate";
+
 		return message;
 	}
-	
+
 	@PostMapping("/suggest/alm/ceo")
 	@ResponseBody
-	public String suggest_alm (@RequestPart(value = "restaurant") RestaurantDTO rdto,
-		   					   @RequestPart(value = "bnd") MultipartFile[] bnd,
-		   					   HttpServletRequest req) {
+	public String suggest_alm(@RequestPart(value = "restaurant") RestaurantDTO rdto,
+			@RequestPart(value = "bnd") MultipartFile[] bnd,
+			HttpServletRequest req) {
 		String message = "proceed";
 
 		double lat = rdto.getLat();
@@ -91,7 +92,7 @@ public class MainController {
 		String r_name = rdto.getR_name();
 		String category = rdto.getCategory();
 		String address = rdto.getAddress().replace("\"", "");
-		
+
 		HttpSession session = req.getSession();
 		String realname = mdao.get_member_name(String.valueOf(session.getAttribute("id")));
 		String owner = String.valueOf(session.getAttribute("id")) + "," + realname;
@@ -103,10 +104,10 @@ public class MainController {
 		LocalTime now = LocalTime.now();
 		DateTimeFormatter fn = DateTimeFormatter.ofPattern("HH-mm-ss ");
 		String timeString = now.format(fn);
-		
+
 		String location = "C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\resources\\static\\img\\admin\\restaurant";
 		String shortLocation = "/img/admin/restaurant/";
-		
+
 		String[] extensions = {
 				"bmp", "jpg", "jpeg", "gif", "png", "webp", "webm", "jfif", "pdf"
 		};
@@ -114,14 +115,15 @@ public class MainController {
 		int acceptable = 0;
 		for (String s : extensions) {
 			if (s.equals(originalExtension)) {
-				acceptable = 1; break;
+				acceptable = 1;
+				break;
 			}
 		}
 		if (acceptable == 0) {
 			message = "extension";
 			return message;
 		}
-		
+
 		String filename = r_name + " " + idString + todayString + timeString + bnd[0].getOriginalFilename();
 		File savefile = new File(location, filename);
 		try {
@@ -129,9 +131,9 @@ public class MainController {
 		} catch (Exception e) {
 		}
 		String localURL = shortLocation + filename;
-		
+
 		int duplicate = mdao.check_duplicateRequest(r_name, address);
-		if (duplicate == 0) 
+		if (duplicate == 0)
 			mdao.restaurant_approval_request(lat, lng, primecode, r_name, owner, category, address, localURL);
 		else {
 			mdao.restaurant_update_request(lat, lng, primecode, r_name, owner, category, address, localURL);
@@ -139,7 +141,7 @@ public class MainController {
 
 		return message;
 	}
-	
+
 	@PostMapping("/main/filter/search")
 	@ResponseBody
 	public String filter_search(HttpServletRequest req) {
@@ -151,13 +153,21 @@ public class MainController {
 		String id = String.valueOf(session.getAttribute("id"));
 		ArrayList<String> tags = new ArrayList<>();
 		if (req.getParameterValues("tags[]") != null) {
-			for (String s : req.getParameterValues("tags[]")) tags.add(s);
+			for (String s : req.getParameterValues("tags[]"))
+				tags.add(s);
 		}
 		double lat = Double.parseDouble(req.getParameter("lat"));
 		double lng = Double.parseDouble(req.getParameter("lng"));
-				
-		String query = make_searchFilterQuery(words, fc, ce, ob, id, tags, lat, lng);
-		System.out.println(query);
+		double swLat = 0, swLng = 0, neLat = 0, neLng = 0;
+		if (req.getParameter("swLat") != null && req.getParameter("swLng") != null
+				&& req.getParameter("neLat") != null && req.getParameter("neLng") != null) {
+			swLat = Double.parseDouble(req.getParameter("swLat"));
+			swLng = Double.parseDouble(req.getParameter("swLng"));
+			neLat = Double.parseDouble(req.getParameter("neLat"));
+			neLng = Double.parseDouble(req.getParameter("neLng"));
+		}
+
+		String query = make_searchFilterQuery(words, fc, ce, ob, id, tags, lat, lng, swLat, swLng, neLat, neLng);
 		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
 		JSONArray ja = new JSONArray();
 		for (RestaurantDTO r : rdto) {
@@ -169,37 +179,16 @@ public class MainController {
 			jo.put("address", r.getAddress());
 			jo.put("r_phone", r.getR_phone());
 			jo.put("r_photo", r.getR_photo());
+			jo.put("eval", r.getEval());
 			ja.put(jo);
 		}
 		return ja.toString();
 	}
-	
-	@PostMapping("/my/reviewList")
-	@ResponseBody
-	public String MyReviewList(HttpServletRequest req) {
-		HttpSession session = req.getSession();
-		JSONArray ja = new JSONArray();
 
-		if (session.getAttribute("id") != null) {
-			String id = session.getAttribute("id").toString();
-
-			ArrayList<ReviewDTO> rvdto = mdao.get_userReviewList(id);
-
-			for (int i=0; i<rvdto.size(); i++) {
-				JSONObject jo = new JSONObject();
-				jo.put("rv_r_name", rvdto.get(i).getRv_r_name());
-				jo.put("rv_photo", rvdto.get(i).getRv_photo());
-				jo.put("rv_detail", rvdto.get(i).getRv_detail());
-				jo.put("rv_time", rvdto.get(i).getRv_time());
-				ja.put(jo);
-			}
-		}
-		return ja.toString();
-	}
-	
 	public String make_searchFilterQuery(String words, String fc, String ce, String ob, 
 										 String id, ArrayList<String> tags,
-										 double lat, double lng) {
+										 double lat, double lng, double swLat, double swLng,
+										 double neLat, double neLng) {
 		StringBuilder query = new StringBuilder();
 		
 		query.append("""
@@ -215,9 +204,28 @@ public class MainController {
 			}
 			else if (ce.equals("eval")) {
 				String temp = "\tselect a.*, ";
+<<<<<<< HEAD
+				if (tags.size() == 0) {
+					String[] temporalTags = {
+						"clean", "kind", "parking", "fast", "pack", "alone", "together",
+						"focus", "talk", "photoplace", "delicious", "portion", "cost",
+						"lot", "satisfy"
+					};
+					for (int i = 0; i < temporalTags.length; i++) {
+						if (i == temporalTags.length - 1) temp += "c." + temporalTags[i] + " as eval\n";
+						else temp += "c." + temporalTags[i] + " + ";
+					}
+				}
+				else {
+					for (int i = 0; i < tags.size(); i++) {
+						if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
+						else temp += "c." + tags.get(i) + " + ";
+					}
+=======
 				for (int i = 0; i < tags.size(); i++) {
 					if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
 					else temp += "c." + tags.get(i) + " + ";
+>>>>>>> b23916b97b76f5ce195ce2107925aee07aeb44c0
 				}
 				query.append(temp);
 			}
@@ -245,7 +253,7 @@ public class MainController {
 		}
 		else query.append("\t\t) a");
 		
-		if (tags.size() != 0) query.append(", statistic c");
+		if (ce != null && ce.equals("eval")) query.append(", statistic c");
 		
 		if (ob != null) {
 			if (ob.equals("been")) query.append(String.format("""
@@ -266,25 +274,57 @@ public class MainController {
 					""", id));
 		}
 		
-		if (tags.size() != 0) {
+		if (ce != null && ce.equals("eval")) {
 			if (ob != null) query.append("	and ");
 			else query.append("\n	where ");
 			query.append("""
 					a.r_name = c.s_r_name
 						and a.address = c.s_address
 					""");
-			for (String s : tags) {
-				query.append(String.format("""
-							and c.%1$s > 0
-						""", s));
+			if (tags.size() != 0) {
+				for (String s : tags) {
+					query.append(String.format("""
+								and c.%1$s > 0
+							""", s));
+				}
 			}
 		}
 		
-		query.append(String.format("""
-			\torder by %1$s
-			""", ce));
+		if (swLat != 0 && swLng != 0 && neLat != 0 && neLng != 0) {
+			if (ob == null && ce == null) {
+				query.append(String.format("""
+						\n\twhere a.lat >= %1$s
+							and a.lat <= %2$s
+							and a.lng >= %3$s
+							and a.lng <= %4$s
+						""", swLat, neLat, swLng, neLng));
+			}
+			else if (ob != null || ce != null) {
+				query.append(String.format("""
+						\tand a.lat >= %1$s
+							and a.lat <= %2$s
+							and a.lng >= %3$s
+							and a.lng <= %4$s
+						""", swLat, neLat, swLng, neLng));
+			}
+		}
+		
+		if (ce != null) {
+			if (ce.equals("close")) {
+				query.append(String.format("""
+						\torder by %1$s
+						""", ce));
+			}
+			else if (ce.equals("eval")) {
+				query.append(String.format("""
+						\torder by %1$s desc
+						""", ce));
+			}
+		}
 		
 		query.append(")\nwhere rownum <= 10");
+		if (ce != null && ce.equals("eval"))
+			query.append("\nand eval > 0");
 		
 		return query.toString();
 	}
