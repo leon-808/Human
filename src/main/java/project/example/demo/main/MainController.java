@@ -18,7 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import project.example.demo.dto.MemberDTO;
 import project.example.demo.dto.RestaurantDTO;
+import project.example.demo.dto.ReviewDTO;
 
 @Controller
 public class MainController {
@@ -156,20 +158,43 @@ public class MainController {
 				
 		String query = make_searchFilterQuery(words, fc, ce, ob, id, tags, lat, lng);
 		System.out.println(query);
-//		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
-//		JSONArray ja = new JSONArray();
-//		for (RestaurantDTO r : rdto) {
-//			JSONObject jo = new JSONObject();
-//			jo.put("lat", r.getLat());
-//			jo.put("lng", r.getLng());
-//			jo.put("r_name", r.getR_name());
-//			jo.put("category", r.getCategory());
-//			jo.put("address", r.getAddress());
-//			jo.put("r_phone", r.getR_phone());
-//			jo.put("r_photo", r.getR_photo());
-//			ja.put(jo);
-//		}
-		return "스트링"; // ja.toString();
+		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
+		JSONArray ja = new JSONArray();
+		for (RestaurantDTO r : rdto) {
+			JSONObject jo = new JSONObject();
+			jo.put("lat", r.getLat());
+			jo.put("lng", r.getLng());
+			jo.put("r_name", r.getR_name());
+			jo.put("category", r.getCategory());
+			jo.put("address", r.getAddress());
+			jo.put("r_phone", r.getR_phone());
+			jo.put("r_photo", r.getR_photo());
+			ja.put(jo);
+		}
+		return ja.toString();
+	}
+	
+	@PostMapping("/my/reviewList")
+	@ResponseBody
+	public String MyReviewList(HttpServletRequest req) {
+		HttpSession session = req.getSession();
+		JSONArray ja = new JSONArray();
+
+		if (session.getAttribute("id") != null) {
+			String id = session.getAttribute("id").toString();
+
+			ArrayList<ReviewDTO> rvdto = mdao.get_userReviewList(id);
+
+			for (int i=0; i<rvdto.size(); i++) {
+				JSONObject jo = new JSONObject();
+				jo.put("rv_r_name", rvdto.get(i).getRv_r_name());
+				jo.put("rv_photo", rvdto.get(i).getRv_photo());
+				jo.put("rv_detail", rvdto.get(i).getRv_detail());
+				jo.put("rv_time", rvdto.get(i).getRv_time());
+				ja.put(jo);
+			}
+		}
+		return ja.toString();
 	}
 	
 	public String make_searchFilterQuery(String words, String fc, String ce, String ob, 

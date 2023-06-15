@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.apache.ibatis.annotations.Mapper;
 
 import project.example.demo.dto.RestaurantDTO;
+import project.example.demo.dto.ReviewDTO;
 
 @Mapper
 public interface MainDAO {
@@ -25,4 +26,6 @@ public interface MainDAO {
 	String admin_search(String primecode);
 	
 	ArrayList<RestaurantDTO> get_searchFilterLIst(String query);
+	
+	ArrayList<ReviewDTO> get_userReviewList(String rv_id);
 }

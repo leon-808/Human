@@ -65,5 +65,5 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		from review
 		where rv_id = #{param1}
 	</select>
-
+	
 </mapper>

@@ -50,5 +50,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="get_searchFilterLIst" resultType="project.example.demo.dto.RestaurantDTO">
 		${param1}
 	</select>
+	
+	
+	<select id="get_userReviewList" resultType="project.example.demo.dto.ReviewDTO">
+		select *
+		from review
+		where rv_id = #{param1}
+	</select>
 
 </mapper>
