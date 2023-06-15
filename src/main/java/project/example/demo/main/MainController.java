@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import project.example.demo.DTO.RestaurantDTO;
+import project.example.demo.dto.RestaurantDTO;
 
 @Controller
 public class MainController {
@@ -158,7 +158,6 @@ public class MainController {
 		System.out.println(query);
 //		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
 //		JSONArray ja = new JSONArray();
-//		
 //		for (RestaurantDTO r : rdto) {
 //			JSONObject jo = new JSONObject();
 //			jo.put("lat", r.getLat());
@@ -168,10 +167,8 @@ public class MainController {
 //			jo.put("address", r.getAddress());
 //			jo.put("r_phone", r.getR_phone());
 //			jo.put("r_photo", r.getR_photo());
-//			
 //			ja.put(jo);
 //		}
-				
 		return "스트링"; // ja.toString();
 	}
 	
@@ -185,18 +182,20 @@ public class MainController {
 				from (
 				""");
 		
-		if (ce.equals("close")) {
-			query.append(String.format("""
-						select a.*, abs((a.lat - %1$s) + (a.lng - %2$s)) as close
-					""", lat, lng));
-		}
-		else if (ce.equals("eval")) {
-			String temp = "\tselect a.*, ";
-			for (int i = 0; i < tags.size(); i++) {
-				if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
-				else temp += "c." + tags.get(i) + " + ";
+		if (ce != null) {
+			if (ce.equals("close")) {
+				query.append(String.format("""
+							select a.*, abs((a.lat - %1$s) + (a.lng - %2$s)) as close
+						""", lat, lng));
 			}
-			query.append(temp);
+			else if (ce.equals("eval")) {
+				String temp = "\tselect a.*, ";
+				for (int i = 0; i < tags.size(); i++) {
+					if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
+					else temp += "c." + tags.get(i) + " + ";
+				}
+				query.append(temp);
+			}
 		}
 		
 		query.append("""
@@ -234,7 +233,7 @@ public class MainController {
 					, (
 							  select *
 							  from review
-							  where rv_id = '%1%s') b
+							  where rv_id = '%1$s') b
 						where a.r_name = b.rv_r_name(+)
 						and a.address = b.rv_address(+)
 						and (b.rv_id != '%1$s' 
@@ -256,23 +255,9 @@ public class MainController {
 			}
 		}
 		
-		if (ob != null) {
-			if (ob.equals("been")) {
-				query.append("""
-					\n\torder by b.rv_visit desc
-					""");
-			}
-			else if (ob.equals("never")) {
-				query.append(String.format("""
-					\n\torder by %1$s
-					""", ce));
-			}
-		}
-		else {
-			query.append(String.format("""
-				\n\torder by %1$s
-				""", ce));
-		}
+		query.append(String.format("""
+			\torder by %1$s
+			""", ce));
 		
 		query.append(")\nwhere rownum <= 10");
 		

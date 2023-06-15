@@ -138,7 +138,7 @@ label {
 	color: #888;
 	width: 17px;
 	height: 17px;
-	margin: 0px 10px 0px 20px;
+	margin: 0 10px 0 20px;
 	background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');
 }
 .alm_body {
@@ -164,12 +164,21 @@ label {
 	width: 100%;
 	margin: 0 0 10px 0; 	
 }
+.alm_blockimg {
+	width: 20px; 
+	height: 20px;
+	margin: 0 10px 0 10px;
+}
 .alm_listBlock {
+	width: 100%;
 	margin: 0 10px 0 10px;
 	font-size: 10px;
 }
 .alm_listBlock p {
 	margin: 10px 0 10px 0;
+}
+.alm_listBlock:hover {
+	background-color: #9db2bf;
 }
 .top_sidebar {
     position: relative;
@@ -377,6 +386,7 @@ label {
 	margin: 0 20px 0 20px;
 }
 .fc_img {
+	width: 25px;
 	margin: 0 0 0 3px;
 }
 .toggleSwitchOff { 
@@ -450,6 +460,9 @@ label {
 	font-weight: bold;
 }
 .dt_info {
+	position: absolute;
+    top: -220px;
+    left: -105px;
 	height: 25vh;
 	background-color: rgb(255, 255, 255);
 	padding: 0;
@@ -457,12 +470,17 @@ label {
 	font-size: 12px;
 }
 .dt_title {
-	padding: 5px 50px 0 10px;
+	display: flex;
+	align-items: center;
+	padding: 10px;
 	height: 40px;
 	background: #ddd;
 	line-height: 30px;
 	font-size: 18px;
 	font-weight: bold;
+}
+.dt_placename {
+	flex-grow: 3;
 }
 .dt_suggest {
 	position: absolute;
@@ -526,7 +544,7 @@ label {
 }
 #btn-GO-signUpdate{
 	position: relative;
-	background-image: url("/img/main/setting.png");
+	background-image: url("/img/main/Setting.png");
 	background-color: transparent;
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -656,4 +674,9 @@ label {
 	text-align: center;
 	line-height: 30px;
 	cursor: pointer;
+}
+.detail_button {
+	width: 100px;
+	margin: 0 20px 0 20px;
+	font-size: 12px;
 }
