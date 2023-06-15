@@ -15,4 +15,6 @@ public class RestaurantDTO {
 	String r_detail;
 	String menu;
 	String r_photo;
+	
+	int eval;
 }
