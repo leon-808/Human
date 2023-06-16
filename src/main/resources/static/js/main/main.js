@@ -732,6 +732,9 @@ function search() {
 		})
 	}
 	else if (sf_count != 0) {
+		
+		$(".middle_sidebar").css("display", "none"); //검색 시 태그 div 숨기기
+		
 		query = $("#search_input").val();
 		$.ajax({
 			url: "/main/filter/search",
