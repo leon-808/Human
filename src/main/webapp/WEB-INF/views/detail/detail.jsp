@@ -11,7 +11,7 @@
 <body>
 <section>
 	<div id="restaurant_image" class="whiteblock">
-		<img id="rImg">
+		<div id="qrcode"></div>
 	</div>
 	
 	<div id="restaurant_name" class="whiteblock">
@@ -108,6 +108,7 @@ data-bs-target="#review_modal" style="display:none"></button>
 <jsp:include page="/WEB-INF/views/script.jsp"/>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" src="https://cdn.canvasjs.com/jquery.canvasjs.min.js"></script>
+<script src="/js/jquery-qrcode-0.18.0.js"></script>
 <script src="/js/detail/detail.js"></script>
 </body>
 </html>

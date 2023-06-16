@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="project.example.demo.detail.DetailPageDAO">
+<mapper namespace="project.example.demo.detail.DetailDAO">
 	<select id="get_restaurant_detail" resultType="project.example.demo.dto.RestaurantDTO">
 		select *
 		from restaurant 
@@ -46,6 +46,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		and rv_address = #{param2}
 		and rv_id = #{param3}
 	</select>
+	<select id="check_isFirst" resultType="string">
+		select rv_detail
+		from review
+		where rv_r_name = #{param1}
+		and rv_address = #{param2}
+		and rv_id = #{param3}
+	</select>
+	<insert id="authorize_reivew">
+		insert into review
+		values (#{param1, jdbcType=VARCHAR}, #{param2}, #{param3}, #{param4}, 
+		1, null, null, null, null, null)
+	</insert>
 	<select id="get_owner" resultType="string">
 		select owner
 		from restaurant
