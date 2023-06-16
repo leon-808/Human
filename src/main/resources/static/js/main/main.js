@@ -2,69 +2,69 @@ const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
 $(document)
-	.ready(isLogin)
-	.ready(geoPosition)
-	.mousemove(function (e) {
-		let mouseX = e.pageX;
-		let mouseY = e.pageY;
+.ready(isLogin)
+.ready(geoPosition)
+.mousemove(function (e) {
+	let mouseX = e.pageX;
+	let mouseY = e.pageY;
 
-		$(".cursor").css({
-			left: mouseX + "px",
-			top: mouseY + "px"
-		})
+	$(".cursor").css({
+		left: mouseX + "px",
+		top: mouseY + "px"
 	})
-	.on("click", "#addLocationButton", clickAddLocationButton)
-	.on("click", ".alm_ceo", addCeoInput)
-	.on("propertychange change paste input", "#primecode", onlyNumber)
-	.on("click", "#button_log", manageLoginButton)
-	.on("click", "#search_button", search)
-	.on("click", "#off_category", offCategory)
-	.on("click", "#off_orderby", offOrderby)
-	.on("click", "#off_tags", offTags)
-	.on("click", ".alm_suggest", suggestALM)
-	.on("click", "#btn-myPage", showMyData)
-	.on("click", "#btn-GO-signUpdate", signUpdate)
-	.on("click", ".toggle_sidebar", toggleBarandMap)
-	.on("click", ".dt_suggest", suggestDT)
-	.on("click", ".choice_currentmap", rectSearch)
-	.on("click", "#btn-pasSetting", showTagSetting)
-	.on("click", "#btn-reviewSetting", showReviewSetting)
-	.on("click", "#btn-storeSetting", showStoreSetting)
-	.on("click", "#btn-backMain", gotoMain)
-	.on("click", "#btn-saveMyTag", saveTag)
-	.on("click", "#userReviewCount", showReviewSetting)
-	.on("click", "#clearMarkerButton", clearMarkers)
+})
+.on("click", "#addLocationButton", clickAddLocationButton)
+.on("click", ".alm_ceo", addCeoInput)
+.on("propertychange change paste input", "#primecode", onlyNumber)
+.on("click", "#button_log", manageLoginButton)
+.on("click", "#search_button", search)
+.on("click", "#off_category", offCategory)
+.on("click", "#off_orderby", offOrderby)
+.on("click", "#off_tags", offTags)
+.on("click", ".alm_suggest", suggestALM)
+.on("click", "#btn-myPage", showMyData)
+.on("click", "#btn-GO-signUpdate", signUpdate)
+.on("click", ".toggle_sidebar", toggleBarandMap)
+.on("click", ".dt_suggest", suggestDT)
+.on("click", ".choice_currentmap", rectSearch)
+.on("click", "#btn-pasSetting", showTagSetting)
+.on("click", "#btn-reviewSetting", showReviewSetting)
+.on("click", "#btn-storeSetting", showStoreSetting)
+.on("click", "#btn-backMain", gotoMain)
+.on("click", "#btn-saveMyTag", saveTag)
+.on("click", "#userReviewCount", showReviewSetting)
+.on("click", "#clearMarkerButton", clearMarkers)
+.on("click", ".MyReviewList_pageNum", MyReviewList_pageNum)
+.on("click", "#MyReviewList_backward", MyReviewList_backward)
+.on("click", "#MyReviewList_forward", MyReviewList_forward)
+.on("click", ".MyStoreList_pageNum", MyStoreList_pageNum)
+.on("click", "#MyStoreList_backward", MyStoreList_backward)
+.on("click", "#MyStoreList_forward", MyStoreList_forward)
+.on("click", ".goto_review_my", goto_review_my)
 
-	.on("click", ".MyReviewList_pageNum", MyReviewList_pageNum)
-	.on("click", "#MyReviewList_backward", MyReviewList_backward)
-	.on("click", "#MyReviewList_forward", MyReviewList_forward)
-	.on("click", ".MyStoreList_pageNum", MyStoreList_pageNum)
-	.on("click", "#MyStoreList_backward", MyStoreList_backward)
-	.on("click", "#MyStoreList_forward", MyStoreList_forward)
 
 
+.on("click", "#currentLocationButton", function () {
+	map.panTo(new kakao.maps.LatLng(selfLat, selfLng));
+})
 
-	.on("click", "#currentLocationButton", function () {
-		map.panTo(new kakao.maps.LatLng(selfLat, selfLng));
-	})
+.on("keyup", "#search_input", function (e) {
+	if (e.keyCode == 13) {
+		search();
+	}
+	return false;
+})
 
-	.on("keyup", "#search_input", function (e) {
-		if (e.keyCode == 13) {
-			search();
-		}
-		return false;
-	})
+.on("click", ".alm_though", function () {
+	thoughSuggestFlag = 1;
+	check_duplicateLocation(thoughLatLng);
+})
 
-	.on("click", ".alm_though", function () {
-		thoughSuggestFlag = 1;
-		check_duplicateLocation(thoughLatLng);
-	})
-
-	.on("click", ".alm_listBlock", function () {
-		let r_name = $(this).find("p").eq(0).text();
-		let address = $(this).find("p").eq(1).text();
-		window.open(`/restaurant/detail/${r_name}/${address}`, "_blank");
-	})
+.on("click", ".alm_listBlock", function () {
+	let r_name = $(this).find("p").eq(0).text();
+	let address = $(this).find("p").eq(1).text();
+	window.open(`/restaurant/detail/${r_name}/${address}`, "_blank");
+})
 
 $(".each_fcr").hover(function () {
 	$(this).css("background-image", "url('/img/main/FC_HoverRectangle.png')");
@@ -1301,6 +1301,8 @@ function gotoMain() {
 	$("#food_categories").css("display", "block");
 	$("#btn-saveMyTag").css("display", "none");
 	$(".top_sidebar").empty();
+	$(".mypage_subtab").css("display", "none");
+	$(".sf_filter").css('display', "block");
 
 	let manageButton = "";
 	if (loginFlag == 2) manageButton =
@@ -1341,7 +1343,6 @@ function get_userName() {
 			if (data.length != 0) {
 				$("#profil_user_name").text(data[0]["name"]);
 			}
-
 		}
 	})
 }
@@ -1406,13 +1407,12 @@ function showReviewSetting() {
 	$("#btn-pasSetting").removeClass("active");
 	$("#btn-reviewSetting").addClass("active");
 	$("#btn-storeSetting").removeClass("active");
-
-	$(".userMessage").css("display", "none");
 	getMyReviewList();
 }
 
 let MyReviewList_page = 1;
 let MyReviewList_deadend = 0;
+
 function getMyReviewList(){
 	let start = (MyReviewList_page - 1) * 5 + 1;
 	let end = MyReviewList_page * 5;
@@ -1425,40 +1425,42 @@ function getMyReviewList(){
 		},
 		dataType: "json",
 		success: function (data) {
-			let datalegth=data.length;
-			
-			if(data != null && datalegth>1){
+			if (data != null && data.length > 1) {
 				$("#review_list").empty();
-				for (let i = 0; i<datalegth-1; i++) {
-				let d = data[i];
-				if(d.rv_photo == undefined) d.rv_photo = "/img/admin/No-Image.jpg";
-				let html = `
-				<div class="myReviewStore">
-					<a href="/restaurant/detail/${d.rv_r_name}/${d.rv_address}" target="_blank">
-						<img src="${d.rv_photo}" style="width:100px;height:100px">
-					</a>
-					<div class="myReviewStoreTag">
-						<a href="/restaurant/detail/${d.rv_r_name}/${d.rv_address}" target="_blank">
-							<strong>${d.rv_r_name}</strong>
-						</a>
-						<br>
-						<span style="font-size:13px;color:grey">${d.rv_time}</span>
-						<br>
-						<span>${d.rv_detail.substring(0,20)}&emsp;...</span>
-					<div>
-				</div>`;
-				$('#review_list').append(html);
+				for (let i = 0; i < data.length - 1; i++) {
+					let d = data[i];
+					if(d.rv_photo == undefined) d.rv_photo = "/img/admin/No-Image.jpg";
+					let html = `
+					<div class="myReviewStore">
+						<img src="${d.rv_photo}" class="goto_review_my">
+						<div class="myReviewStoreTag">
+							<strong r_name="${d.rv_r_name}" address="${d.rv_address}"
+							class="goto_review_my">${d.rv_r_name}</strong>
+							<p style="font-size:13px;color:grey; margin: 0px;">${d.rv_time}</p>
+							<span style="font-size: 13px">${d.rv_detail.substring(0,20)}&emsp;...</span>
+						<div>
+					</div>`;
+					$('#review_list').append(html);
 				}
-				
 				let count = data[data.length - 1].count;
 				MyReviewList_deadend = Math.ceil(count / 5);
 				MyReview_list_pagination();
-			}else{
-				$(".userMessage").css("display", "block");
+			}
+			else{
+				$("#noMyReview").css("display", "block");
 			}
 		}
 	})
 }
+
+function goto_review_my() {
+	let parent = $(this).closest(".myReviewStore");
+	let r_name = parent.find("strong").attr("r_name");
+	let address = parent.find("strong").attr("address");
+	localStorage.setItem("goto_review", true);
+	window.open(`/restaurant/detail/${r_name}/${address}`, "_blank");
+}
+
 
 function MyReview_list_pagination(){
 	$("#MyReview_list_pagination").empty();
@@ -1496,8 +1498,10 @@ function MyReview_list_pagination(){
 	<li id="MyReviewList_forward" class="page-item ${disabled}"><a class="page-link">></a></li>
 	<li class="page-item ${disabled} MyReviewList_pageNum" pn=${ep}><a class="page-link">>></a></li>`);
 }
+
 function MyReviewList_pageNum() {
 	MyReviewList_page = Number($(this).attr("pn"));
+	
 	getMyReviewList();
 }
 
@@ -1523,8 +1527,6 @@ function showStoreSetting() {
 	$("#btn-pasSetting").removeClass("active");
 	$("#btn-reviewSetting").removeClass("active");
 	$("#btn-storeSetting").addClass("active");
-	
-	$(".userMessage").css("display", "none");
 	getMyStoreList();
 }
 
@@ -1544,21 +1546,19 @@ function getMyStoreList(){
 	  	},
 	  	dataType: "json",
 	  	success: function(data) {
-	    	let dataLength = data.length;
-	    
-	    	if (data != null && dataLength > 1) {
+	    	if (data != null && data.length > 1) {
 	     		$("#store_List").empty();
-	      		for (let i = 0; i < dataLength-1; i++) {
+	      		for (let i = 0; i < data.length - 1; i++) {
 	        		let d = data[i];
 	        		let category = "";
-	        		if(d.category == "koreanfood") category = "한식";
-	        		else if(d.category == "chinafood") category = "중식";
-	        		else if(d.category == "japanfood") category = "일식";
-	        		else if(d.category == "westernfood") category = "양식";
-	        		else if(d.category == "pizza") category = "피자";
-	        		else if(d.category == "chicken") category = "치킨";
-	        		else if(d.category == "jokbal") category = "족발";
-	        		else if(d.category == "cafe") category = "카페";
+	        		if (d.category == "koreanfood") category = "한식";
+	        		else if (d.category == "chinafood") category = "중식";
+	        		else if (d.category == "japanfood") category = "일식";
+	        		else if (d.category == "westernfood") category = "양식";
+	        		else if (d.category == "pizza") category = "피자";
+	        		else if (d.category == "chicken") category = "치킨";
+	        		else if (d.category == "jokbal") category = "족발";
+	        		else if (d.category == "cafe") category = "카페";
 	        		
 	        		let html = `
 	          		<div class="myReviewStore">
@@ -1569,9 +1569,8 @@ function getMyStoreList(){
 		          			<a href="/restaurant/detail/${d.r_name}/${d.address}" target="_blank">
 		            			<strong>${d.r_name}</strong>
 		            		</a>
-	            			<h6><span class="badge bg-secondary">${category}</span></h6>
-	            			<span>${d.address}</span>
-		            		
+		            		<span class="badge bg-dark store_ctbadge">${category}</span><br>
+	            			<span style="font-size: 13px">${d.address}</span>
 	            		</div>
 	          		</div>`;
 	       			$("#store_List").append(html);
@@ -1579,9 +1578,10 @@ function getMyStoreList(){
 	      		let count = data[data.length - 1].count;
 				MyStoreList_deadend = Math.ceil(count / 5);
 				MyStore_list_pagination();
-	    	} else {
-	      		$(".userMessage").css("display", "block");
-	    	}
+	    	} 
+	    	else {
+				$("#noMyStore").css("display", "block");
+			}
 	  	}
 	});
 }
@@ -1623,8 +1623,12 @@ function MyStore_list_pagination(){
 	<li class="page-item ${disabled} MyStoreList_pageNum" pn=${ep}><a class="page-link">>></a></li>`);
 }
 function MyStoreList_pageNum() {
-	MyStoreList_page = Number($(this).attr("pn"));
-	getMyStoreList();
+	let clicked = Number($(this).attr("pn"));
+	if (MyStoreList_page == clicked) return false; 
+	else {
+		MyStoreList_page = Number($(this).attr("pn"));
+		getMyStoreList();
+	}
 }
 
 function MyStoreList_backward() {
