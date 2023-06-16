@@ -62,7 +62,7 @@ public class DetailPageController {
 			
 			HttpSession session = req.getSession();
 			String id = "";
-			if (session.getAttribute("id") != null) { 
+			if (session.getAttribute("id") != null && r.getOwner() != null) { 
 				id = String.valueOf(session.getAttribute("id"));
 				if (id.equals(r.getOwner().split(",")[0])) jo.put("isOwner", "true");
 				else jo.put("isOwner", "false");
@@ -204,7 +204,7 @@ public class DetailPageController {
 	@ResponseBody
 	public String review_submit_photo (@RequestPart(value = "review") ReviewDTO rdto,
 									   @RequestPart(value = "tags") String tags,
-									   @RequestPart(value = "photo") MultipartFile[] photo,
+									   @RequestPart(value = "photo", required = false) MultipartFile[] photo,
 									   HttpServletRequest req) {
 		String message = "";
 		
@@ -225,32 +225,36 @@ public class DetailPageController {
 		DateTimeFormatter fn = DateTimeFormatter.ofPattern("HH-mm-ss ");
 		String timeString = now.format(fn);
 		
-		String location = 
-				"C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\resources\\static\\img\\review";
-		String shortLocation = "/img/review/";
+		String rv_photo = "";
 		
-		String[] extensions = {
-				"bmp", "jpg", "jpeg", "gif", "png", "webp", "webm", "jfif", "pdf"
-		};
-		String originalExtension = photo[0].getOriginalFilename().split("\\.")[1];
-		int acceptable = 0;
-		for (String s : extensions) {
-			if (s.equals(originalExtension)) {
-				acceptable = 1; break;
+		if(photo != null) {
+			String location = 
+					"C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\resources\\static\\img\\review";
+			String shortLocation = "/img/review/";
+			
+			String[] extensions = {
+					"bmp", "jpg", "jpeg", "gif", "png", "webp", "webm", "jfif", "pdf"
+			};
+			String originalExtension = photo[0].getOriginalFilename().split("\\.")[1];
+			int acceptable = 0;
+			for (String s : extensions) {
+				if (s.equals(originalExtension)) {
+					acceptable = 1; break;
+				}
 			}
-		}
-		if (acceptable == 0) {
-			message = "extension";
-			return message;
-		}
+			if (acceptable == 0) {
+				message = "extension";
+				return message;
+			}
 		
-		String filename = rv_r_name + " " + idString + todayString + timeString + photo[0].getOriginalFilename();
-		File savefile = new File(location, filename);
-		try {
-			photo[0].transferTo(savefile);
-		} 
-		catch (Exception e) {}
-		String rv_photo = shortLocation + filename;
+			String filename = rv_r_name + " " + idString + todayString + timeString + photo[0].getOriginalFilename();
+			File savefile = new File(location, filename);
+			try {
+				photo[0].transferTo(savefile);
+			} 
+			catch (Exception e) {}
+			rv_photo = shortLocation + filename;
+		}
 		String origin_photo = ddao.get_origin_fileURL(rv_r_name, rv_address, rv_id);
 		
 		int flag = ddao.check_mine(rv_r_name, rv_address, rv_id);
