@@ -179,7 +179,7 @@ let selfLat, selfLng;
 
 function geoPosition() {
 	lat = 36.81044107630051,
-		lng = 127.14647463417765;
+	lng = 127.14647463417765;
 	selfLat = lat; selfLng = lng;
 	makeMap(lat, lng);
 
@@ -700,7 +700,7 @@ function search() {
 	if (sf_count == 0 || loginFlag == 0) {
 		query = encodeURI($("#search_input").val());
 		let searchURL =
-			`https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy&query=${query}&x=${lng}&y=${lat}`;
+			`https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=10&sort=accuracy&query=${query}&x=${lng}&y=${lat}`;
 		$.ajax({
 			url: searchURL,
 			type: "get",
@@ -722,7 +722,13 @@ function search() {
 						bounds.extend(new kakao.maps.LatLng(data.documents[i].y, data.documents[i].x));
 					}
 					map.setBounds(bounds);
-					map.setCenter(new kakao.maps.LatLng(data.documents[0].y, data.documents[0].x));
+					let swLat = bounds.getSouthWest().getLat(),
+					swLng = bounds.getSouthWest().getLng(),
+					neLat = bounds.getNorthEast().getLat(),
+					neLng = bounds.getNorthEast().getLng();
+					let centerLng = (neLng + swLng) / 2;
+					let centerLat = (neLat + swLat) / 2;
+					map.setCenter(new kakao.maps.LatLng(centerLat, centerLng));
 				}
 				else addressSearch(searchURL, query);
 			},
@@ -779,7 +785,13 @@ function search() {
 						bounds.extend(new kakao.maps.LatLng(d.lat, d.lng));
 					}
 					map.setBounds(bounds);
-					map.setCenter(new kakao.maps.LatLng(data[0].lat, data[0].lng));
+					let swLat = bounds.getSouthWest().getLat(),
+					swLng = bounds.getSouthWest().getLng(),
+					neLat = bounds.getNorthEast().getLat(),
+					neLng = bounds.getNorthEast().getLng();
+					let centerLng = (neLng + swLng) / 2;
+					let centerLat = (neLat + swLat) / 2;
+					map.setCenter(new kakao.maps.LatLng(centerLat, centerLng));
 				}
 				else alert("검색하신 결과에 맞는 맛집이 없습니다");
 			}
@@ -824,7 +836,7 @@ function rectSearch() {
 	if (sf_count == 0 || loginFlag == 0) {
 		query = encodeURI($("#search_input").val());
 		let searchURL =
-			`https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=15&sort=accuracy
+			`https://dapi.kakao.com/v2/local/search/keyword.json?page=1&size=10&sort=accuracy
 		&query=${query}&x=${lng}&y=${lat}&rect=${boundary}`;
 		$.ajax({
 			url: searchURL,
@@ -844,10 +856,7 @@ function rectSearch() {
 					let bounds = new kakao.maps.LatLngBounds();
 					for (i = 0; i < data.documents.length; i++) {
 						displayKeywordMarker(data.documents[i]);
-						bounds.extend(new kakao.maps.LatLng(data.documents[i].y, data.documents[i].x));
 					}
-					map.setBounds(bounds);
-					map.setCenter(new kakao.maps.LatLng(data.documents[0].y, data.documents[0].x));
 				}
 				else addressSearch(searchURL, query);
 			},
