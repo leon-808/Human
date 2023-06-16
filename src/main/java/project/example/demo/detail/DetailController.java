@@ -157,8 +157,10 @@ public class DetailController {
 			String rv_id = String.valueOf(session.getAttribute("id"));
 			int flag = ddao.check_mine(rv_r_name, rv_address, rv_id);
 			if (flag == 0) {
-				if (rv_id.equals(ddao.get_owner(rv_r_name, rv_address).split(",")[0])) {
-					message = "owner";
+				if (ddao.get_owner(rv_r_name, rv_address) != null) {
+					if (rv_id.equals(ddao.get_owner(rv_r_name, rv_address).split(",")[0])) {
+						message = "owner";
+					}
 				}
 				else {
 					String rv_primecode = ddao.get_primecode(rv_r_name, rv_address);
@@ -204,8 +206,10 @@ public class DetailController {
 		int flag = ddao.check_mine(rv_r_name, rv_address, rv_id);
 		if (flag == 0) ddao.review_insert(rv_primecode, rv_r_name, rv_address, rv_id, tags, rv_detail);
 		else {
-			String[] temp = ddao.get_origin_tags(rv_r_name, rv_address, rv_id).split(",");
-			originList = new ArrayList<String>(Arrays.asList(temp));
+			if (ddao.get_origin_tags(rv_r_name, rv_address, rv_id) != null) {
+				String[] temp = ddao.get_origin_tags(rv_r_name, rv_address, rv_id).split(",");
+				originList = new ArrayList<String>(Arrays.asList(temp));
+			}
 			ddao.review_update(rv_primecode, rv_r_name, rv_address, rv_id, tags, rv_detail);
 		}
 				

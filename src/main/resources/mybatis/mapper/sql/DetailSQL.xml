@@ -92,7 +92,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<update id="review_update">
 		update review
 		set 
-			rv_primecode = #{param1},
+			rv_primecode = #{param1, jdbcType=VARCHAR},
 			tags = #{param5},
 			rv_detail = #{param6},
 			rv_time = to_char(sysdate,'YYYY-MM-DD HH24:mi:ss')
@@ -166,6 +166,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where rv_r_name = #{param1}
 		and rv_address = #{param2}
 		and rv_id ${param3}
+		and rv_detail is not null
 	</select>
 	<select id="get_reviewList" resultType="project.example.demo.dto.ReviewDTO">
 		select *
