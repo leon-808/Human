@@ -199,7 +199,7 @@ public class MainController {
 			}
 			else if (ce.equals("eval")) {
 				String temp = "\tselect a.*, ";
-<<<<<<< HEAD
+
 				if (tags.size() == 0) {
 					String[] temporalTags = {
 						"clean", "kind", "parking", "fast", "pack", "alone", "together",
@@ -216,11 +216,7 @@ public class MainController {
 						if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
 						else temp += "c." + tags.get(i) + " + ";
 					}
-=======
-				for (int i = 0; i < tags.size(); i++) {
-					if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
-					else temp += "c." + tags.get(i) + " + ";
->>>>>>> b23916b97b76f5ce195ce2107925aee07aeb44c0
+
 				}
 				query.append(temp);
 			}
