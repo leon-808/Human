@@ -35,6 +35,12 @@ $(document)
 	.on("click", "#userReviewCount", showReviewSetting)
 	.on("click", "#clearMarkerButton", clearMarkers)
 
+	.on("click", ".MyReviewList_pageNum", MyReviewList_pageNum)
+	.on("click", "#MyReviewList_backward", MyReviewList_backward)
+	.on("click", "#MyReviewList_forward", MyReviewList_forward)
+	.on("click", ".MyStoreList_pageNum", MyStoreList_pageNum)
+	.on("click", "#MyStoreList_backward", MyStoreList_backward)
+	.on("click", "#MyStoreList_forward", MyStoreList_forward)
 
 
 
@@ -59,8 +65,6 @@ $(document)
 		let address = $(this).find("p").eq(1).text();
 		window.open(`/restaurant/detail/${r_name}/${address}`, "_blank");
 	})
-
-
 
 $(".each_fcr").hover(function () {
 	$(this).css("background-image", "url('/img/main/FC_HoverRectangle.png')");
@@ -1341,7 +1345,6 @@ function get_userName() {
 		}
 	})
 }
-let myReviewCount = 0;
 function get_userReviewCount() {
 	$.ajax({
 		url: "/get/userReviewCount",
@@ -1350,7 +1353,6 @@ function get_userReviewCount() {
 		success: function (count) {
 			$("#userReviewCount").text(count);
 			get_userGrade(count);
-			myReviewCount = count;
 		}
 	})
 }
@@ -1405,31 +1407,114 @@ function showReviewSetting() {
 	$("#btn-reviewSetting").addClass("active");
 	$("#btn-storeSetting").removeClass("active");
 
-	if (myReviewCount != 0) {
-		$(".userMessage").css("display", "none");
-		$.ajax({
-			url: "/my/reviewList",
-			type: "post",
-			dataType: "json",
-			success: function (data) {
-				for (let i = 0; data.length; i++) {
-					let d = data[i];
-
-					let html = [`
-					<div>
-						<img src="${d.rv_photo}">
-						<p>${d.rv_r_name}</p>
-						<p>${d.rv_time}</p>
-						<p>${d.rv_detail}</p>
-					</div>
-					`];
-					$('#review_list').append(html);
-				}
-			}
-		})
-	}
-
+	$(".userMessage").css("display", "none");
+	getMyReviewList();
 }
+
+let MyReviewList_page = 1;
+let MyReviewList_deadend = 0;
+function getMyReviewList(){
+	let start = (MyReviewList_page - 1) * 5 + 1;
+	let end = MyReviewList_page * 5;
+	$.ajax({
+		url: "/my/reviewList",
+		type: "post",
+		data: {
+			start: start,
+			end: end
+		},
+		dataType: "json",
+		success: function (data) {
+			let datalegth=data.length;
+			
+			if(data != null && datalegth>1){
+				$("#review_list").empty();
+				for (let i = 0; i<datalegth-1; i++) {
+				let d = data[i];
+				if(d.rv_photo == undefined) d.rv_photo = "/img/admin/No-Image.jpg";
+				let html = `
+				<div class="myReviewStore">
+					<a href="/restaurant/detail/${d.rv_r_name}/${d.rv_address}" target="_blank">
+						<img src="${d.rv_photo}" style="width:100px;height:100px">
+					</a>
+					<div class="myReviewStoreTag">
+						<a href="/restaurant/detail/${d.rv_r_name}/${d.rv_address}" target="_blank">
+							<strong>${d.rv_r_name}</strong>
+						</a>
+						<br>
+						<span style="font-size:13px;color:grey">${d.rv_time}</span>
+						<br>
+						<span>${d.rv_detail.substring(0,20)}&emsp;...</span>
+					<div>
+				</div>`;
+				$('#review_list').append(html);
+				}
+				
+				let count = data[data.length - 1].count;
+				MyReviewList_deadend = Math.ceil(count / 5);
+				MyReview_list_pagination();
+			}else{
+				$(".userMessage").css("display", "block");
+			}
+		}
+	})
+}
+
+function MyReview_list_pagination(){
+	$("#MyReview_list_pagination").empty();
+	
+	let cp = MyReviewList_page; // current page
+	let ep = MyReviewList_deadend; // end page
+	let fp = 0; // first page
+	let lp = 0; // last page
+	
+	if (cp % 5 == 0 ) fp = cp /5;
+	else fp = (Math.floor(cp/5) * 5 + 1);
+	
+	if (fp + 4 <= ep) lp = fp + 4;
+	else lp = ep;
+	
+	let active = "";
+	let disabled = "";
+	
+	if(cp == 1) disabled = "disabled";
+	$("#MyReview_list_pagination").append(`
+	<li class="page-item ${disabled} MyReviewList_pageNum" pn=1><a class="page-link"><<</a></li>
+	<li id="MyReviewList_backward" class="page-item ${disabled}"><a class="page-link"><</a></li>`);
+	
+	for (i = fp; i <= lp; i++) {
+		if (i == cp) active = "active";
+		else active = "";
+		
+		$("#MyReview_list_pagination").append(`
+		<li class="page-item ${active} MyReviewList_pageNum" pn=${i}><a class="page-link">${i}</a></li>`);
+	}
+	
+	disabled = "";
+	if (cp == ep) disabled = "disabled";
+	$("#MyReview_list_pagination").append(`
+	<li id="MyReviewList_forward" class="page-item ${disabled}"><a class="page-link">></a></li>
+	<li class="page-item ${disabled} MyReviewList_pageNum" pn=${ep}><a class="page-link">>></a></li>`);
+}
+function MyReviewList_pageNum() {
+	MyReviewList_page = Number($(this).attr("pn"));
+	getMyReviewList();
+}
+
+function MyReviewList_backward() {
+	if (MyReviewList_page - 1 > 0) {
+		MyReviewList_page--;
+		getMyReviewList();
+	}
+}
+
+function MyReviewList_forward() {
+	if (MyReviewList_page + 1 <= MyReviewList_deadend) {
+		MyReviewList_page++;
+		getMyReviewList();
+	}
+}
+
 function showStoreSetting() {
 	$(".sf_filter").css("display", "none");
 	$("#btn-saveMyTag").css("display", "none");
@@ -1438,8 +1523,123 @@ function showStoreSetting() {
 	$("#btn-pasSetting").removeClass("active");
 	$("#btn-reviewSetting").removeClass("active");
 	$("#btn-storeSetting").addClass("active");
+	
+	$(".userMessage").css("display", "none");
+	getMyStoreList();
 }
 
+let MyStoreList_page = 1;
+let MyStoreList_deadend = 0;
+function getMyStoreList(){
+	let name = $("#profil_user_name").text();
+	let start = (MyStoreList_page - 1) * 5 + 1;
+	let end = MyStoreList_page * 5;
+	$.ajax({
+		url: "/my/storeList",
+    	type: "post",
+	  	data: { 
+			name: name,
+			start: start,
+			end: end
+	  	},
+	  	dataType: "json",
+	  	success: function(data) {
+	    	let dataLength = data.length;
+	    
+	    	if (data != null && dataLength > 1) {
+	     		$("#store_List").empty();
+	      		for (let i = 0; i < dataLength-1; i++) {
+	        		let d = data[i];
+	        		let category = "";
+	        		if(d.category == "koreanfood") category = "한식";
+	        		else if(d.category == "chinafood") category = "중식";
+	        		else if(d.category == "japanfood") category = "일식";
+	        		else if(d.category == "westernfood") category = "양식";
+	        		else if(d.category == "pizza") category = "피자";
+	        		else if(d.category == "chicken") category = "치킨";
+	        		else if(d.category == "jokbal") category = "족발";
+	        		else if(d.category == "cafe") category = "카페";
+	        		
+	        		let html = `
+	          		<div class="myReviewStore">
+	          			<label>
+	          				<img src="/img/main/${d.category}.png" style="width:60px;height:60px;">
+	          			</label>
+	          			<div class="myReviewStoreTag">
+		          			<a href="/restaurant/detail/${d.r_name}/${d.address}" target="_blank">
+		            			<strong>${d.r_name}</strong>
+		            		</a>
+	            			<h6><span class="badge bg-secondary">${category}</span></h6>
+	            			<span>${d.address}</span>
+		            		
+	            		</div>
+	          		</div>`;
+	       			$("#store_List").append(html);
+	      		}
+	      		let count = data[data.length - 1].count;
+				MyStoreList_deadend = Math.ceil(count / 5);
+				MyStore_list_pagination();
+	    	} else {
+	      		$(".userMessage").css("display", "block");
+	    	}
+	  	}
+	});
+}
+
+function MyStore_list_pagination(){
+	$("#MyStore_list_pagination").empty();
+	
+	let cp = MyStoreList_page; // current page
+	let ep = MyStoreList_deadend; // end page
+	let fp = 0; // first page
+	let lp = 0; // last page
+	
+	if (cp % 5 == 0 ) fp = cp /5;
+	else fp = (Math.floor(cp/5) * 5 + 1);
+	
+	if (fp + 4 <= ep) lp = fp + 4;
+	else lp = ep;
+	
+	let active = "";
+	let disabled = "";
+	
+	if(cp == 1) disabled = "disabled";
+	$("#MyStore_list_pagination").append(`
+	<li class="page-item ${disabled} MyStoreList_pageNum" pn=1><a class="page-link"><<</a></li>
+	<li id="MyStoreList_backward" class="page-item ${disabled}"><a class="page-link"><</a></li>`);
+	
+	for (i = fp; i <= lp; i++) {
+		if (i == cp) active = "active";
+		else active = "";
+		
+		$("#MyStore_list_pagination").append(`
+		<li class="page-item ${active} MyStoreList_pageNum" pn=${i}><a class="page-link">${i}</a></li>`);
+	}
+	
+	disabled = "";
+	if (cp == ep) disabled = "disabled";
+	$("#MyStore_list_pagination").append(`
+	<li id="MyStoreList_forward" class="page-item ${disabled}"><a class="page-link">></a></li>
+	<li class="page-item ${disabled} MyStoreList_pageNum" pn=${ep}><a class="page-link">>></a></li>`);
+}
+function MyStoreList_pageNum() {
+	MyStoreList_page = Number($(this).attr("pn"));
+	getMyStoreList();
+}
+
+function MyStoreList_backward() {
+	if (MyStoreList_page - 1 > 0) {
+		MyStoreList_page--;
+		getMyStoreList();
+	}
+}
+
+function MyStoreList_forward() {
+	if (MyStoreList_page + 1 <= MyStoreList_deadend) {
+		MyStoreList_page++;
+		getMyStoreList();
+	}
+}
 
 function saveTag() {
 	let close_or_eval = $("input:radio[name='close_or_eval']:checked").val(),

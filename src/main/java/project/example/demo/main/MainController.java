@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -184,6 +185,73 @@ public class MainController {
 		}
 		return ja.toString();
 	}
+	
+	@PostMapping("/my/reviewList")
+	@ResponseBody
+	public String MyReviewList(HttpServletRequest req,
+							   @RequestParam("start") int start,
+							   @RequestParam("end") int end) {
+		HttpSession session = req.getSession();
+		JSONArray ja = new JSONArray();
+		int count = 0;
+		
+		if (session.getAttribute("id") != null) {
+			String id = session.getAttribute("id").toString();
+			
+			count = mdao.countMyReviewList(id);
+			if (count ==0) return "null";
+			
+			ArrayList<ReviewDTO> rvdto = mdao.getMyReviewList(id,start,end);
+
+			for (int i = 0; i < rvdto.size(); i++) {
+				JSONObject jo = new JSONObject();
+				jo.put("rv_photo", rvdto.get(i).getRv_photo());
+				jo.put("rv_r_name", rvdto.get(i).getRv_r_name());
+				jo.put("rv_time", rvdto.get(i).getRv_time());
+				jo.put("rv_detail", rvdto.get(i).getRv_detail());
+				jo.put("rv_address", rvdto.get(i).getRv_address());
+				ja.put(jo);
+			}
+		}
+		JSONObject jo = new JSONObject();
+		jo.put("count", count);
+		ja.put(jo);
+		return ja.toString();
+	}
+	
+	@PostMapping("/my/storeList")
+	@ResponseBody
+	public String MyStoreList(HttpServletRequest req,
+							  @RequestParam("name") String name,
+							  @RequestParam("start") int start,
+							  @RequestParam("end") int end) {
+		HttpSession session = req.getSession();
+		JSONArray ja = new JSONArray();
+		int count = 0;
+		
+		if (session.getAttribute("id") != null) {
+			String id = session.getAttribute("id").toString();
+			
+			String owner = id+","+name;
+			
+			count = mdao.countMyStoreList(owner);
+			if (count ==0) return "null";
+
+			ArrayList<RestaurantDTO> restdto = mdao.getMyStoreList(owner, start, end);
+
+			for (int i = 0; i < restdto.size(); i++) {
+				JSONObject jo = new JSONObject();
+				jo.put("r_name", restdto.get(i).getR_name());
+				jo.put("category", restdto.get(i).getCategory());
+				jo.put("address", restdto.get(i).getAddress());
+				ja.put(jo);
+			}
+		}
+		JSONObject jo = new JSONObject();
+		jo.put("count", count);
+		ja.put(jo);
+		return ja.toString();
+	}
 
 	public String make_searchFilterQuery(String words, String fc, String ce, String ob, 
 										 String id, ArrayList<String> tags,
@@ -204,7 +272,6 @@ public class MainController {
 			}
 			else if (ce.equals("eval")) {
 				String temp = "\tselect a.*, ";
-<<<<<<< HEAD
 				if (tags.size() == 0) {
 					String[] temporalTags = {
 						"clean", "kind", "parking", "fast", "pack", "alone", "together",
@@ -221,11 +288,6 @@ public class MainController {
 						if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
 						else temp += "c." + tags.get(i) + " + ";
 					}
-=======
-				for (int i = 0; i < tags.size(); i++) {
-					if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
-					else temp += "c." + tags.get(i) + " + ";
->>>>>>> b23916b97b76f5ce195ce2107925aee07aeb44c0
 				}
 				query.append(temp);
 			}

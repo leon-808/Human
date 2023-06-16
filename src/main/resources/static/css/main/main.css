@@ -750,3 +750,64 @@ label {
     margin: 0 20px 0 20px;
     font-size: 12px;
 }
+
+.pagination {
+	display: flex;
+	justify-content: center;
+	margin-top:25px;
+}
+
+.page-links {
+  list-style-type: none;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 0;
+}
+
+.page-links li {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.page-links a {
+  display: block;
+  padding: 5px 10px;
+  text-decoration: none;
+  background-color: #f2f2f2;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.page-links a:hover {
+  background-color: #ddd;
+}
+
+.page-links a:active {
+  background-color: #ddd;
+  color: white;
+}
+
+.page-links .disabled a {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.myReviewStore{
+	margin:20px 20px 0 20px;
+	display:flex;
+	gap:20px;
+	border-bottom: solid grey;
+}
+
+.myReviewStore label{
+	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+
+.myReviewStoreTag > a{
+	color: black;
+	text-decoration:none
+}

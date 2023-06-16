@@ -27,5 +27,9 @@ public interface MainDAO {
 	
 	ArrayList<RestaurantDTO> get_searchFilterLIst(String query);
 	
-	ArrayList<ReviewDTO> get_userReviewList(String rv_id);
+	int countMyReviewList(String rv_id);
+	ArrayList<ReviewDTO> getMyReviewList(String rv_id, int start, int end);
+	
+	int countMyStoreList(String owner);
+	ArrayList<RestaurantDTO> getMyStoreList(String owner, int start, int end);
 }
