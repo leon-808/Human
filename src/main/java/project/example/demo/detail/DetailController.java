@@ -1,6 +1,7 @@
 package project.example.demo.detail;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,13 +30,13 @@ import project.example.demo.dto.ReviewDTO;
 import project.example.demo.dto.StatisticDTO;
 
 @Controller
-public class DetailPageController {
+public class DetailController {
 	@Autowired
-	private DetailPageDAO ddao;
+	private DetailDAO ddao;
 
 	@GetMapping("/restaurant/detail/{rname}/{address}")
 	public String rdetail() {
-		return "DetailPage";
+		return "/detail/detail";
 	}
 
 	@PostMapping("/restaurant/detail/{rname}/{address}")
@@ -116,9 +117,58 @@ public class DetailPageController {
 			String rv_id = String.valueOf(session.getAttribute("id"));
 			int flag = ddao.check_mine(rv_r_name, rv_address, rv_id);
 			if (flag == 0) message = "none";
-			else message = "exist";
+			else {
+				String detail = ddao.check_isFirst(rv_r_name, rv_address, rv_id);
+				if (detail == null) message = "first";
+				else message = "exist";
+			}
 			return message;
 		}
+	}
+	
+	@GetMapping("/restaurant/detail/{rname}/{address}/authorize")
+	public String get_authorize (@PathVariable("rname") String rname, 
+							     @PathVariable("address") String address,
+							     HttpServletRequest req) {
+		String encodedName = null;
+		String encodedAddress = null;
+		try {
+			encodedName = URLEncoder.encode(rname, "UTF-8").replace("+", "%20");
+			encodedAddress = URLEncoder.encode(address, "UTF-8").replace("+", "%20");
+		}
+		catch (Exception e) {}
+		
+		HttpSession session = req.getSession();
+		if (session.getAttribute("id") == null) {
+			return "redirect:/restaurant/detail/" + encodedName + "/" + encodedAddress;
+		}
+		else return "/detail/authorize";
+	}
+	
+	@PostMapping("/restaurant/detail/{rname}/{address}/authorize")
+	@ResponseBody
+	public String review_authorize (@PathVariable("rname") String rv_r_name,
+									@PathVariable("address") String rv_address,
+									HttpServletRequest req) {
+		String message = "";
+		HttpSession session = req.getSession();
+		if (session.getAttribute("id") == null) message = "logout";
+		else {
+			String rv_id = String.valueOf(session.getAttribute("id"));
+			int flag = ddao.check_mine(rv_r_name, rv_address, rv_id);
+			if (flag == 0) {
+				if (rv_id.equals(ddao.get_owner(rv_r_name, rv_address).split(",")[0])) {
+					message = "owner";
+				}
+				else {
+					String rv_primecode = ddao.get_primecode(rv_r_name, rv_address);
+					ddao.authorize_reivew(rv_primecode, rv_r_name, rv_address, rv_id);
+					message = "authorize";
+				}
+			}
+			else message = "exist";
+		}
+		return message;
 	}
 	
 	@PostMapping("/restaurant/detail/tag/top")
