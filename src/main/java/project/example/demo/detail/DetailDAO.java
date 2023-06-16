@@ -9,7 +9,7 @@ import project.example.demo.dto.ReviewDTO;
 import project.example.demo.dto.StatisticDTO;
 
 @Mapper
-public interface DetailPageDAO {
+public interface DetailDAO {
 	ArrayList<RestaurantDTO> get_restaurant_detail(String rname,String address);
 	
 	void update_info(String r_name, String address, String r_phone, String r_detail);
@@ -19,6 +19,10 @@ public interface DetailPageDAO {
 	ArrayList<StatisticDTO> tag_top(String r_name, String address);
 	
 	int check_mine(String rv_r_name, String rv_address, String rv_id);
+	
+	String check_isFirst(String rv_r_name, String rv_address, String rv_id);
+	
+	void authorize_reivew(String rv_primecode, String rv_r_name, String rv_address, String rv_id);
 	
 	String get_owner(String r_name, String address);
 	

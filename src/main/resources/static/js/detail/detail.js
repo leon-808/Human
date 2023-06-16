@@ -1,5 +1,5 @@
 const r_name = decodeURIComponent(window.location.pathname.split('/')[3]);
-const address = decodeURIComponent(window.location.pathname.split('/').pop());
+const address = decodeURIComponent(window.location.pathname.split('/')[4]);
 
 const oe = "/img/detail/OwnerEdit.png";
 const ock = "/img/detail/OwnerCheck.png";
@@ -82,6 +82,7 @@ const review_string = `
 
 $(document)
 .ready(function() {
+	gen_qrcode();
 	check_mine();
     get_restaurant_detail();
     tag_ranking();
@@ -223,6 +224,37 @@ function came_from_main() {
 
 
 
+function gen_qrcode() {
+	const encode_name = r_name.replace(/ /g, "%20");
+	const encode_address = address.replace(/ /g, "%20");
+	let options = {
+		render: "canvas",
+		minVersion: 1,
+		maxVersion: 40,
+		ecLevel: "L",
+		left: 0,
+		top: 0,
+		size: 100,
+		fill: "#0d1015",
+		background: null,
+		text: `http://192.168.0.90:8081/restaurant/detail/${encode_name}/${encode_address}/authorize`,
+		radius: 0,
+		quiet: 1,
+		mode: 0,
+		mSize: 0.1,
+		mPosX: 0.5,
+		mPosY: 0.5,
+		label: "no label",
+		fontname: "sans",
+		fontcolor: "#000",
+		image: null
+	}
+	console.log(options.text);
+	$("#qrcode").qrcode(options);
+}
+
+
+
 let isOwner = 0;
 
 function check_mine() {
@@ -236,13 +268,13 @@ function check_mine() {
 		dataType: "text",
 		success: function(message) {
 			$("#restaurant_review").empty();
-			if (message == "logout") {
+			if (message == "logout" || message == "none") {
 				$("#restaurant_review").css("display", "block");
 				$("#restaurant_review").append(`
 				<pre>리뷰</pre>
 				<pre style="font-weight: normal;">&emsp;로그인 및 방문 인증을 하시면 리뷰가 가능합니다</pre>`)
 			}
-			else if (message == "none") {
+			else if (message == "first") {
 				$("#restaurant_review").css("display", "block");
 				$("#restaurant_review").append(`
 						${review_string}
@@ -719,7 +751,7 @@ function tag_ranking(){
 					$("#restaurant_tag").css("min-height", "0px");		
 					return false;
 				}
-				
+																
 				let percentAry = [];
 				
 				for (i = 0; i < countAry.length; i++) {
@@ -727,6 +759,15 @@ function tag_ranking(){
 					percentAry.push(percent);
 				}
 				
+				let dataPointsAry = [];
+				for (i = countAry.length - 1; i >= 0; i--) {
+					let dic = {};
+					dic["y"] = countAry[i];
+					dic["label"] = percentAry[i] + "%";
+					dic["indexLabel"] = tagAry[i];
+					dataPointsAry.push(dic)		
+				}
+												
 				let options = {
 					animationEnabled: true,
 					title: {
@@ -758,16 +799,10 @@ function tag_ranking(){
 						indexLabelFontFamily: "SUITE-Regular",
 						color: "#B83B5E",
 						type: "bar",
-						dataPoints: [
-							{ y: countAry[4], label: percentAry[4] + "%", indexLabel: tagAry[4] },
-							{ y: countAry[3], label: percentAry[3] + "%", indexLabel: tagAry[3] },
-							{ y: countAry[2], label: percentAry[2] + "%", indexLabel: tagAry[2] },
-							{ y: countAry[1], label: percentAry[1] + "%", indexLabel: tagAry[1] },
-							{ y: countAry[0], label: percentAry[0] + "%", indexLabel: tagAry[0] }
-						]
+						dataPoints: dataPointsAry
 					}]
 				};
-	
+					
 				$("#graph_container").CanvasJSChart(options);
 			}
 		}
@@ -811,8 +846,8 @@ function review_submit(){
 			data: formData,
 	        dataType: "text",
 			beforeSend: function() {
-				if	(detail =='')	{
-					alert("내용을 입력하세요");
+				if	(detail == '')	{
+					alert("내용을 입력해주세요");
 					return false;
 				}
 				else if (checkboxValues.length == 0) {

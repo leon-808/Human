@@ -12,13 +12,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import project.example.demo.dto.MemberDTO;
 import project.example.demo.dto.RestaurantDTO;
+import project.example.demo.dto.ReviewDTO;
 
 @Controller
 public class MainController {
@@ -29,12 +32,12 @@ public class MainController {
 	public String main_page() {
 		return "main";
 	}
-		
+
 	@GetMapping("/main/search/{query}")
 	public String detail(@PathVariable("query") String query) {
 		return "main";
 	}
-	
+
 	@PostMapping("/check/duplicateLocation")
 	@ResponseBody
 	public String check_duplicateLocation(HttpServletRequest req) {
@@ -53,12 +56,12 @@ public class MainController {
 		}
 		return ja.toString();
 	}
-	
+
 	@PostMapping("/suggest/alm/user")
 	@ResponseBody
-	public String suggest_alm (@RequestPart(value = "restaurant") RestaurantDTO rdto) {
+	public String suggest_alm(@RequestPart(value = "restaurant") RestaurantDTO rdto) {
 		String message = "proceed";
-		
+
 		double lat = rdto.getLat();
 		double lng = rdto.getLng();
 		String primecode = null;
@@ -67,20 +70,21 @@ public class MainController {
 		String address = rdto.getAddress().replace("\"", "");
 		String owner = null;
 		String localURL = null;
-		
+
 		int duplicate = mdao.check_duplicateRequest(r_name, address);
-		if (duplicate == 0) 
+		if (duplicate == 0)
 			mdao.restaurant_approval_request(lat, lng, primecode, r_name, owner, category, address, localURL);
-		else message = "duplicate";
-		
+		else
+			message = "duplicate";
+
 		return message;
 	}
-	
+
 	@PostMapping("/suggest/alm/ceo")
 	@ResponseBody
-	public String suggest_alm (@RequestPart(value = "restaurant") RestaurantDTO rdto,
-		   					   @RequestPart(value = "bnd") MultipartFile[] bnd,
-		   					   HttpServletRequest req) {
+	public String suggest_alm(@RequestPart(value = "restaurant") RestaurantDTO rdto,
+			@RequestPart(value = "bnd") MultipartFile[] bnd,
+			HttpServletRequest req) {
 		String message = "proceed";
 
 		double lat = rdto.getLat();
@@ -89,7 +93,7 @@ public class MainController {
 		String r_name = rdto.getR_name();
 		String category = rdto.getCategory();
 		String address = rdto.getAddress().replace("\"", "");
-		
+
 		HttpSession session = req.getSession();
 		String realname = mdao.get_member_name(String.valueOf(session.getAttribute("id")));
 		String owner = String.valueOf(session.getAttribute("id")) + "," + realname;
@@ -101,10 +105,10 @@ public class MainController {
 		LocalTime now = LocalTime.now();
 		DateTimeFormatter fn = DateTimeFormatter.ofPattern("HH-mm-ss ");
 		String timeString = now.format(fn);
-		
+
 		String location = "C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\resources\\static\\img\\admin\\restaurant";
 		String shortLocation = "/img/admin/restaurant/";
-		
+
 		String[] extensions = {
 				"bmp", "jpg", "jpeg", "gif", "png", "webp", "webm", "jfif", "pdf"
 		};
@@ -112,14 +116,15 @@ public class MainController {
 		int acceptable = 0;
 		for (String s : extensions) {
 			if (s.equals(originalExtension)) {
-				acceptable = 1; break;
+				acceptable = 1;
+				break;
 			}
 		}
 		if (acceptable == 0) {
 			message = "extension";
 			return message;
 		}
-		
+
 		String filename = r_name + " " + idString + todayString + timeString + bnd[0].getOriginalFilename();
 		File savefile = new File(location, filename);
 		try {
@@ -127,9 +132,9 @@ public class MainController {
 		} catch (Exception e) {
 		}
 		String localURL = shortLocation + filename;
-		
+
 		int duplicate = mdao.check_duplicateRequest(r_name, address);
-		if (duplicate == 0) 
+		if (duplicate == 0)
 			mdao.restaurant_approval_request(lat, lng, primecode, r_name, owner, category, address, localURL);
 		else {
 			mdao.restaurant_update_request(lat, lng, primecode, r_name, owner, category, address, localURL);
@@ -137,7 +142,7 @@ public class MainController {
 
 		return message;
 	}
-	
+
 	@PostMapping("/main/filter/search")
 	@ResponseBody
 	public String filter_search(HttpServletRequest req) {
@@ -149,19 +154,20 @@ public class MainController {
 		String id = String.valueOf(session.getAttribute("id"));
 		ArrayList<String> tags = new ArrayList<>();
 		if (req.getParameterValues("tags[]") != null) {
-			for (String s : req.getParameterValues("tags[]")) tags.add(s);
+			for (String s : req.getParameterValues("tags[]"))
+				tags.add(s);
 		}
 		double lat = Double.parseDouble(req.getParameter("lat"));
 		double lng = Double.parseDouble(req.getParameter("lng"));
 		double swLat = 0, swLng = 0, neLat = 0, neLng = 0;
 		if (req.getParameter("swLat") != null && req.getParameter("swLng") != null
-			&& req.getParameter("neLat") != null && req.getParameter("neLng") != null) {
+				&& req.getParameter("neLat") != null && req.getParameter("neLng") != null) {
 			swLat = Double.parseDouble(req.getParameter("swLat"));
 			swLng = Double.parseDouble(req.getParameter("swLng"));
 			neLat = Double.parseDouble(req.getParameter("neLat"));
-			neLng = Double.parseDouble(req.getParameter("neLng"));					
+			neLng = Double.parseDouble(req.getParameter("neLng"));
 		}
-				
+
 		String query = make_searchFilterQuery(words, fc, ce, ob, id, tags, lat, lng, swLat, swLng, neLat, neLng);
 		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
 		JSONArray ja = new JSONArray();
@@ -180,6 +186,73 @@ public class MainController {
 		return ja.toString();
 	}
 	
+	@PostMapping("/my/reviewList")
+	@ResponseBody
+	public String MyReviewList(HttpServletRequest req,
+							   @RequestParam("start") int start,
+							   @RequestParam("end") int end) {
+		HttpSession session = req.getSession();
+		JSONArray ja = new JSONArray();
+		int count = 0;
+		
+		if (session.getAttribute("id") != null) {
+			String id = session.getAttribute("id").toString();
+			
+			count = mdao.countMyReviewList(id);
+			if (count ==0) return "null";
+			
+			ArrayList<ReviewDTO> rvdto = mdao.getMyReviewList(id,start,end);
+
+			for (int i = 0; i < rvdto.size(); i++) {
+				JSONObject jo = new JSONObject();
+				jo.put("rv_photo", rvdto.get(i).getRv_photo());
+				jo.put("rv_r_name", rvdto.get(i).getRv_r_name());
+				jo.put("rv_time", rvdto.get(i).getRv_time());
+				jo.put("rv_detail", rvdto.get(i).getRv_detail());
+				jo.put("rv_address", rvdto.get(i).getRv_address());
+				ja.put(jo);
+			}
+		}
+		JSONObject jo = new JSONObject();
+		jo.put("count", count);
+		ja.put(jo);
+		return ja.toString();
+	}
+	
+	@PostMapping("/my/storeList")
+	@ResponseBody
+	public String MyStoreList(HttpServletRequest req,
+							  @RequestParam("name") String name,
+							  @RequestParam("start") int start,
+							  @RequestParam("end") int end) {
+		HttpSession session = req.getSession();
+		JSONArray ja = new JSONArray();
+		int count = 0;
+		
+		if (session.getAttribute("id") != null) {
+			String id = session.getAttribute("id").toString();
+			
+			String owner = id+","+name;
+			
+			count = mdao.countMyStoreList(owner);
+			if (count ==0) return "null";
+
+			ArrayList<RestaurantDTO> restdto = mdao.getMyStoreList(owner, start, end);
+
+			for (int i = 0; i < restdto.size(); i++) {
+				JSONObject jo = new JSONObject();
+				jo.put("r_name", restdto.get(i).getR_name());
+				jo.put("category", restdto.get(i).getCategory());
+				jo.put("address", restdto.get(i).getAddress());
+				ja.put(jo);
+			}
+		}
+		JSONObject jo = new JSONObject();
+		jo.put("count", count);
+		ja.put(jo);
+		return ja.toString();
+	}
+
 	public String make_searchFilterQuery(String words, String fc, String ce, String ob, 
 										 String id, ArrayList<String> tags,
 										 double lat, double lng, double swLat, double swLng,
@@ -215,7 +288,6 @@ public class MainController {
 						if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
 						else temp += "c." + tags.get(i) + " + ";
 					}
-
 				}
 				query.append(temp);
 			}

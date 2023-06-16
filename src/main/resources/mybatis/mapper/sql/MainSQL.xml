@@ -50,5 +50,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="get_searchFilterLIst" resultType="project.example.demo.dto.RestaurantDTO">
 		${param1}
 	</select>
-
+	
+	<select id="countMyReviewList" resultType="_int">
+		select count(*)
+		from review
+		where rv_id = #{param1}
+	</select>
+	
+	<select id="getMyReviewList" resultType="project.example.demo.dto.ReviewDTO">
+		select *
+		from(
+			select a.*, rownum r
+			from(
+				select rv_photo,rv_r_name,rv_time,rv_detail,rv_address
+				from review
+				where rv_id = #{param1}
+				order by rv_time desc
+			) a
+			where rownum <![CDATA[<=]]> #{param3}
+		)
+		where r <![CDATA[>=]]> #{param2}
+	</select>
+	
+	<select id="countMyStoreList" resultType="_int">
+		select count(*)
+		from restaurant
+		where owner = #{param1}
+	</select>
+	
+	<select id="getMyStoreList" resultType="project.example.demo.dto.RestaurantDTO">
+		select *
+		from(
+			select a.*, rownum r
+			from(
+				select r_name, category, address
+				from restaurant
+				where owner = #{param1}
+			) a
+			where rownum <![CDATA[<=]]> #{param3}
+		) 
+		where r <![CDATA[>=]]> #{param2}
+	</select>
 </mapper>
