@@ -249,7 +249,6 @@ function gen_qrcode() {
 		fontcolor: "#000",
 		image: null
 	}
-	console.log(options.text);
 	$("#qrcode").qrcode(options);
 }
 
