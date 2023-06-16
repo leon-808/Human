@@ -199,7 +199,6 @@ public class MainController {
 			}
 			else if (ce.equals("eval")) {
 				String temp = "\tselect a.*, ";
-
 				if (tags.size() == 0) {
 					String[] temporalTags = {
 						"clean", "kind", "parking", "fast", "pack", "alone", "together",
