@@ -743,6 +743,7 @@ label {
     margin: 10px;
     font-size: 15px;
     font-weight: bold;
+    display: none;
 }
 
 .detail_button {
@@ -794,11 +795,19 @@ label {
   cursor: not-allowed;
 }
 
-.myReviewStore{
-	margin:20px 20px 0 20px;
+.myReviewStore {
 	display:flex;
-	gap:20px;
+	height: 20%;
 	border-bottom: solid grey;
+}
+
+.myReviewStore strong:hover {
+	color: #FF0060;
+}
+
+.myReviewStore img {
+    margin: 0 10px 0 0;
+    height: 100%;
 }
 
 .myReviewStore label{
@@ -807,7 +816,18 @@ label {
   	justify-content: center;
 }
 
+.store_ctbadge {
+	width: fit-content;
+	position: relative;
+	top: -2px;
+}
+
 .myReviewStoreTag > a{
 	color: black;
 	text-decoration:none
+}
+
+.block_myList {
+	height: calc(-300px + 100vh);
+	margin: 20px 0 0 0;
 }

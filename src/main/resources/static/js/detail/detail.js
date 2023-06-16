@@ -597,8 +597,12 @@ function reviewList_pagination() {
 }
 
 function reviewList_pageNum() {
-	reviewList_page = Number($(this).attr("pn"));
-	get_reviewList();
+	let clicked = Number($(this).attr("pn"));
+	if (reviewList_page == clicked) return false;
+	else { 
+		reviewList_page = Number($(this).attr("pn"));
+		get_reviewList();
+	}
 }
 
 function reviewList_backward() {
@@ -864,7 +868,7 @@ function review_submit(){
 					alert("지원하지 않는 이미지 파일입니다 이미지를 변경해주세요");
 				}
 				else {
-					alert("리뷰가 등록되었습니다 포토");
+					alert("리뷰가 등록되었습니다");
 					window.location.reload();
 				}
 			},
@@ -893,7 +897,7 @@ function review_submit(){
 					alert("지원하지 않는 이미지 파일입니다 이미지를 변경해주세요");
 				}
 				else {
-					alert("리뷰가 등록되었습니다 포토없음");
+					alert("리뷰가 등록되었습니다");
 					window.location.reload();
 				}
 			},
