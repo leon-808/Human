@@ -1156,27 +1156,17 @@ function displayDetailMarker(data, index, flag) {
 			content: `<div class="iw_placename">${r_name}</div>`
 		});
 		
-	if(flag == "close"){
-		if (Number(close) >= 1000) close = (close / 1000).toFixed(2) + "km";
-		else close += "m";
-			
-		let showSearchInfo = `
-			 	<div class="showSearchInfo">
-				 	<span style="font-weight: bold;">${r_name}</span>
-				 	&emsp;<span style="font-weight: bold; color: #f24c3d;">${close}</span><br>
-			 			<span class="r_address">주소: ${address}</span><br>
-			 	</div>`;
-		$('#search_list').append(showSearchInfo);
-	}else if (flag == "eval"){
-		let detailContent = ` 
-		    <div class="restaurant_search_detail">
-		    	<img src="/img/main/Pin${index}.png" width="20" height="20">			        
-	            <span>${r_name}</span><br>
-	            <span>주소 : ${address}</span><br>			        
-		    </div>`;
 	
-		$('#search_list').append(detailContent);
-	}
+	if (Number(close) >= 1000) close = (close / 1000).toFixed(2) + "km";
+	else close += "m";
+		
+	let showSearchInfo = `
+		 	<div class="showSearchInfo">
+			 	<span style="font-weight: bold;">${r_name}</span>
+			 	&emsp;<span style="font-weight: bold; color: #f24c3d;">${close}</span><br>
+		 			<span class="r_address">주소: ${address}</span><br>
+		 	</div>`;
+	$('#search_list').append(showSearchInfo);
 	 	
 	kakao.maps.event.addListener(detailMarker, "click", function () {
 		if (selectedDetailMarker != null && detailMarker != selectedDetailMarker) {
