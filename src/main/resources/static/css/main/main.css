@@ -719,6 +719,7 @@ label {
     background-position: 200% 0;
   }
 }
+
 .silver-background {
 	background: linear-gradient(to right, #eee 0%, #ccc 50%, #eee 100%);
 }
