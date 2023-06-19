@@ -174,7 +174,7 @@
 					<ul id= "MyReview_list_pagination" class="pagination">
 					</ul>
 				</div>
-				<div class="div_storeList mypage_subtab">
+				<div class="div_storeList mypage_subtab" style="display:none;">
 					<h3 class="sf_title">업체 관리</h3>
 					<p id="noMyStore" class="userMessage">
 						등록된 업체가 없습니다. <br><br>
@@ -185,6 +185,8 @@
 					<ul id= "MyStore_list_pagination" class="pagination">
 					</ul>
 				</div>
+			  <div class="search_food_categoryList" style="display:none;">
+			  </div>
 			</div>
 			<div class="toggle_sidebar tsb_close" data-bs-toggle="offcanvas" data-bs-target="#wrapper_sidebar"></div>
 		</div>

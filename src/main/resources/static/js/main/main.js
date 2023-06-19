@@ -66,6 +66,12 @@ $(document)
 	window.open(`/restaurant/detail/${r_name}/${address}`, "_blank");
 })
 
+.on("click",".restaurant_search_detail",function(){
+	var index = $('.restaurant_search_detail').index(this);
+	let detail = detailMarkers[index];
+	kakao.maps.event.trigger(detail,"click");
+})
+
 $(".each_fcr").hover(function () {
 	$(this).css("background-image", "url('/img/main/FC_HoverRectangle.png')");
 	$(this).css("background-position", "center");
@@ -672,7 +678,7 @@ function manageLoginButton() {
 
 
 
-function search() {
+function search() {	
 	let sf_count = 0;
 	let query, fc, ce, ob;
 	let tags = [];
@@ -739,6 +745,11 @@ function search() {
 	}
 	else if (sf_count != 0) {
 		query = $("#search_input").val();
+		
+		$('.sf_filter').css('display','none');
+		$('.search_food_categoryList').css("display", "block");
+		
+
 		$.ajax({
 			url: "/main/filter/search",
 			type: "post",
@@ -794,6 +805,16 @@ function search() {
 			}
 		})
 	}
+	
+	// 검색 전에 이전의 detailContentList 요소들을 제거
+    let middleSidebarElements = document.getElementsByClassName('search_food_categoryList');
+    if (middleSidebarElements.length > 0) {
+        for (let i = 0; i < middleSidebarElements.length; i++) {
+            let middleSidebar = middleSidebarElements[i];
+            middleSidebar.innerHTML = ''; // 해당 middleSidebar의 내용을 비움
+        }
+    }
+	
 }
 
 function rectSearch() {
@@ -1154,6 +1175,20 @@ function displayDetailMarker(data, index, flag) {
 	});
 
 	detailMarkers.push(detailMarker);
+	
+	if (flag == "eval"){
+		let detailContent = ` 
+		    <div class="restaurant_search_detail">
+		    	<img src="/img/main/Pin${index}.png" width="20" height="20">			        
+	            <span>${r_name}</span><br>
+	            <span>주소 : ${address}</span><br>			        
+		    </div>`;
+	
+		$('.search_food_categoryList').append(detailContent);
+	}
+	
+	
+	
 }
 
 function goto_detail() {

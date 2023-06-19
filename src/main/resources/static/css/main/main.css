@@ -832,3 +832,10 @@ label {
 	height: calc(-300px + 100vh);
 	margin: 20px 0 0 0;
 }
+
+.restaurant_search_detail{
+	border: 1px solid #000;
+	padding: 10px;
+	margin-bottom: 5px;
+	font-size:15px; 
+}

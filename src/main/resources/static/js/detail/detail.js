@@ -467,7 +467,7 @@ function get_photoList() {
 				for (i = 0; i < data.length - 1; i++) {
 					let src = data[i]["rv_photo"];
 					$("#reviewPhoto_list").append(`
-					<img src="${src}" class="">`);
+					<img src="${src}" class="photo_modal">`);
 				}
 				
 				let count = data[data.length - 1]["count"];
