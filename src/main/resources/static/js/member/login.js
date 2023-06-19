@@ -1,4 +1,5 @@
 $(document)
+.ready(islogin)
 .on("click", "#btnLogin", submit_login)
 .on("click", "#signup", goto_signup)
 .on("click", "#IdFind", goto_IdFind)
@@ -10,6 +11,18 @@ $(document)
 	return false;
 })
 
+function islogin(){
+	$.ajax({
+		url: "//isLogin",
+		type: "post",
+		dtatType: "text",
+		success: function(isLogin){
+			if(isLogin != "false"){
+				document.location = "/main";
+			}
+		}
+	})
+}
 
 function submit_login(){
 	id = $("#input_loginID").val();
