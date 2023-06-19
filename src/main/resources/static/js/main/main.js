@@ -43,6 +43,22 @@ $(document)
 .on("click", ".goto_review_my", goto_review_my)
 
 
+.on("click", ".showSearchInfo", function(){
+	var index = $('.showSearchInfo').index(this);
+	let detailMarker = detailMarkers[index];
+	kakao.maps.event.trigger(detailMarker,"click");
+		
+})
+
+.on("click", "#btn-backTag", function(){
+	$(".middle_sidebar").css("display", "block"); 
+	$(".search_list").css("display", "none"); 
+})
+
+.on("click", "#btn-SearchList", function(){
+	$(".middle_sidebar").css("display", "none"); 
+	$(".search_list").css("display", "block"); 
+})
 
 .on("click", "#currentLocationButton", function () {
 	map.panTo(new kakao.maps.LatLng(selfLat, selfLng));
@@ -678,7 +694,10 @@ function manageLoginButton() {
 
 
 
-function search() {	
+
+function search() {
+	$(".search_list").empty();
+
 	let sf_count = 0;
 	let query, fc, ce, ob;
 	let tags = [];
@@ -744,11 +763,26 @@ function search() {
 		})
 	}
 	else if (sf_count != 0) {
-		query = $("#search_input").val();
 		
-		$('.sf_filter').css('display','none');
-		$('.search_food_categoryList').css("display", "block");
-		
+		if(ce=="close"){
+			$(".middle_sidebar").css("display", "none");
+			let html = `
+					<div class="seach_list_div">
+					<button type="button" id="btn-backTag">뒤로가기</button>
+					</div>`;
+			$(".search_list").css("display", "block");
+			$('.search_list').append(html);
+		}else if(ce == "eval"){
+			$(".middle_sidebar").css("display", "none");
+			let html = `
+					<div class="seach_list_div">
+					<button type="button" id="btn-backTag">뒤로가기</button>
+					</div>`;
+			$('.search_list').css("display", "block");
+			$('.search_list').append(html);
+		}
+	
+		query = $("#search_input").val();	
 
 		$.ajax({
 			url: "/main/filter/search",
@@ -764,6 +798,7 @@ function search() {
 			},
 			dataType: "json",
 			success: function (data) {
+				
 				if (data.length != 0) {
 					let tempAry = [];
 					for (i = 0; i < data.length; i++) {
@@ -804,16 +839,7 @@ function search() {
 				else alert("검색하신 결과에 맞는 맛집이 없습니다");
 			}
 		})
-	}
-	
-	// 검색 전에 이전의 detailContentList 요소들을 제거
-    let middleSidebarElements = document.getElementsByClassName('search_food_categoryList');
-    if (middleSidebarElements.length > 0) {
-        for (let i = 0; i < middleSidebarElements.length; i++) {
-            let middleSidebar = middleSidebarElements[i];
-            middleSidebar.innerHTML = ''; // 해당 middleSidebar의 내용을 비움
-        }
-    }
+	}	
 	
 }
 
@@ -1105,6 +1131,8 @@ function displayDetailMarker(data, index, flag) {
 		category = data.category,
 		address = data.address,
 		r_phone = data.r_phone;
+		close = data.close;
+	console.log(data);
 	if (r_phone == undefined) r_phone = "미등록";
 
 	let imageSrc = null, hoverSrc = null;
@@ -1134,7 +1162,7 @@ function displayDetailMarker(data, index, flag) {
 		infowindow = new kakao.maps.InfoWindow({
 			content: `<div class="iw_placename">${r_name}</div>`
 		});
-
+	 	
 	kakao.maps.event.addListener(detailMarker, "click", function () {
 		if (selectedDetailMarker != null && detailMarker != selectedDetailMarker) {
 			openedDetailOverlay.setMap(null);
@@ -1157,10 +1185,12 @@ function displayDetailMarker(data, index, flag) {
 			 		</div>
 		 		</div>
 		 	</div>`;
+
 		map.setCenter(detailMarker.getPosition());
 		detailOverlay.setContent(detailContent);
 		detailOverlay.setPosition(detailMarker.getPosition());
 		detailOverlay.setMap(map);
+	
 		openedDetailOverlay = detailOverlay;
 	});
 
@@ -1173,10 +1203,16 @@ function displayDetailMarker(data, index, flag) {
 		infowindow.close();
 		detailMarker.setImage(markerImage);
 	});
-
 	detailMarkers.push(detailMarker);
 	
-	if (flag == "eval"){
+	if(flag == "close"){
+		let showSearchInfo = `
+		 	<div class="showSearchInfo">
+			 	<span>${r_name}</span>&nbsp&nbsp<span>${close}m</span><br>
+		 			<span class="r_address">주소: ${address}</span><br>
+		 	</div>`;
+		$('.seach_list_div').append(showSearchInfo);
+	}else if (flag == "eval"){
 		let detailContent = ` 
 		    <div class="restaurant_search_detail">
 		    	<img src="/img/main/Pin${index}.png" width="20" height="20">			        
@@ -1184,7 +1220,7 @@ function displayDetailMarker(data, index, flag) {
 	            <span>주소 : ${address}</span><br>			        
 		    </div>`;
 	
-		$('.search_food_categoryList').append(detailContent);
+		$('.seach_list_div').append(detailContent);
 	}
 	
 	
@@ -1266,6 +1302,9 @@ function clearMarkers() {
 
 
 function showMyData() {
+	$(".search_list").css("display", "none");
+	$(".search_list").empty();
+	$(".middle_sidebar").css("display", "block"); 
 	if (loginFlag == 1 || loginFlag == 2) {
 		$(".top_sidebar").empty();
 		$(".top_sidebar").append(
@@ -1703,4 +1742,26 @@ function saveTag() {
 	})
 	localStorage.setItem("tags", JSON.stringify(checkedValues));
 	alert("설정 태그가 저장되었습니다.");
+}
+
+function showDistance(content, position) {
+    
+    if (distanceOverlay) { // 커스텀오버레이가 생성된 상태이면
+        
+        // 커스텀 오버레이의 위치와 표시할 내용을 설정합니다
+        distanceOverlay.setPosition(position);
+        distanceOverlay.setContent(content);
+        
+    } else { // 커스텀 오버레이가 생성되지 않은 상태이면
+        
+        // 커스텀 오버레이를 생성하고 지도에 표시합니다
+        distanceOverlay = new kakao.maps.CustomOverlay({
+            map: map, // 커스텀오버레이를 표시할 지도입니다
+            content: content,  // 커스텀오버레이에 표시할 내용입니다
+            position: position, // 커스텀오버레이를 표시할 위치입니다.
+            xAnchor: 0,
+            yAnchor: 0,
+            zIndex: 3  
+        });      
+    }
 }
