@@ -174,6 +174,7 @@ public class MainController {
 		JSONArray ja = new JSONArray();
 		for (RestaurantDTO r : rdto) {
 			JSONObject jo = new JSONObject();
+			
 			jo.put("lat", r.getLat());
 			jo.put("lng", r.getLng());
 			jo.put("r_name", r.getR_name());
@@ -182,6 +183,7 @@ public class MainController {
 			jo.put("r_phone", r.getR_phone());
 			jo.put("r_photo", r.getR_photo());
 			jo.put("eval", r.getEval());
+			jo.put("close", r.getClose());
 			ja.put(jo);
 		}
 		return ja.toString();
@@ -289,6 +291,7 @@ public class MainController {
 						if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
 						else temp += "c." + tags.get(i) + " + ";
 					}
+
 				}
 				query.append(temp);
 			}

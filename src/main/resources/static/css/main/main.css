@@ -22,6 +22,11 @@ label {
     height: 100vh;
 }
 
+#roadview {
+	width: 100vw;
+	height: 100vh;
+}
+
 .simpleOverlay {
     position: relative;
     bottom: 85px;
@@ -421,6 +426,10 @@ label {
     z-index: 30;
 }
 
+.search_list {
+    display:none;
+}
+
 .sf_filter {
     margin: 10px 0 20px 0;
     display: none;
@@ -746,6 +755,32 @@ label {
     display: none;
 }
 
+
+.custom_typecontrol {
+	position: absolute;
+	top: 10px;
+	right: 50px;
+	overflow: hidden;
+	width: 130px;
+	height: 30px;
+	margin: 0;
+	padding: 0;
+	z-index: 30;
+	font-size: 12px;
+	font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+	border: 1px solid #919191;
+	border-radius: 5px;
+}
+
+.custom_typecontrol span {
+	display: block;
+	width: 65px;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	cursor: pointer;
+}
+
 .detail_button {
     width: 100px;
     margin: 0 20px 0 20px;
@@ -831,4 +866,35 @@ label {
 .block_myList {
 	height: calc(-300px + 100vh);
 	margin: 20px 0 0 0;
+}
+
+.showSearchInfo {
+  border: 1px solid #ccc;
+  padding: 5px;
+  margin: 5px;
+  border-radius: 3px 3px 0px 0px;
+}
+
+#btn-backTag {
+    width: 100px;
+    margin-right: 3px;
+    font-size: 13px;
+    border-radius: 5px;
+    background-color: #808080;
+    color: white;
+    border: none;
+    margin: 5px;
+}
+
+#btn-SearchList {
+	width: 120px;
+    margin-right: 3px;
+    font-size: 14px;
+    border-radius: 5px;
+    background-color: #808080;
+    color: white;
+    border: none;
+    margin: 0 0 0 30px;
+    float: right; 
+	
 }

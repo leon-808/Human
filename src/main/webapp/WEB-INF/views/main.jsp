@@ -25,6 +25,8 @@
 					</div>
 				</div>
 			</div>
+			<div class="search_list">
+			</div>
 			<div class="middle_sidebar">
 				<div class="middle_sideMessage">
 					<p class="sideMessage">
@@ -37,6 +39,7 @@
 					<div style="display: flex;">
 						<h3 class="sf_title">카테고리</h3>
 						<label id="off_category" class="toggleSwitchOff"><span>해제</span></label>
+						<button id="btn-SearchList">검색 결과 보기</button>
 					</div>
 					<div class="sf_fcr">
 						<div class="each_fcr">
