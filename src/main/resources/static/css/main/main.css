@@ -711,20 +711,15 @@ label {
 	border: none;
 }
 
-@
-keyframes shimmer { 0% {
-	background-position: -200% 0;
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
-100
-%
-{
-background-position
-:
-200%
-0;
-}
-}
 .silver-background {
 	background: linear-gradient(to right, #eee 0%, #ccc 50%, #eee 100%);
 }
