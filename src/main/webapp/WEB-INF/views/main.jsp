@@ -25,6 +25,8 @@
 					</div>
 				</div>
 			</div>
+			<div class="search_list">
+			</div>
 			<div class="middle_sidebar">
 				<div class="middle_sideMessage">
 					<p class="sideMessage">

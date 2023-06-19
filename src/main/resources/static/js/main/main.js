@@ -43,6 +43,13 @@ $(document)
 .on("click", ".goto_review_my", goto_review_my)
 
 
+.on("click", ".showSearchInfo", function(){
+	var index = $('.showSearchInfo').index(this);
+	let detailMarker = detailMarkers[index];
+	kakao.maps.event.trigger(detailMarker,"click");
+		
+})
+
 
 .on("click", "#currentLocationButton", function () {
 	map.panTo(new kakao.maps.LatLng(selfLat, selfLng));
@@ -739,7 +746,12 @@ function search() {
 	}
 	else if (sf_count != 0) {
 		
-		$(".middle_sidebar").css("display", "none"); //검색 시 태그 div 숨기기
+		$(".middle_sidebar").css("display", "none"); 
+		$(".search_list").css("display", "block"); 
+		let html = `
+					<div class="seach_list_div">
+					</div>`;
+		$('.search_list').append(html);
 		
 		query = $("#search_input").val();
 		$.ajax({
@@ -756,6 +768,7 @@ function search() {
 			},
 			dataType: "json",
 			success: function (data) {
+				
 				if (data.length != 0) {
 					let tempAry = [];
 					for (i = 0; i < data.length; i++) {
@@ -1116,7 +1129,13 @@ function displayDetailMarker(data, index, flag) {
 		infowindow = new kakao.maps.InfoWindow({
 			content: `<div class="iw_placename">${r_name}</div>`
 		});
-
+	let showSearchInfo = `
+		 	<div class="showSearchInfo">
+			 	<span>${r_name}</span><br>
+		 			<span class="r_address">주소: ${address}</span><br>
+		 	</div>`;
+	$('.seach_list_div').append(showSearchInfo);
+	 	
 	kakao.maps.event.addListener(detailMarker, "click", function () {
 		if (selectedDetailMarker != null && detailMarker != selectedDetailMarker) {
 			openedDetailOverlay.setMap(null);
@@ -1139,10 +1158,12 @@ function displayDetailMarker(data, index, flag) {
 			 		</div>
 		 		</div>
 		 	</div>`;
+
 		map.setCenter(detailMarker.getPosition());
 		detailOverlay.setContent(detailContent);
 		detailOverlay.setPosition(detailMarker.getPosition());
 		detailOverlay.setMap(map);
+	
 		openedDetailOverlay = detailOverlay;
 	});
 
@@ -1155,7 +1176,6 @@ function displayDetailMarker(data, index, flag) {
 		infowindow.close();
 		detailMarker.setImage(markerImage);
 	});
-
 	detailMarkers.push(detailMarker);
 }
 
@@ -1234,6 +1254,9 @@ function clearMarkers() {
 
 
 function showMyData() {
+	$(".search_list").css("display", "none");
+	$(".search_list").empty();
+	$(".middle_sidebar").css("display", "block"); 
 	if (loginFlag == 1 || loginFlag == 2) {
 		$(".top_sidebar").empty();
 		$(".top_sidebar").append(

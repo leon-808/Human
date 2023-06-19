@@ -426,6 +426,10 @@ label {
     z-index: 30;
 }
 
+.search_list {
+    display:none;
+}
+
 .sf_filter {
     margin: 10px 0 20px 0;
     display: none;
@@ -862,4 +866,11 @@ label {
 .block_myList {
 	height: calc(-300px + 100vh);
 	margin: 20px 0 0 0;
+}
+
+.showSearchInfo {
+  background-color: #f0f0f0;
+  padding: 5px;
+  margin: 5px;
+  border-radius: 3px 3px 0px 0px;
 }
