@@ -25,8 +25,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="search_list">
-			</div>
+			
 			<div class="middle_sidebar">
 				<div class="middle_sideMessage">
 					<p class="sideMessage">
@@ -39,7 +38,6 @@
 					<div style="display: flex;">
 						<h3 class="sf_title">카테고리</h3>
 						<label id="off_category" class="toggleSwitchOff"><span>해제</span></label>
-						<button id="btn-SearchList">검색 결과 보기</button>
 					</div>
 					<div class="sf_fcr">
 						<div class="each_fcr">
@@ -166,6 +164,10 @@
 						</div>
 					</div>
 				</div>
+				<div id="search_list_wrapper">
+					<button type="button" id="backto_sf" class="btn btn-secondary">뒤로가기</button>
+					<div id="search_list"></div>
+				</div>
 				<div class="div_reviewList mypage_subtab" style="display: none;">
 					<h3 class="sf_title">리뷰 관리</h3>
 					<p id="noMyReview" class="userMessage">
@@ -177,7 +179,7 @@
 					<ul id= "MyReview_list_pagination" class="pagination">
 					</ul>
 				</div>
-				<div class="div_storeList mypage_subtab" style="display:none;">
+				<div class="div_storeList mypage_subtab" style="display: none;">
 					<h3 class="sf_title">업체 관리</h3>
 					<p id="noMyStore" class="userMessage">
 						등록된 업체가 없습니다. <br><br>
