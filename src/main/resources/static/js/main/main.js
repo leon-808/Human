@@ -50,6 +50,15 @@ $(document)
 		
 })
 
+.on("click", "#btn-backTag", function(){
+	$(".middle_sidebar").css("display", "block"); 
+	$(".search_list").css("display", "none"); 
+})
+
+.on("click", "#btn-SearchList", function(){
+	$(".middle_sidebar").css("display", "none"); 
+	$(".search_list").css("display", "block"); 
+})
 
 .on("click", "#currentLocationButton", function () {
 	map.panTo(new kakao.maps.LatLng(selfLat, selfLng));
@@ -680,6 +689,7 @@ function manageLoginButton() {
 
 
 function search() {
+	$(".search_list").empty();
 	let sf_count = 0;
 	let query, fc, ce, ob;
 	let tags = [];
@@ -750,9 +760,12 @@ function search() {
 		$(".search_list").css("display", "block"); 
 		let html = `
 					<div class="seach_list_div">
+					<button type="button" id="btn-backTag">뒤로가기</button>
 					</div>`;
 		$('.search_list').append(html);
 		
+
+	
 		query = $("#search_input").val();
 		$.ajax({
 			url: "/main/filter/search",
@@ -1100,6 +1113,8 @@ function displayDetailMarker(data, index, flag) {
 		category = data.category,
 		address = data.address,
 		r_phone = data.r_phone;
+		close = data.close;
+	console.log(data);
 	if (r_phone == undefined) r_phone = "미등록";
 
 	let imageSrc = null, hoverSrc = null;
@@ -1129,9 +1144,10 @@ function displayDetailMarker(data, index, flag) {
 		infowindow = new kakao.maps.InfoWindow({
 			content: `<div class="iw_placename">${r_name}</div>`
 		});
+		
 	let showSearchInfo = `
 		 	<div class="showSearchInfo">
-			 	<span>${r_name}</span><br>
+			 	<span>${r_name}</span>&nbsp&nbsp<span>${close}m</span><br>
 		 			<span class="r_address">주소: ${address}</span><br>
 		 	</div>`;
 	$('.seach_list_div').append(showSearchInfo);
@@ -1694,4 +1710,26 @@ function saveTag() {
 	})
 	localStorage.setItem("tags", JSON.stringify(checkedValues));
 	alert("설정 태그가 저장되었습니다.");
+}
+
+function showDistance(content, position) {
+    
+    if (distanceOverlay) { // 커스텀오버레이가 생성된 상태이면
+        
+        // 커스텀 오버레이의 위치와 표시할 내용을 설정합니다
+        distanceOverlay.setPosition(position);
+        distanceOverlay.setContent(content);
+        
+    } else { // 커스텀 오버레이가 생성되지 않은 상태이면
+        
+        // 커스텀 오버레이를 생성하고 지도에 표시합니다
+        distanceOverlay = new kakao.maps.CustomOverlay({
+            map: map, // 커스텀오버레이를 표시할 지도입니다
+            content: content,  // 커스텀오버레이에 표시할 내용입니다
+            position: position, // 커스텀오버레이를 표시할 위치입니다.
+            xAnchor: 0,
+            yAnchor: 0,
+            zIndex: 3  
+        });      
+    }
 }

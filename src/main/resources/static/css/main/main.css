@@ -869,8 +869,33 @@ label {
 }
 
 .showSearchInfo {
-  background-color: #f0f0f0;
+  border: 1px solid #ccc;
   padding: 5px;
   margin: 5px;
   border-radius: 3px 3px 0px 0px;
+}
+
+#btn-backTag {
+    width: 100px;
+    margin-right: 3px;
+    font-size: 13px;
+    border-radius: 5px;
+    background-color: #808080;
+    color: white;
+    border: none;
+    margin: 5px;
+}
+
+#btn-search {
+	background-color: #4CAF50;
+	color: white;
+	padding: 10px 20px;
+	font-size: 16px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+#btn-search:hover {
+	background-color: #45a049;
 }
