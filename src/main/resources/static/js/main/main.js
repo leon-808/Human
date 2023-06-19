@@ -75,7 +75,7 @@ $(document)
 
 .on("click", "#backto_sf", function(){
 	$(".sf_filter").css("display", "block"); 
-	$("#search_list").css("display", "none"); 
+	$("#search_list_wrapper").css("display", "none"); 
 })
 
 .on("click", "#btn_searchList", function(){
@@ -84,7 +84,7 @@ $(document)
 		return false;
 	}
 	$(".sf_filter").css("display", "none"); 
-	$("#search_list").css("display", "block"); 
+	$("#search_list_wrapper").css("display", "block"); 
 })
 
 
@@ -762,7 +762,7 @@ function search() {
 	}
 	else if (sf_count != 0) {
 		$(".sf_filter").css("display", "none"); 
-		$("#search_list").css("display", "block"); 
+		$("#search_list_wrapper").css("display", "block"); 
 					
 		query = $("#search_input").val();
 		$.ajax({
@@ -1273,9 +1273,8 @@ function clearMarkers() {
 
 
 function showMyData() {
-	$("#search_list").css("display", "none");
-	$("#search_list").empty();
-	$(".middle_sidebar").css("display", "block"); 
+	$("#search_list_wrapper").css("display", "none");
+	$(".sf_filter").css("display", "block"); 
 	if (loginFlag == 1 || loginFlag == 2) {
 		$(".top_sidebar").empty();
 		$(".top_sidebar").append(
