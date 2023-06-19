@@ -695,7 +695,6 @@ function manageLoginButton() {
 
 
 function search() {
-	$("#search_list").empty();
 	let sf_count = 0;
 	let query, fc, ce, ob;
 	let tags = [];
@@ -719,6 +718,7 @@ function search() {
 		lng = position.getLng();
 
 	wholeMarkersNull();
+	$("#search_list").empty();
 
 	if (sf_count == 0 || loginFlag == 0) {
 		query = encodeURI($("#search_input").val());
