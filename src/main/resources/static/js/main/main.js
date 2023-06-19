@@ -1154,7 +1154,7 @@ function displayDetailMarker(data, index, flag) {
 	
 	let showSearchInfo = `
 		 	<div class="showSearchInfo">
-		 	<img src="${imageSrc}">
+		 	<img src="${imageSrc}" style="width:25px">
 			 	<span style="font-weight: bold;">${r_name}</span>
 			 	&emsp;<span style="font-weight: bold; color: #f24c3d;">${close}</span><br>
 		 			<span class="r_address">주소: ${address}</span><br>
