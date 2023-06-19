@@ -679,8 +679,6 @@ function suggestDT() {
 	}
 }
 
-
-
 function manageLoginButton() {
 	if ($(this).text() == "로그인") {
 		document.location = "/login";
@@ -697,9 +695,6 @@ function manageLoginButton() {
 		})
 	}
 }
-
-
-
 
 function search() {
 	let sf_count = 0;
@@ -769,28 +764,17 @@ function search() {
 	}
 	else if (sf_count != 0) {
 		
-		if(ce=="close"){
-			$(".sf_filter").css("display", "none");
-			let html = `
-					<div class="seach_list_div">
-					<button type="button" id="btn-backTag">뒤로가기</button>
-					</div>`;
-			$(".search_list").css("display", "block");
-			$('.search_list').append(html);
+		if(ce=="close"){			
+			$(".sf_filter").css("display", "none"); 
+			$("#search_list_wrapper").css("display", "block"); 
 		}else if(ce == "eval"){
 			$(".sf_filter").css("display", "none");
-			let html = `
-					<div class="seach_list_div">
-					<button type="button" id="btn-backTag">뒤로가기</button>
-					</div>`;
-			$('.search_list').css("display", "block");
-			$('.search_list').append(html);
+			$('.search_list_wrapper').css("display", "block");
 		}
 	
 		query = $("#search_input").val();	
 
-		/*$(".sf_filter").css("display", "none"); 
-		$("#search_list_wrapper").css("display", "block"); */
+		
 					
 		$.ajax({
 			url: "/main/filter/search",
@@ -1171,6 +1155,28 @@ function displayDetailMarker(data, index, flag) {
 		infowindow = new kakao.maps.InfoWindow({
 			content: `<div class="iw_placename">${r_name}</div>`
 		});
+		
+	if(flag == "close"){
+		if (Number(close) >= 1000) close = (close / 1000).toFixed(2) + "km";
+		else close += "m";
+			
+		let showSearchInfo = `
+			 	<div class="showSearchInfo">
+				 	<span style="font-weight: bold;">${r_name}</span>
+				 	&emsp;<span style="font-weight: bold; color: #f24c3d;">${close}</span><br>
+			 			<span class="r_address">주소: ${address}</span><br>
+			 	</div>`;
+		$('#search_list').append(showSearchInfo);
+	}else if (flag == "eval"){
+		let detailContent = ` 
+		    <div class="restaurant_search_detail">
+		    	<img src="/img/main/Pin${index}.png" width="20" height="20">			        
+	            <span>${r_name}</span><br>
+	            <span>주소 : ${address}</span><br>			        
+		    </div>`;
+	
+		$('#search_list').append(detailContent);
+	}
 	 	
 	kakao.maps.event.addListener(detailMarker, "click", function () {
 		if (selectedDetailMarker != null && detailMarker != selectedDetailMarker) {
@@ -1214,30 +1220,6 @@ function displayDetailMarker(data, index, flag) {
 	});
 	
 	detailMarkers.push(detailMarker);
-	
-	if(flag == "close"){
-		if (Number(close) >= 1000) close = (close / 1000).toFixed(2) + "km";
-		else close += "m";
-			
-		let showSearchInfo = `
-			 	<div class="showSearchInfo">
-				 	<span style="font-weight: bold;">${r_name}</span>
-				 	&emsp;<span style="font-weight: bold; color: #f24c3d;">${close}</span><br>
-			 			<span class="r_address">주소: ${address}</span><br>
-			 	</div>`;
-		$('#search_list').append(showSearchInfo);
-	}else if (flag == "eval"){
-		let detailContent = ` 
-		    <div class="restaurant_search_detail">
-		    	<img src="/img/main/Pin${index}.png" width="20" height="20">			        
-	            <span>${r_name}</span><br>
-	            <span>주소 : ${address}</span><br>			        
-		    </div>`;
-	
-		$('.search_list').append(detailContent);
-	}
-	
-	
 	
 }
 
