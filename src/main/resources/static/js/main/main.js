@@ -44,7 +44,7 @@ $(document)
 
 
 
-.on("click", "#currentLocationButton", function () {
+.on("click", "#currentLocationButton", function() {
 	map.panTo(new kakao.maps.LatLng(selfLat, selfLng));
 })
 
@@ -55,26 +55,28 @@ $(document)
 	return false;
 })
 
-.on("click", ".alm_though", function () {
+.on("click", ".alm_though", function() {
 	thoughSuggestFlag = 1;
 	check_duplicateLocation(thoughLatLng);
 })
 
-.on("click", ".alm_listBlock", function () {
+.on("click", ".alm_listBlock", function() {
 	let r_name = $(this).find("p").eq(0).text();
 	let address = $(this).find("p").eq(1).text();
 	window.open(`/restaurant/detail/${r_name}/${address}`, "_blank");
 })
 
-$(".each_fcr").hover(function () {
+
+
+$(".each_fcr").hover(function() {
 	$(this).css("background-image", "url('/img/main/FC_HoverRectangle.png')");
 	$(this).css("background-position", "center");
-}, function () {
+}, function() {
 	$(this).css("background-image", "none");
 })
 
-$("input:radio[name='fc']").change(function () {
-	$("input[name='fc']").each(function () {
+$("input:radio[name='fc']").change(function() {
+	$("input[name='fc']").each(function() {
 		let id = $(this).attr("id");
 		if ($(this).prop("checked")) {
 			$(`label[for='${id}']`).children("img").attr("src", id + "Act.png");
@@ -85,8 +87,8 @@ $("input:radio[name='fc']").change(function () {
 	})
 })
 
-$("input:radio[name='close_or_eval']").change(function () {
-	$("input:radio[name='close_or_eval']").each(function () {
+$("input:radio[name='close_or_eval']").change(function() {
+	$("input:radio[name='close_or_eval']").each(function() {
 		let id = $(this).attr("id");
 		if ($(this).prop("checked")) {
 			$(`label[for='${id}']`).addClass("active");
@@ -95,8 +97,8 @@ $("input:radio[name='close_or_eval']").change(function () {
 	})
 })
 
-$("input:radio[name='orderby']").change(function () {
-	$("input[name='orderby']").each(function () {
+$("input:radio[name='orderby']").change(function() {
+	$("input[name='orderby']").each(function() {
 		let id = $(this).attr("id");
 		if ($(this).prop("checked")) {
 			$(`label[for='${id}']`).addClass("active");
@@ -105,7 +107,7 @@ $("input:radio[name='orderby']").change(function () {
 	})
 })
 
-$("input:checkbox[name='tags']").change(function () {
+$("input:checkbox[name='tags']").change(function() {
 	$("input:checkbox[name='tags']").each(function () {
 		let id = $(this).attr("id");
 		if ($(this).prop("checked")) {
@@ -115,19 +117,19 @@ $("input:checkbox[name='tags']").change(function () {
 	})
 })
 
-$("#currentLocationButton").hover(function () {
+$("#currentLocationButton").hover(function() {
 	$(this).css("background-position-y", "-350px");
 }, function () {
 	$(this).css("background-position-y", "-450px");
 })
 
-$(".eraserIcon").hover(function () {
+$(".eraserIcon").hover(function() {
 	$(this).css("background-position-x", "-140px");
 }, function () {
 	$(this).css("background-position-x", "-80px");
 })
 
-$("#goto_admin_restaurant").click(function () {
+$("#goto_admin_restaurant").click(function() {
 	document.location = "/admin/restaurant";
 })
 

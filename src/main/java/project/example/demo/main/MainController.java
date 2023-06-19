@@ -170,6 +170,7 @@ public class MainController {
 
 		String query = make_searchFilterQuery(words, fc, ce, ob, id, tags, lat, lng, swLat, swLng, neLat, neLng);
 		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
+		System.out.println(query);
 		JSONArray ja = new JSONArray();
 		for (RestaurantDTO r : rdto) {
 			JSONObject jo = new JSONObject();
@@ -267,7 +268,7 @@ public class MainController {
 		if (ce != null) {
 			if (ce.equals("close")) {
 				query.append(String.format("""
-							select a.*, abs((a.lat - %1$s) + (a.lng - %2$s)) as close
+							select a.*, distance(%1$s, %2$s, a.lat, a.lng) as close
 						""", lat, lng));
 			}
 			else if (ce.equals("eval")) {
