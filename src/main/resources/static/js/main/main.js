@@ -44,7 +44,7 @@ $(document)
 
 
 
-.on("click", "#currentLocationButton", function () {
+.on("click", "#currentLocationButton", function() {
 	map.panTo(new kakao.maps.LatLng(selfLat, selfLng));
 })
 
@@ -55,26 +55,49 @@ $(document)
 	return false;
 })
 
-.on("click", ".alm_though", function () {
+.on("click", ".alm_though", function() {
 	thoughSuggestFlag = 1;
 	check_duplicateLocation(thoughLatLng);
 })
 
-.on("click", ".alm_listBlock", function () {
+.on("click", ".alm_listBlock", function() {
 	let r_name = $(this).find("p").eq(0).text();
 	let address = $(this).find("p").eq(1).text();
 	window.open(`/restaurant/detail/${r_name}/${address}`, "_blank");
 })
 
-$(".each_fcr").hover(function () {
+.on("click", ".showSearchInfo", function(){
+	var index = $('.showSearchInfo').index(this);
+	let detailMarker = detailMarkers[index];
+	kakao.maps.event.trigger(detailMarker,"click");
+		
+})
+
+.on("click", "#backto_sf", function(){
+	$(".sf_filter").css("display", "block"); 
+	$("#search_list_wrapper").css("display", "none"); 
+})
+
+.on("click", "#btn_searchList", function(){
+	if (detailMarkers.length == 0) {
+		alert("검색을 먼저 수행해주세요");
+		return false;
+	}
+	$(".sf_filter").css("display", "none"); 
+	$("#search_list_wrapper").css("display", "block"); 
+})
+
+
+
+$(".each_fcr").hover(function() {
 	$(this).css("background-image", "url('/img/main/FC_HoverRectangle.png')");
 	$(this).css("background-position", "center");
-}, function () {
+}, function() {
 	$(this).css("background-image", "none");
 })
 
-$("input:radio[name='fc']").change(function () {
-	$("input[name='fc']").each(function () {
+$("input:radio[name='fc']").change(function() {
+	$("input[name='fc']").each(function() {
 		let id = $(this).attr("id");
 		if ($(this).prop("checked")) {
 			$(`label[for='${id}']`).children("img").attr("src", id + "Act.png");
@@ -85,8 +108,8 @@ $("input:radio[name='fc']").change(function () {
 	})
 })
 
-$("input:radio[name='close_or_eval']").change(function () {
-	$("input:radio[name='close_or_eval']").each(function () {
+$("input:radio[name='close_or_eval']").change(function() {
+	$("input:radio[name='close_or_eval']").each(function() {
 		let id = $(this).attr("id");
 		if ($(this).prop("checked")) {
 			$(`label[for='${id}']`).addClass("active");
@@ -95,8 +118,8 @@ $("input:radio[name='close_or_eval']").change(function () {
 	})
 })
 
-$("input:radio[name='orderby']").change(function () {
-	$("input[name='orderby']").each(function () {
+$("input:radio[name='orderby']").change(function() {
+	$("input[name='orderby']").each(function() {
 		let id = $(this).attr("id");
 		if ($(this).prop("checked")) {
 			$(`label[for='${id}']`).addClass("active");
@@ -105,7 +128,7 @@ $("input:radio[name='orderby']").change(function () {
 	})
 })
 
-$("input:checkbox[name='tags']").change(function () {
+$("input:checkbox[name='tags']").change(function() {
 	$("input:checkbox[name='tags']").each(function () {
 		let id = $(this).attr("id");
 		if ($(this).prop("checked")) {
@@ -115,19 +138,19 @@ $("input:checkbox[name='tags']").change(function () {
 	})
 })
 
-$("#currentLocationButton").hover(function () {
+$("#currentLocationButton").hover(function() {
 	$(this).css("background-position-y", "-350px");
 }, function () {
 	$(this).css("background-position-y", "-450px");
 })
 
-$(".eraserIcon").hover(function () {
+$(".eraserIcon").hover(function() {
 	$(this).css("background-position-x", "-140px");
 }, function () {
 	$(this).css("background-position-x", "-80px");
 })
 
-$("#goto_admin_restaurant").click(function () {
+$("#goto_admin_restaurant").click(function() {
 	document.location = "/admin/restaurant";
 })
 
@@ -159,11 +182,10 @@ function createUI(isLogin) {
 	$(".middle_sideMessage").css("display", "none");
 	$(".sf_filter").css("display", "block");
 	$(".header").append(`
-		<div class="header_subarea">
-		 	<button type="button" class="btn btn-success" id="btn-myPage">마이페이지</button>	
-		  	<button type="button" id="challenge" class="btn btn-danger" data-bs-toggle="tooltip" 
-		  	data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>
-		</div>`);
+		<button id="btn_searchList" class="btn btn-secondary ts_button">검색 결과 보기</button>
+	 	<button id="btn-myPage" class="btn btn-success ts_button">마이페이지</button>	
+	  	<button id="challenge" class="btn btn-danger ts_button" data-bs-toggle="tooltip" 
+	  	data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>`);
 	if (isLogin == "admin") {
 		$(".header_title").append(`
 		<button id="button_manage" class="btn btn-dark" data-bs-toggle="modal"
@@ -696,6 +718,7 @@ function search() {
 		lng = position.getLng();
 
 	wholeMarkersNull();
+	$("#search_list").empty();
 
 	if (sf_count == 0 || loginFlag == 0) {
 		query = encodeURI($("#search_input").val());
@@ -738,6 +761,9 @@ function search() {
 		})
 	}
 	else if (sf_count != 0) {
+		$(".sf_filter").css("display", "none"); 
+		$("#search_list_wrapper").css("display", "block"); 
+					
 		query = $("#search_input").val();
 		$.ajax({
 			url: "/main/filter/search",
@@ -753,6 +779,7 @@ function search() {
 			},
 			dataType: "json",
 			success: function (data) {
+				
 				if (data.length != 0) {
 					let tempAry = [];
 					for (i = 0; i < data.length; i++) {
@@ -776,6 +803,7 @@ function search() {
 						}
 					}
 					let bounds = new kakao.maps.LatLngBounds();
+					detailMarkers = [];
 					for (i = 0; i < data.length; i++) {
 						let d = data[i];
 						displayDetailMarker(d, indexAry[i], ce);
@@ -849,6 +877,7 @@ function rectSearch() {
 				}
 			},
 			success: function (data) {
+				detailMarkers = [];
 				if (data.documents.length != 0) {
 					let bounds = new kakao.maps.LatLngBounds();
 					for (i = 0; i < data.documents.length; i++) {
@@ -1084,6 +1113,7 @@ function displayDetailMarker(data, index, flag) {
 		category = data.category,
 		address = data.address,
 		r_phone = data.r_phone;
+		close = data.close;
 	if (r_phone == undefined) r_phone = "미등록";
 
 	let imageSrc = null, hoverSrc = null;
@@ -1113,7 +1143,18 @@ function displayDetailMarker(data, index, flag) {
 		infowindow = new kakao.maps.InfoWindow({
 			content: `<div class="iw_placename">${r_name}</div>`
 		});
-
+		
+	if (Number(close) >= 1000) close = (close / 1000).toFixed(2) + "km";
+	else close += "m";
+		
+	let showSearchInfo = `
+		 	<div class="showSearchInfo">
+			 	<span style="font-weight: bold;">${r_name}</span>
+			 	&emsp;<span style="font-weight: bold; color: #f24c3d;">${close}</span><br>
+		 			<span class="r_address">주소: ${address}</span><br>
+		 	</div>`;
+	$('#search_list').append(showSearchInfo);
+	 	
 	kakao.maps.event.addListener(detailMarker, "click", function () {
 		if (selectedDetailMarker != null && detailMarker != selectedDetailMarker) {
 			openedDetailOverlay.setMap(null);
@@ -1136,10 +1177,12 @@ function displayDetailMarker(data, index, flag) {
 			 		</div>
 		 		</div>
 		 	</div>`;
+
 		map.setCenter(detailMarker.getPosition());
 		detailOverlay.setContent(detailContent);
 		detailOverlay.setPosition(detailMarker.getPosition());
 		detailOverlay.setMap(map);
+	
 		openedDetailOverlay = detailOverlay;
 	});
 
@@ -1152,7 +1195,7 @@ function displayDetailMarker(data, index, flag) {
 		infowindow.close();
 		detailMarker.setImage(markerImage);
 	});
-
+	
 	detailMarkers.push(detailMarker);
 }
 
@@ -1224,13 +1267,14 @@ function toggleBarandMap() {
 
 
 function clearMarkers() {
-	markersNuller(keywordMarkers);
-	addLocationMarker.setMap(null);
+	wholeMarkersNull();
 }
 
 
 
 function showMyData() {
+	$("#search_list_wrapper").css("display", "none");
+	$(".sf_filter").css("display", "block"); 
 	if (loginFlag == 1 || loginFlag == 2) {
 		$(".top_sidebar").empty();
 		$(".top_sidebar").append(
@@ -1320,11 +1364,10 @@ function gotoMain() {
 
 	let header_subarea = "";
 	if (loginFlag >= 1) header_subarea = `
-	    <div class="header_subarea">
-		 	<button type="button" class="btn btn-success" id="btn-myPage">마이페이지</button>	
-		  	<button type="button" id="challenge" class="btn btn-danger" data-bs-toggle="tooltip" 
-		  	data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>
-		</div>`;
+		<button id="btn_searchList" class="btn btn-secondary ts_button">검색 결과 보기</button>
+	 	<button id="btn-myPage" class="btn btn-success ts_button">마이페이지</button>	
+	  	<button id="challenge" class="btn btn-danger ts_button" data-bs-toggle="tooltip" 
+	  	data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>`;
 
 	$(".top_sidebar").append(`
 		<div class="header" role="banner">
@@ -1668,4 +1711,26 @@ function saveTag() {
 	})
 	localStorage.setItem("tags", JSON.stringify(checkedValues));
 	alert("설정 태그가 저장되었습니다.");
+}
+
+function showDistance(content, position) {
+    
+    if (distanceOverlay) { // 커스텀오버레이가 생성된 상태이면
+        
+        // 커스텀 오버레이의 위치와 표시할 내용을 설정합니다
+        distanceOverlay.setPosition(position);
+        distanceOverlay.setContent(content);
+        
+    } else { // 커스텀 오버레이가 생성되지 않은 상태이면
+        
+        // 커스텀 오버레이를 생성하고 지도에 표시합니다
+        distanceOverlay = new kakao.maps.CustomOverlay({
+            map: map, // 커스텀오버레이를 표시할 지도입니다
+            content: content,  // 커스텀오버레이에 표시할 내용입니다
+            position: position, // 커스텀오버레이를 표시할 위치입니다.
+            xAnchor: 0,
+            yAnchor: 0,
+            zIndex: 3  
+        });      
+    }
 }

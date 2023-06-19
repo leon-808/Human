@@ -25,6 +25,7 @@
 					</div>
 				</div>
 			</div>
+			
 			<div class="middle_sidebar">
 				<div class="middle_sideMessage">
 					<p class="sideMessage">
@@ -163,6 +164,10 @@
 						</div>
 					</div>
 				</div>
+				<div id="search_list_wrapper">
+					<button type="button" id="backto_sf" class="btn btn-secondary">뒤로가기</button>
+					<div id="search_list"></div>
+				</div>
 				<div class="div_reviewList mypage_subtab" style="display: none;">
 					<h3 class="sf_title">리뷰 관리</h3>
 					<p id="noMyReview" class="userMessage">
@@ -174,7 +179,7 @@
 					<ul id= "MyReview_list_pagination" class="pagination">
 					</ul>
 				</div>
-				<div class="div_storeList mypage_subtab">
+				<div class="div_storeList mypage_subtab" style="display: none;">
 					<h3 class="sf_title">업체 관리</h3>
 					<p id="noMyStore" class="userMessage">
 						등록된 업체가 없습니다. <br><br>
