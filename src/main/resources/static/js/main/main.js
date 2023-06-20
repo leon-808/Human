@@ -857,6 +857,7 @@ function rectSearch() {
 		boundary = encodeURI(tempBoundary);
 
 	wholeMarkersNull();
+	$("#search_list").empty();
 
 	if (sf_count == 0 || loginFlag == 0) {
 		query = encodeURI($("#search_input").val());
@@ -1728,26 +1729,4 @@ function saveTag() {
 	})
 	localStorage.setItem("tags", JSON.stringify(checkedValues));
 	alert("설정 태그가 저장되었습니다.");
-}
-
-function showDistance(content, position) {
-    
-    if (distanceOverlay) { // 커스텀오버레이가 생성된 상태이면
-        
-        // 커스텀 오버레이의 위치와 표시할 내용을 설정합니다
-        distanceOverlay.setPosition(position);
-        distanceOverlay.setContent(content);
-        
-    } else { // 커스텀 오버레이가 생성되지 않은 상태이면
-        
-        // 커스텀 오버레이를 생성하고 지도에 표시합니다
-        distanceOverlay = new kakao.maps.CustomOverlay({
-            map: map, // 커스텀오버레이를 표시할 지도입니다
-            content: content,  // 커스텀오버레이에 표시할 내용입니다
-            position: position, // 커스텀오버레이를 표시할 위치입니다.
-            xAnchor: 0,
-            yAnchor: 0,
-            zIndex: 3  
-        });      
-    }
 }
