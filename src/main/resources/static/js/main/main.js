@@ -892,6 +892,9 @@ function rectSearch() {
 		})
 	}
 	else if (sf_count != 0) {
+		$(".sf_filter").css("display", "none"); 
+		$("#search_list_wrapper").css("display", "block"); 
+		
 		query = $("#search_input").val();
 		let bounds = map.getBounds(),
 			swLat = bounds.getSouthWest().getLat(),

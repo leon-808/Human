@@ -169,6 +169,7 @@ public class MainController {
 		}
 
 		String query = make_searchFilterQuery(words, fc, ce, ob, id, tags, lat, lng, swLat, swLng, neLat, neLng);
+		System.out.println(query);
 		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
 		JSONArray ja = new JSONArray();
 		for (RestaurantDTO r : rdto) {
@@ -266,34 +267,32 @@ public class MainController {
 				from (
 				""");
 		
-		if (ce != null) {
-			if (ce.equals("close")) {
-				query.append(String.format("""
-							select a.*, distance(%1$s, %2$s, a.lat, a.lng) as close
-						""", lat, lng));
-			}
-			else if (ce.equals("eval")) {
-				String temp = "\tselect a.*, ";
-				if (tags.size() == 0) {
-					String[] temporalTags = {
-						"clean", "kind", "parking", "fast", "pack", "alone", "together",
-						"focus", "talk", "photoplace", "delicious", "portion", "cost",
-						"lot", "satisfy"
-					};
-					for (int i = 0; i < temporalTags.length; i++) {
-						if (i == temporalTags.length - 1) temp += "c." + temporalTags[i] + " as eval\n";
-						else temp += "c." + temporalTags[i] + " + ";
-					}
+		if (ce.equals("close")) {
+			query.append(String.format("""
+						select a.*, distance(%1$s, %2$s, a.lat, a.lng) as close
+					""", lat, lng));
+		}
+		else if (ce.equals("eval")) {
+			String temp = "\tselect a.*, ";
+			if (tags.size() == 0) {
+				String[] temporalTags = {
+					"clean", "kind", "parking", "fast", "pack", "alone", "together",
+					"focus", "talk", "photoplace", "delicious", "portion", "cost",
+					"lot", "satisfy"
+				};
+				for (int i = 0; i < temporalTags.length; i++) {
+					if (i == temporalTags.length - 1) temp += "c." + temporalTags[i] + " as eval\n";
+					else temp += "c." + temporalTags[i] + " + ";
 				}
-				else {
-					for (int i = 0; i < tags.size(); i++) {
-						if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
-						else temp += "c." + tags.get(i) + " + ";
-					}
+			}
+			else {
+				for (int i = 0; i < tags.size(); i++) {
+					if (i == tags.size() - 1) temp += "c." + tags.get(i) + " as eval\n";
+					else temp += "c." + tags.get(i) + " + ";
+				}
 
-				}
-				query.append(temp);
 			}
+			query.append(temp);
 		}
 		
 		query.append("""
@@ -318,7 +317,7 @@ public class MainController {
 		}
 		else query.append("\t\t) a");
 		
-		if (ce != null && ce.equals("eval")) query.append(", statistic c");
+		if (ce.equals("eval")) query.append(", statistic c");
 		
 		if (ob != null) {
 			if (ob.equals("been")) query.append(String.format("""
@@ -339,7 +338,7 @@ public class MainController {
 					""", id));
 		}
 		
-		if (ce != null && ce.equals("eval")) {
+		if (ce.equals("eval")) {
 			if (ob != null) query.append("	and ");
 			else query.append("\n	where ");
 			query.append("""
@@ -356,7 +355,7 @@ public class MainController {
 		}
 		
 		if (swLat != 0 && swLng != 0 && neLat != 0 && neLng != 0) {
-			if (ob == null && ce == null) {
+			if (ob == null && ce.equals("close")) {
 				query.append(String.format("""
 						\n\twhere a.lat >= %1$s
 							and a.lat <= %2$s
@@ -364,7 +363,7 @@ public class MainController {
 							and a.lng <= %4$s
 						""", swLat, neLat, swLng, neLng));
 			}
-			else if (ob != null || ce != null) {
+			else if (ob != null || (ce != null && ce.equals("eval"))) {
 				query.append(String.format("""
 						\tand a.lat >= %1$s
 							and a.lat <= %2$s
@@ -374,17 +373,15 @@ public class MainController {
 			}
 		}
 		
-		if (ce != null) {
-			if (ce.equals("close")) {
-				query.append(String.format("""
-						\torder by %1$s
-						""", ce));
-			}
-			else if (ce.equals("eval")) {
-				query.append(String.format("""
-						\torder by %1$s desc
-						""", ce));
-			}
+		if (ce.equals("close")) {
+			query.append(String.format("""
+					\torder by %1$s
+					""", ce));
+		}
+		else if (ce.equals("eval")) {
+			query.append(String.format("""
+					\torder by %1$s desc
+					""", ce));
 		}
 		
 		query.append(")\nwhere rownum <= 10");
