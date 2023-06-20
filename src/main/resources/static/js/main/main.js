@@ -1139,18 +1139,18 @@ function displayDetailMarker(data, index, flag) {
 		position: new kakao.maps.LatLng(data.lat, data.lng),
 		image: markerImage
 	}),
-		detailOverlay = new kakao.maps.CustomOverlay({
-			clickable: true
-		}),
-		infowindow = new kakao.maps.InfoWindow({
-			content: `<div class="iw_placename">${r_name}</div>`
-		});
-	if (close>0){
-	if (Number(close) >= 1000) close = (close / 1000).toFixed(2) + "km";
-	else close += "m";
-	} else {
-		close = "리뷰 "+eval;
-	} 	
+	detailOverlay = new kakao.maps.CustomOverlay({
+		clickable: true
+	}),
+	infowindow = new kakao.maps.InfoWindow({
+		content: `<div class="iw_placename">${r_name}</div>`
+	});
+		
+	if (close > 0){
+		if (Number(close) >= 1000) close = (close / 1000).toFixed(2) + "km";
+		else close += "m";
+	} 
+	else close = "리뷰 "+ eval;	
 	
 	let showSearchInfo = `
 		 	<div class="showSearchInfo">
@@ -1160,6 +1160,13 @@ function displayDetailMarker(data, index, flag) {
 		 			<span class="r_address">주소: ${address}</span><br>
 		 	</div>`;
 	$('#search_list').append(showSearchInfo);
+	
+    if (r_phone.length == 10) {
+		r_phone = r_phone.slice(0, 3) + "-" + r_phone.slice(3, 6) + "-" + r_phone.slice(6);
+	}
+	else if (r_phone.length == 11) {
+		r_phone = r_phone.slice(0, 3) + "-" + r_phone.slice(3, 7) + "-" + r_phone.slice(7);
+	}
 	 	
 	kakao.maps.event.addListener(detailMarker, "click", function () {
 		if (selectedDetailMarker != null && detailMarker != selectedDetailMarker) {
@@ -1175,6 +1182,7 @@ function displayDetailMarker(data, index, flag) {
 			 	<div class="alm_body">
 		 			<p id="dt_address">주소: ${address}</p>
 		 			<p>전화번호: ${r_phone}</p>
+		 			<p>리뷰 태그 수: ${eval}</p>
 		 			<div style="display: flex; justify-content: center;">
 			 			<button id="goto_detail" class="btn btn-primary detail_button"
 			 			onclick="goto_detail()">상세보기</button>

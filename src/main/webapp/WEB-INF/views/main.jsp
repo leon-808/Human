@@ -164,7 +164,7 @@
 						</div>
 					</div>
 				</div>
-				<div id="search_list_wrapper" style="display:none;">
+				<div id="search_list_wrapper" style="display: none;">
 					<button type="button" id="backto_sf" class="btn btn-secondary">뒤로가기</button>
 					<div id="search_list"></div>
 				</div>
