@@ -169,7 +169,6 @@ public class MainController {
 		}
 
 		String query = make_searchFilterQuery(words, fc, ce, ob, id, tags, lat, lng, swLat, swLng, neLat, neLng);
-		System.out.println(query);
 		ArrayList<RestaurantDTO> rdto = mdao.get_searchFilterLIst(query);
 		JSONArray ja = new JSONArray();
 		for (RestaurantDTO r : rdto) {
