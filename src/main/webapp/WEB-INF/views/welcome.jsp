@@ -11,7 +11,6 @@
 	<div class="position-absolute top-0 start-50 translate-middle-x title1">
 		<h1>AI 맛집 추천 Map</h1>
 	</div>
-
 	<div id="carouselExampleDark" class="carousel carousel-dark slide"
 		data-bs-ride="carousel">
 		<div class="carousel-indicators">
@@ -25,7 +24,7 @@
 		</div>
 		<div class="carousel-inner">
 			<div class="carousel-item active" data-bs-interval="5000">
-				<img src="/img/welcomePage/background.jpg" class="d-block w-100"
+				<img src="/img/welcomePage/background.jpg" class="d-block w-100 stretch" 
 					alt="/img/welcomePage/background.jpg">
 				<div class="carousel-caption d-none d-md-block">
 					<h2>AI 맛집 추천 기능!</h2>
@@ -36,7 +35,7 @@
 				</div>
 			</div>
 			<div class="carousel-item" data-bs-interval="5000">
-				<img src="/img/welcomePage/background.jpg" class="d-block w-100"
+				<img src="/img/welcomePage/background.jpg" class="d-block w-100 stretch"
 					alt="/img/welcomePage/background.jpg">
 				<div class="carousel-caption d-none d-md-block lll">
 					<h2>다양한 데이터를 활용한 추천!</h2>
@@ -48,7 +47,7 @@
 				</div>
 			</div>
 			<div class="carousel-item">
-				<img src="/img/welcomePage/background.jpg" class="d-block w-100"
+				<img src="/img/welcomePage/background.jpg" class="d-block w-100 stretch"
 					alt="/img/welcomePage/background.jpg">
 				<div class="carousel-caption d-none d-md-block">
 					<h2>회원 참여형 시스템!</h2>

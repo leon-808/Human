@@ -1,18 +1,20 @@
 @charset "UTF-8";
-.title1{
+.title1 {
 	z-index:22;
 	margin-top:10%;
 }
-#outDivWel{
+#outDivWel {
 	z-index:18;
 	display:flex;
 	justify-content:center;
 }
-.divWel{
+.divWel {
 	display: inline-block;
 	padding: 0 40px 10px 40px;
 }
-.btnWel{
+.btnWel {
 	 width:180px;
 }
-
+.stretch {
+	height: 100vh;
+}
