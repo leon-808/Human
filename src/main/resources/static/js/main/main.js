@@ -1326,6 +1326,9 @@ function showMyData() {
 		$("input:checkbox").each(function () {
 			$(this).prop("checked", false);
 		});
+		$("label").each(function() {
+			$(this).removeClass("active");
+		})
 
 		checkTag();
 		get_userName();

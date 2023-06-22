@@ -358,8 +358,8 @@ public class MainController {
 			jo.put("lng", r.getLng());
 			jo.put("r_name", r.getR_name());
 			jo.put("address", r.getAddress());
-			jo.put("category", r.getCategory())
-;			jo.put("r_phone", r.getR_phone());
+			jo.put("category", r.getCategory());			
+			jo.put("r_phone", r.getR_phone());
 			ja.put(jo);
 		}
 		return ja.toString();

@@ -535,6 +535,7 @@ function get_reviewList() {
 				$("#review_list_block").empty();
 				for (i = 0; i < data.length - 1; i++) {
 					let d = data[i];
+					if (d.rv_detail == undefined) continue;
 					let html = "";
 					let ownerTag = "";
 					if (d.rv_owner != undefined) ownerTag = `<img src="/img/detail/OwnerCommented.png">`;
