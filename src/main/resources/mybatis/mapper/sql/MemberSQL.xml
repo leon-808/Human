@@ -40,6 +40,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		#{param4},#{param5},#{param6})
 	</insert>
 	
+	<insert id="insert_ustatic">
+		insert into u_statistic
+		values (#{param1}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+	</insert>
+	
 	<update id="update_pw">
 		update member
 		set pw = #{param4}

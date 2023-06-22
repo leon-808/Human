@@ -41,6 +41,7 @@ $(document)
 .on("click", "#MyStoreList_backward", MyStoreList_backward)
 .on("click", "#MyStoreList_forward", MyStoreList_forward)
 .on("click", ".goto_review_my", goto_review_my)
+.on("click", "#challenge", ai_challenge)
 
 
 
@@ -1116,10 +1117,10 @@ function displayDetailMarker(data, index, flag) {
 	let r_name = data.r_name,
 		category = data.category,
 		address = data.address,
-		r_phone = data.r_phone;
-		close = data.close;
+		r_phone = data.r_phone,
+		close = data.close,
 		eval = data.eval;
-		
+			
 	if (r_phone == undefined) r_phone = "미등록";
 
 	let imageSrc = null, hoverSrc = null;
@@ -1186,7 +1187,6 @@ function displayDetailMarker(data, index, flag) {
 			 	<div class="alm_body">
 		 			<p id="dt_address">주소: ${address}</p>
 		 			<p>전화번호: ${r_phone}</p>
-		 			<p>리뷰 태그 수: ${eval}</p>
 		 			<div style="display: flex; justify-content: center;">
 			 			<button id="goto_detail" class="btn btn-primary detail_button"
 			 			onclick="goto_detail()">상세보기</button>
@@ -1729,4 +1729,192 @@ function saveTag() {
 	})
 	localStorage.setItem("tags", JSON.stringify(checkedValues));
 	alert("설정 태그가 저장되었습니다.");
+}
+
+let challenge_question = [];
+let challengeQ = null;
+
+function ai_challenge() {
+	$("#ai_loading").css("display", "block");
+	$.ajax({
+		url: "/ai/challenge",
+		type: "post",
+		dataType: "json",
+		success: function(data) {
+			challenge_question = [];
+			challengeQ = null; 
+			if (data.length != 0) {
+				for (i = 0; i < data.length; i++) {
+					 let d = data[i];
+					 challenge_question.push(d.question);
+				}
+				challengeQ = tf.tensor(challenge_question);
+				ai_prepare();
+			}
+		}
+	})
+}
+
+function ai_prepare() {
+	$.ajax({
+		url: "/ai/prepare",
+		type: "post",
+		dataType: "json",
+		success: function(data) {
+			let train_question = [];
+			let train_answer = [];
+			if (data.length != 0) {
+				for (i = 0; i < data.length; i++) {
+					 let d = data[i];
+					 train_question.push(d.question);
+					 train_answer.push(d.answer);	
+				}
+				let tensorQ = tf.tensor(train_question);
+				let tensorA = tf.tensor(train_answer);
+				
+				let X = tf.input({ shape : [15] });
+				let H1 = tf.layers.dense({ units: 15, activation: 'relu' }).apply(X);
+				let H2 = tf.layers.dense({ units: 15, activation: 'relu' }).apply(H1);
+				let Y = tf.layers.dense({ units: 1 }).apply(H2);
+				let model = tf.model({ inputs: X, outputs: Y });
+				let compileParam = { optimizer: tf.train.adam(), loss: tf.losses.meanSquaredError }
+				model.compile(compileParam);
+				
+				let fitParam = {
+					epochs: 200
+				}
+				
+				model.fit(tensorQ, tensorA, fitParam).then(function(result) {
+					let prediction = model.predict(challengeQ);
+					let predAry = prediction.dataSync();
+					let dataIndex = new Map();
+					for (i = 0; i < predAry.length; i++) dataIndex.set(predAry[i], i);
+					predAry.sort(function(a, b) {
+						return b - a;
+					});
+					let orderIndex = new Map();
+					for (i = 0; i < predAry.length; i++) orderIndex.set(i, predAry[i]);
+					ai_display(dataIndex, orderIndex);
+				})
+			}
+		}
+	})	
+}
+
+function ai_display(dataIndex, orderIndex) {
+	$.ajax({
+		url: "/ai/display",
+		type: "post",
+		dataType: "json",
+		success: function(data) {
+			if (data.length != 0) {
+				$('#search_list').empty();
+				$(".sf_filter").css("display", "none"); 
+				$("#search_list_wrapper").css("display", "block");
+				let bounds = new kakao.maps.LatLngBounds();
+				for (i = 0; i < 10; i++) {
+					let targetPred = orderIndex.get(i);
+					let targetIndex = dataIndex.get(targetPred);
+					displayAiMarker(data[targetIndex]);
+					bounds.extend(new kakao.maps.LatLng(data[targetIndex].lat, data[targetIndex].lng));
+				}
+				map.setBounds(bounds);
+				let swLat = bounds.getSouthWest().getLat(),
+				swLng = bounds.getSouthWest().getLng(),
+				neLat = bounds.getNorthEast().getLat(),
+				neLng = bounds.getNorthEast().getLng();
+				let centerLng = (neLng + swLng) / 2;
+				let centerLat = (neLat + swLat) / 2;
+				map.setCenter(new kakao.maps.LatLng(centerLat, centerLng));
+				$("#ai_loading").css("display", "none");
+			}
+		}
+	})
+}
+
+function displayAiMarker(data) {
+	let r_name = data.r_name,
+		category = data.category,
+		address = data.address,
+		r_phone = data.r_phone;
+			
+	if (r_phone == undefined) r_phone = "미등록";
+
+	let imageSrc = "/img/main/" + category + ".png",
+	hoverSrc = "/img/main/" + category + "Act.png";
+
+	let imageSize = new kakao.maps.Size(30, 30),
+		imageOption = { offset: new kakao.maps.Point(20, 20) },
+		markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
+		hoverImage = new kakao.maps.MarkerImage(hoverSrc, imageSize, imageOption);
+
+	let detailMarker = new kakao.maps.Marker({
+		clickable: true,
+		map: map,
+		position: new kakao.maps.LatLng(data.lat, data.lng),
+		image: markerImage
+	}),
+	detailOverlay = new kakao.maps.CustomOverlay({
+		clickable: true
+	}),
+	infowindow = new kakao.maps.InfoWindow({
+		content: `<div class="iw_placename">${r_name}</div>`
+	});
+	
+	let showSearchInfo = `
+		 	<div class="showSearchInfo">
+			 	<img src="${imageSrc}" style="width:25px">
+			 	<span style="font-weight: bold;">${r_name}</span><br>
+	 			<span class="r_address">주소: ${address}</span><br>
+		 	</div>`;
+	$('#search_list').append(showSearchInfo);
+	
+    if (r_phone.length == 10) {
+		r_phone = r_phone.slice(0, 3) + "-" + r_phone.slice(3, 6) + "-" + r_phone.slice(6);
+	}
+	else if (r_phone.length == 11) {
+		r_phone = r_phone.slice(0, 3) + "-" + r_phone.slice(3, 7) + "-" + r_phone.slice(7);
+	}
+	 	
+	kakao.maps.event.addListener(detailMarker, "click", function () {
+		if (selectedDetailMarker != null && detailMarker != selectedDetailMarker) {
+			openedDetailOverlay.setMap(null);
+		}
+		selectedDetailMarker = detailMarker;
+		let detailContent = `
+		 	<div class="dt_info">
+		 		<div class="dt_title">
+		 			<span id="dt_r_name" class="dt_placename">${r_name}</span>
+		 			<div class="alm_close" onclick="closeOverlay()" title="닫기"></div>
+		 		</div>
+			 	<div class="alm_body">
+		 			<p id="dt_address">주소: ${address}</p>
+		 			<p>전화번호: ${r_phone}</p>
+		 			<div style="display: flex; justify-content: center;">
+			 			<button id="goto_detail" class="btn btn-primary detail_button"
+			 			onclick="goto_detail()">상세보기</button>
+			 			<button id="goto_review" class="btn btn-primary detail_button"
+			 			onclick="goto_review()">리뷰보기</button>
+			 		</div>
+		 		</div>
+		 	</div>`;
+
+		map.setCenter(detailMarker.getPosition());
+		detailOverlay.setContent(detailContent);
+		detailOverlay.setPosition(detailMarker.getPosition());
+		detailOverlay.setMap(map);
+		openedDetailOverlay = detailOverlay;
+	});
+
+	kakao.maps.event.addListener(detailMarker, "mouseover", function () {
+		infowindow.open(map, detailMarker);
+		detailMarker.setImage(hoverImage);
+	});
+
+	kakao.maps.event.addListener(detailMarker, "mouseout", function () {
+		infowindow.close();
+		detailMarker.setImage(markerImage);
+	});
+	
+	detailMarkers.push(detailMarker);
 }

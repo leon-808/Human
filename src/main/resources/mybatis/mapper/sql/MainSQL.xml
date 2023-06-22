@@ -91,4 +91,92 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		) 
 		where r <![CDATA[>=]]> #{param2}
 	</select>
+	
+	<select id="get_top3_tags" resultType="project.example.demo.dto.U_StatisticDTO">
+		select *
+		from (
+		    select rownum r, a.*
+		    from (
+		        select *
+		        from (
+		            select u_clean, u_kind, u_parking, u_fast, u_pack, u_alone, u_together,
+		            u_focus, u_talk, u_photoplace, u_delicious, u_portion, u_cost, u_lot, u_satisfy
+		            from u_statistic
+		            where u_id = #{param1}
+		        ) 
+		        unpivot (count for tags in (u_clean, u_kind, u_parking, u_fast, u_pack, u_alone,
+		        u_together, u_focus, u_talk, u_photoplace, u_delicious, u_portion, 
+		        u_cost, u_lot, u_satisfy))
+		        order by count desc
+		    ) a
+		    where rownum <![CDATA[<=]]> 3
+		)
+	</select>
+	
+	<select id="prepare_train_keyQuest" resultType="project.example.demo.dto.StatisticDTO">
+		select s_r_name, s_address, clean, kind, parking, fast, pack, alone, 
+		together, focus, talk, photoplace, delicious, portion, cost, lot, satisfy
+		from statistic a, review b
+		where a.s_r_name = b.rv_r_name
+		and a.s_address = b.rv_address
+		and b.rv_id = #{param1}
+		order by a.s_r_name
+	</select>
+	
+	<select id="prepare_train_value" resultType="project.example.demo.dto.StatisticDTO">
+		select s_r_name, s_address, tag_count
+		from (
+		    select a.*, dense_rank() over(partition by s_r_name order by tag_count desc) as rank
+		    from (
+		        select *
+		        from (
+		            select s_r_name, s_address, clean, kind, parking, fast, pack, alone, together, 
+		            focus, talk, photoplace, delicious, portion, cost, lot, satisfy
+		            from statistic a, review b
+		            where a.s_r_name = b.rv_r_name
+		            and a.s_address = b.rv_address
+		            and b.rv_id = #{param1}
+		        ) 
+		        unpivot (tag_count for tags in (clean, kind, parking, fast, pack, alone, together,
+		        focus, talk, photoplace, delicious, portion, cost, lot, satisfy))
+		        order by s_r_name, tag_count desc
+		    ) a
+		)
+		where (tags = #{param2} and rank <![CDATA[<=]]> 3 and tag_count <![CDATA[>=]]> 10)
+	</select>
+	
+	<select id="prepare_challenge" resultType="project.example.demo.dto.StatisticDTO">
+		select a.s_r_name, a.s_address, b.clean, b.kind, b.parking, b.fast, b.pack,
+		b.alone, b.together, b.focus, b.talk, b.photoplace, b.delicious, b.portion,
+		b.cost, b.lot, b.satisfy
+		from (
+		    select s_r_name, s_address
+		    from statistic 
+		    minus
+		    select rv_r_name, rv_address
+		    from review 
+		    where rv_id = #{param1}
+		) a, statistic b
+		where a.s_r_name = b.s_r_name
+		order by a.s_r_name
+	</select>
+	
+	<select id="ai_display" resultType="project.example.demo.dto.RestaurantDTO">
+		select lat, lng, r_name, address, category, r_phone
+		from (
+		    select a.s_r_name, a.s_address
+		    from (
+		        select s_r_name, s_address
+		        from statistic 
+		        minus
+		        select rv_r_name, rv_address
+		        from review 
+		        where rv_id = #{param1}
+		    ) a, statistic b
+		    where a.s_r_name = b.s_r_name
+		    order by a.s_r_name
+		) c, restaurant d
+		where c.s_r_name = d.r_name
+		and c.s_address = d.address
+	</select>
 </mapper>

@@ -106,6 +106,7 @@ public class MemberController {
 		String phone = req.getParameter("phone");
 
 		mdao.submit_signup(id, pw, gender, birth, name, phone);
+		mdao.insert_ustatic(id);
 
 		return check;
 	}

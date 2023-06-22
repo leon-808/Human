@@ -4,6 +4,7 @@ import java.io.File;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,6 +23,8 @@ import jakarta.servlet.http.HttpSession;
 import project.example.demo.dto.MemberDTO;
 import project.example.demo.dto.RestaurantDTO;
 import project.example.demo.dto.ReviewDTO;
+import project.example.demo.dto.StatisticDTO;
+import project.example.demo.dto.U_StatisticDTO;
 
 @Controller
 public class MainController {
@@ -252,6 +255,113 @@ public class MainController {
 		JSONObject jo = new JSONObject();
 		jo.put("count", count);
 		ja.put(jo);
+		return ja.toString();
+	}
+	
+	@PostMapping("/ai/prepare")
+	@ResponseBody
+	public String ai_prepare(HttpServletRequest req) {
+		HttpSession session = req.getSession();
+		String u_id = String.valueOf(session.getAttribute("id"));
+		ArrayList<U_StatisticDTO> udto = mdao.get_top3_tags(u_id);
+//		String query = "", tag = "";
+//		for (int i = 0; i < udto.size(); i++) {
+//			U_StatisticDTO u = udto.get(i);
+//			tag = "";
+//			if (i == 0) tag = u.getTags().replace("U_", "");
+//			else tag = u.getTags().replace("U_", ",");
+//			query += tag;
+//		}
+		
+		ArrayList<StatisticDTO> kdto = mdao.prepare_train_keyQuest(u_id);
+		HashMap<String, Double> resultMap = new HashMap<String, Double>();
+		for (StatisticDTO k : kdto) resultMap.put(k.getS_r_name() + "," + k.getS_address(), 0.0);
+		
+		for (U_StatisticDTO u : udto) {
+			String utag = u.getTags().replace("U_", "");
+			ArrayList<StatisticDTO> vdto = mdao.prepare_train_value(u_id, utag);
+			for (StatisticDTO v : vdto) {
+				String key = v.getS_r_name() + "," + v.getS_address();
+				if (utag.equals("DELICIOUS")) resultMap.put(key, resultMap.get(key) + v.getTag_count() * 0.001);
+				else resultMap.put(key, resultMap.get(key) + v.getTag_count() * 0.1);
+			}
+		}
+		
+		JSONArray ja = new JSONArray();
+		for (StatisticDTO k : kdto) {
+			JSONObject jo = new JSONObject();
+			int[] question = new int[15];
+			question[0] = k.getClean();
+			question[1] = k.getKind();
+			question[2] = k.getParking();
+			question[3] = k.getFast();
+			question[4] = k.getPack();
+			question[5] = k.getAlone();
+			question[6] = k.getTogether();
+			question[7] = k.getFocus();
+			question[8] = k.getTalk();
+			question[9] = k.getPhotoplace();
+			question[10] = k.getDelicious();
+			question[11] = k.getPortion();
+			question[12] = k.getCost();
+			question[13] = k.getLot();
+			question[14] = k.getSatisfy();
+			jo.put("question", question);
+			double answer = resultMap.get(k.getS_r_name() + "," + k.getS_address());
+			jo.put("answer", answer);
+			ja.put(jo);
+		}
+		return ja.toString();
+	}
+	
+	@PostMapping("/ai/challenge")
+	@ResponseBody
+	public String ai_challenge(HttpServletRequest req) {
+		HttpSession session = req.getSession();
+		String u_id = String.valueOf(session.getAttribute("id"));
+		ArrayList<StatisticDTO> kdto = mdao.prepare_challenge(u_id);
+		JSONArray ja = new JSONArray();
+		for (StatisticDTO k : kdto) {
+			JSONObject jo = new JSONObject();
+			int[] question = new int[15];
+			question[0] = k.getClean();
+			question[1] = k.getKind();
+			question[2] = k.getParking();
+			question[3] = k.getFast();
+			question[4] = k.getPack();
+			question[5] = k.getAlone();
+			question[6] = k.getTogether();
+			question[7] = k.getFocus();
+			question[8] = k.getTalk();
+			question[9] = k.getPhotoplace();
+			question[10] = k.getDelicious();
+			question[11] = k.getPortion();
+			question[12] = k.getCost();
+			question[13] = k.getLot();
+			question[14] = k.getSatisfy();
+			jo.put("question", question);
+			ja.put(jo);
+		}
+		return ja.toString();
+	}
+	
+	@PostMapping("/ai/display")
+	@ResponseBody
+	public String ai_display(HttpServletRequest req) {
+		HttpSession session = req.getSession();
+		String u_id = String.valueOf(session.getAttribute("id"));
+		ArrayList<RestaurantDTO> rdto = mdao.ai_display(u_id);
+		JSONArray ja = new JSONArray();
+		for (RestaurantDTO r : rdto) {
+			JSONObject jo = new JSONObject();
+			jo.put("lat", r.getLat());
+			jo.put("lng", r.getLng());
+			jo.put("r_name", r.getR_name());
+			jo.put("address", r.getAddress());
+			jo.put("category", r.getCategory())
+;			jo.put("r_phone", r.getR_phone());
+			ja.put(jo);
+		}
 		return ja.toString();
 	}
 
