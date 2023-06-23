@@ -182,11 +182,7 @@ function createUI(isLogin) {
 	$("#button_log").html("로그아웃");
 	$(".middle_sideMessage").css("display", "none");
 	$(".sf_filter").css("display", "block");
-	$(".header").append(`
-		<button id="btn_searchList" class="btn btn-secondary ts_button">검색 결과 보기</button>
-	 	<button id="btn-myPage" class="btn btn-success ts_button">마이페이지</button>	
-	  	<button id="challenge" class="btn btn-danger ts_button" data-bs-toggle="tooltip" 
-	  	data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>`);
+	$("#login_header").css("display", "block");
 	if (isLogin == "admin") {
 		$(".header_title").append(`
 		<button id="button_manage" class="btn btn-dark" data-bs-toggle="modal"
@@ -1294,29 +1290,8 @@ function showMyData() {
 	$("#search_list_wrapper").css("display", "none");
 	$(".sf_filter").css("display", "block"); 
 	if (loginFlag == 1 || loginFlag == 2) {
-		$(".top_sidebar").empty();
-		$(".top_sidebar").append(
-			`<div class="profil" role="banner">
-			<span class="profil img"><img src="/img/main/Profile.jpg"
-				width="85" height="85"></span>
-			<div class="profil info">
-				<span id="profil_user_name"></span>님 안녕하세요
-				<button id="btn-GO-signUpdate"></button>
-				<div style="line-height: 50%"><br><br></div>
-				<button type="button" class="btn-userGrade"></button>
-				<span class="profil userInfo">리뷰 <a id=userReviewCount></a></span>
-			</div>
-
-		</div>
-		<div class="profil_subarea">
-			<button type="button" id="btn-backMain">뒤로</button>
-			<button type="button" class="btn-userSetting active"
-				id="btn-pasSetting">선호도 관리</button>
-			<button type="button" class="btn-userSetting"
-				id="btn-reviewSetting">리뷰 관리</button>
-			<button type="button" class="btn-userSetting"
-				id="btn-storeSetting">업체 관리</button>
-		</div>`);
+		$(".header").css("display", "none");
+		$("#mypage_header").css("display", "block");
 		$("#food_categories").css("display", "none");
 		$("#btn-saveMyTag").css("display", "block");
 
@@ -1374,37 +1349,10 @@ function checkTag() {
 function gotoMain() {
 	$("#food_categories").css("display", "block");
 	$("#btn-saveMyTag").css("display", "none");
-	$(".top_sidebar").empty();
 	$(".mypage_subtab").css("display", "none");
 	$(".sf_filter").css('display', "block");
-
-	let manageButton = "";
-	if (loginFlag == 2) manageButton =
-		`<button id='button_manage' class='btn btn-dark' data-bs-toggle='modal' 
-	data-bs-target='#manageModal'>관리</button>`
-
-	let header_subarea = "";
-	if (loginFlag >= 1) header_subarea = `
-		<button id="btn_searchList" class="btn btn-secondary ts_button">검색 결과 보기</button>
-	 	<button id="btn-myPage" class="btn btn-success ts_button">마이페이지</button>	
-	  	<button id="challenge" class="btn btn-danger ts_button" data-bs-toggle="tooltip" 
-	  	data-bs-placement="right" data-bs-title="내 취향의 가보지 않은 맛집 찾기">도전</button>`;
-
-	$(".top_sidebar").append(`
-		<div class="header" role="banner">
-		    <h1 class="header_title">
-		        <a class="a_title">kakaomap</a>
-		        <button id="button_log" class="btn btn-danger">로그아웃</button>
-			    ${manageButton}
-		    </h1>
-		    <button class="choice_currentmap btn btn-success">현 지도 내 장소검색</button>
-			<div class="box_searchbar">
-			    <input id="search_input" class="tf_keyword" maxlength="100" 
-			    autocomplete="off" placeholder="장소, 주소 검색">
-			    <button id="search_button">검색</button>
-			</div>
-			${header_subarea}
-		</div>`);
+	$(".header").css("display", "block");
+	$("#mypage_header").css("display", "none");
 }
 
 function get_userName() {

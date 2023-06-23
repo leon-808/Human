@@ -1,3 +1,4 @@
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -20,6 +21,36 @@
 					<input id="search_input" class="tf_keyword" maxlength="100" autocomplete="off"
 						placeholder="장소, 주소 검색">
 					<button id="search_button">검색</button>
+				</div>
+				<div id="login_header" style="display: none;">
+					<button id="btn_searchList" class="btn btn-secondary ts_button">검색 결과 보기</button>
+				 	<button id="btn-myPage" class="btn btn-success ts_button">마이페이지</button>	
+				  	<button id="challenge" class="btn btn-danger ts_button" data-bs-toggle="tooltip" 
+				  	data-bs-placement="right" 
+				  	data-bs-title="내 취향의 가보지 않은 맛집을 AI 가 찾아줍니다
+				  	그냥 누르거나 태그 하나 골라 눌러보세요 ">도전</button>
+			  	</div>
+			</div>
+			<div id="mypage_header" style="display: none;">
+				<div class="profil" role="banner">
+					<span class="profil img"><img src="/img/main/Profile.jpg"
+						width="85" height="85"></span>
+					<div class="profil info">
+						<span id="profil_user_name"></span>님 안녕하세요
+						<button id="btn-GO-signUpdate"></button>
+						<div style="line-height: 50%"><br><br></div>
+						<button type="button" class="btn-userGrade"></button>
+						<span class="profil userInfo">리뷰 <a id=userReviewCount></a></span>
+					</div>
+				</div>
+				<div class="profil_subarea">
+					<button type="button" id="btn-backMain">뒤로</button>
+					<button type="button" class="btn-userSetting active"
+						id="btn-pasSetting">선호도 관리</button>
+					<button type="button" class="btn-userSetting"
+						id="btn-reviewSetting">리뷰 관리</button>
+					<button type="button" class="btn-userSetting"
+						id="btn-storeSetting">업체 관리</button>
 				</div>
 			</div>
 		</div>
