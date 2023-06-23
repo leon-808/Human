@@ -73,6 +73,15 @@ public class AdminController {
 				""", primecode);
 			ardao.admin_insup_restaurant(query);
 			adrt_delete_procedure(r_name, address);
+			query = "";
+			query = String.format("""
+					insert into statistic (s_primecode, s_r_name, s_address, s_category)
+					select adrt_primecode, adrt_r_name, adrt_address, adrt_category
+					from admin restaurant
+					where adrt_primecode = '%1$s'
+					""", primecode);
+			ardao.admin_insup_statistic(query);
+			
 		}
 		else if (exist == 0 && primecode == "") {
 			query = String.format("""
@@ -85,6 +94,15 @@ public class AdminController {
 				""", r_name, address);
 			ardao.admin_insup_restaurant(query);
 			adrt_delete_procedure(r_name, address);
+			query = "";
+			query = String.format("""
+					insert into statistic (s_primecode, s_r_name, s_address, s_category)
+					select adrt_primecode, adrt_r_name, adrt_address, adrt_category
+					from admin restaurant
+					where adrt_r_name = '%1$s'
+					and adrt_address = '%2$s'
+					""", r_name, address);
+			ardao.admin_insup_statistic(query);
 		}
 		else if  (exist != 0 && changeFlag == 0) check = "exist";
 		else if (changeFlag == 1) {
