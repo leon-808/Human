@@ -264,14 +264,6 @@ public class MainController {
 		HttpSession session = req.getSession();
 		String u_id = String.valueOf(session.getAttribute("id"));
 		ArrayList<U_StatisticDTO> udto = mdao.get_top3_tags(u_id);
-//		String query = "", tag = "";
-//		for (int i = 0; i < udto.size(); i++) {
-//			U_StatisticDTO u = udto.get(i);
-//			tag = "";
-//			if (i == 0) tag = u.getTags().replace("U_", "");
-//			else tag = u.getTags().replace("U_", ",");
-//			query += tag;
-//		}
 		
 		ArrayList<StatisticDTO> kdto = mdao.prepare_train_keyQuest(u_id);
 		HashMap<String, Double> resultMap = new HashMap<String, Double>();

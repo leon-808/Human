@@ -13,4 +13,5 @@ public interface AdminRestaurantDAO {
 	String admin_getLocalURL(String r_name, String address);
 	void admin_insup_restaurant(String query);
 	void admin_delete_restaurant(String r_name, String address);
+	void admin_insup_statistic(String query);
 }

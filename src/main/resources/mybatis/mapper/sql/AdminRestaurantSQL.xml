@@ -35,6 +35,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<insert id="admin_insup_restaurant">
 		${param1}
 	</insert>
+	
+	<insert id="admin_insup_statistic">
+		${param1}
+	</insert>
 
 	<delete id="admin_delete_restaurant">
 		delete from admin_restaurant 
