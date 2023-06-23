@@ -913,3 +913,15 @@ label {
     top: calc(-150px + 50vh);
     display: none;
 }
+
+.ms-options {
+	height: 50vh;
+}
+.ms-options > li {
+	height: 11%;
+}
+
+.ms-dd-option-image {
+	width: 25px;
+	height: 25px;
+}
