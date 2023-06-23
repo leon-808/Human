@@ -48,6 +48,8 @@ public interface DetailDAO {
 	
 	void update_statistic(String rv_r_name, String rv_address, String query);
 	
+	void update_ustatic(String rv_id, String query2);
+	
 	int count_photoList(String rv_r_name, String rv_address);
 	
 	ArrayList<ReviewDTO> get_photoList(String rv_r_name, String rv_address, int start, int end);

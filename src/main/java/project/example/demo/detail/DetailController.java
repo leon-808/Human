@@ -46,6 +46,13 @@ public class DetailController {
 							    	  HttpServletRequest req) {
 		String response;
 		
+//		인증 바이패스
+//		HttpSession session = req.getSession();
+//		String rv_id = String.valueOf(session.getAttribute("id"));
+//		String rv_primecode = ddao.get_primecode(rname, address);
+//		int flag = ddao.check_mine(rname, address, rv_id);
+//		if (flag == 0) ddao.authorize_reivew(rv_primecode, rname, address, rv_id);
+		
 		int count = ddao.count_reviewList(rname, address, "is not null");
 		ArrayList<RestaurantDTO> rdto = ddao.get_restaurant_detail(rname, address);
 		JSONArray ja = new JSONArray();
@@ -161,6 +168,11 @@ public class DetailController {
 					if (rv_id.equals(ddao.get_owner(rv_r_name, rv_address).split(",")[0])) {
 						message = "owner";
 					}
+					else {
+						String rv_primecode = ddao.get_primecode(rv_r_name, rv_address);
+						ddao.authorize_reivew(rv_primecode, rv_r_name, rv_address, rv_id);
+						message = "authorize";
+					}
 				}
 				else {
 					String rv_primecode = ddao.get_primecode(rv_r_name, rv_address);
@@ -199,6 +211,7 @@ public class DetailController {
 		String rv_primecode = ddao.get_primecode(rv_r_name, rv_address);
 		HttpSession session = req.getSession();
 		String rv_id = String.valueOf(session.getAttribute("id"));
+		String originTags = ddao.get_origin_tags(rv_r_name, rv_address, rv_id);
 		ArrayList<String> originList = new ArrayList<String>();
 		ArrayList<String> tagList = new ArrayList<String>(Arrays.asList(tags.split(",")));
 		String rv_detail = rdto.getRv_detail();
@@ -206,51 +219,14 @@ public class DetailController {
 		int flag = ddao.check_mine(rv_r_name, rv_address, rv_id);
 		if (flag == 0) ddao.review_insert(rv_primecode, rv_r_name, rv_address, rv_id, tags, rv_detail);
 		else {
-			if (ddao.get_origin_tags(rv_r_name, rv_address, rv_id) != null) {
-				String[] temp = ddao.get_origin_tags(rv_r_name, rv_address, rv_id).split(",");
+			if (originTags != null) {
+				String[] temp = originTags.split(",");
 				originList = new ArrayList<String>(Arrays.asList(temp));
 			}
 			ddao.review_update(rv_primecode, rv_r_name, rv_address, rv_id, tags, rv_detail);
 		}
 				
-		StringBuilder query = new StringBuilder();
-		int occured = 0;
-		if (flag == 0) {
-			for (int i = 0; i < tagList.size(); i++) {
-				if (occured == 0) {
-					query.append(String.format("%1$s = %1$s + 1", tagList.get(i)));
-					occured++;
-				}
-				else query.append(String.format("\n, %1$s = %1$s + 1", tagList.get(i)));
-			}
-			ddao.update_statistic(rv_r_name, rv_address, query.toString());	
-		}
-		else {
-			for (int i = 0; i < tagList.size(); i++) {
-				if (originList.contains(tagList.get(i))) continue;
-				else {
-					if (occured == 0) {
-						query.append(String.format("%1$s = %1$s + 1", tagList.get(i)));
-						occured++;
-					}
-					else query.append(String.format("\n, %1$s = %1$s + 1", tagList.get(i)));
-				}
-			}
-			if (query.length() != 0) ddao.update_statistic(rv_r_name, rv_address, query.toString());
-			query.setLength(0);
-			occured = 0;
-			for (int i = 0; i < originList.size(); i++) {
-				if (tagList.contains(originList.get(i))) continue;
-				else {
-					if (occured == 0) {
-						query.append(String.format("%1$s = %1$s - 1", originList.get(i)));
-						occured++;
-					}
-					else query.append(String.format("\n, %1$s = %1$s - 1", originList.get(i)));
-				}
-			}
-			if (query.length() != 0) ddao.update_statistic(rv_r_name, rv_address, query.toString());
-		}
+		update_procedure(flag, tagList, rv_r_name, rv_address, originList, rv_id);
 		return "insert";
 	}
 	
@@ -268,6 +244,7 @@ public class DetailController {
 		HttpSession session = req.getSession();
 		String rv_id = String.valueOf(session.getAttribute("id"));
 		String idString = String.valueOf(session.getAttribute("id")) + " ";
+		String originTags = ddao.get_origin_tags(rv_r_name, rv_address, rv_id);
 		ArrayList<String> originList = new ArrayList<String>();
 		ArrayList<String> tagList = new ArrayList<String>(Arrays.asList(tags.split(",")));
 		String rv_detail = rdto.getRv_detail();
@@ -314,8 +291,10 @@ public class DetailController {
 		int flag = ddao.check_mine(rv_r_name, rv_address, rv_id);
 		if (flag == 0) ddao.review_insert_photo(rv_primecode, rv_r_name, rv_address, rv_id, rv_photo, tags, rv_detail);
 		else {
-			String[] temp = ddao.get_origin_tags(rv_r_name, rv_address, rv_id).split(",");
-			originList = new ArrayList<String>(Arrays.asList(temp));
+			if (originTags != null) {
+				String[] temp = originTags.split(",");
+				originList = new ArrayList<String>(Arrays.asList(temp));
+			}
 			ddao.review_update_photo(rv_primecode, rv_r_name, rv_address, rv_id, rv_photo, tags, rv_detail);
 		}
 		
@@ -327,44 +306,7 @@ public class DetailController {
 			catch (Exception e) {};
 		}
 				
-		StringBuilder query = new StringBuilder();
-		int occured = 0;
-		if (flag == 0) {
-			for (int i = 0; i < tagList.size(); i++) {
-				if (occured == 0) {
-					query.append(String.format("%1$s = %1$s + 1", tagList.get(i)));
-					occured++;
-				}
-				else query.append(String.format("\n, %1$s = %1$s + 1", tagList.get(i)));
-			}
-			ddao.update_statistic(rv_r_name, rv_address, query.toString());	
-		}
-		else {
-			for (int i = 0; i < tagList.size(); i++) {
-				if (originList.contains(tagList.get(i))) continue;
-				else {
-					if (occured == 0) {
-						query.append(String.format("%1$s = %1$s + 1", tagList.get(i)));
-						occured++;
-					}
-					else query.append(String.format("\n, %1$s = %1$s + 1", tagList.get(i)));
-				}
-			}
-			if (query.length() != 0) ddao.update_statistic(rv_r_name, rv_address, query.toString());
-			query.setLength(0);
-			occured = 0;
-			for (int i = 0; i < originList.size(); i++) {
-				if (tagList.contains(originList.get(i))) continue;
-				else {
-					if (occured == 0) {
-						query.append(String.format("%1$s = %1$s - 1", originList.get(i)));
-						occured++;
-					}
-					else query.append(String.format("\n, %1$s = %1$s - 1", originList.get(i)));
-				}
-			}
-			if (query.length() != 0) ddao.update_statistic(rv_r_name, rv_address, query.toString());
-		}
+		update_procedure(flag, tagList, rv_r_name, rv_address, originList, rv_id);
 		return message;
 	}
 	
@@ -418,18 +360,22 @@ public class DetailController {
 								@RequestParam("rv_address") String rv_address,
 								HttpServletRequest req) {
 		String message = "null";
+		
 		HttpSession session = req.getSession();
 		String rv_id = null;
 		if (session.getAttribute("id") != null) {
 			rv_id = String.valueOf(session.getAttribute("id"));
-			String[] temp = ddao.get_origin_tags(rv_r_name, rv_address, rv_id).split(",");
-			ArrayList<String> originList = new ArrayList<String>(Arrays.asList(temp));
-			StringBuilder query = new StringBuilder();
-			for (int i = 0; i < originList.size(); i++) {
-				if (i == 0) query.append(String.format("%1$s = %1$s - 1", originList.get(i)));
-				else query.append(String.format("\n, %1$s = %1$s - 1", originList.get(i)));
+			String originTags = ddao.get_origin_tags(rv_r_name, rv_address, rv_id);
+			if (originTags != null) {
+				String[] temp = originTags.split(",");
+				ArrayList<String> originList = new ArrayList<String>(Arrays.asList(temp));
+				StringBuilder query = new StringBuilder();
+				for (int i = 0; i < originList.size(); i++) {
+					if (i == 0) query.append(String.format("%1$s = %1$s - 1", originList.get(i)));
+					else query.append(String.format("\n, %1$s = %1$s - 1", originList.get(i)));
+				}
+				ddao.update_statistic(rv_r_name, rv_address, query.toString());
 			}
-			if (query.length() != 0) ddao.update_statistic(rv_r_name, rv_address, query.toString());
 			
 			String origin_photo = ddao.get_origin_fileURL(rv_r_name, rv_address, rv_id);
 			Path filePath = Paths.get("C:\\Users\\leon1\\eclipse-workspace\\Project\\src\\main\\resources\\static" + origin_photo);
@@ -507,5 +453,64 @@ public class DetailController {
 								     @RequestParam("rv_owner") String rv_owner) {
 		ddao.update_review_ceo(rv_r_name, rv_address, rv_id, rv_owner);
 		return "업데이트";		
+	}
+	
+	public void update_procedure(int flag, ArrayList<String> tagList, String rv_r_name, 
+								 String rv_address, ArrayList<String> originList, String rv_id) {
+		StringBuilder query = new StringBuilder();
+		StringBuilder query2 = new StringBuilder();
+		int occured = 0;
+		if (flag == 0) {
+			for (int i = 0; i < tagList.size(); i++) {
+				if (occured == 0) {
+					query.append(String.format("%1$s = %1$s + 1", tagList.get(i)));
+					query2.append(String.format("u_%1$s = u_%1$s + 1", tagList.get(i)));
+					occured++;
+				}
+				else {
+					query.append(String.format("\n, %1$s = %1$s + 1", tagList.get(i)));
+					query2.append(String.format("\n, u_%1$s = u_%1$s + 1", tagList.get(i)));
+				}
+			}
+			ddao.update_statistic(rv_r_name, rv_address, query.toString());
+			ddao.update_ustatic(rv_id, query2.toString());
+		}
+		else {
+			for (int i = 0; i < tagList.size(); i++) {
+				if (originList.contains(tagList.get(i))) continue;
+				else {
+					if (occured == 0) {
+						query.append(String.format("%1$s = %1$s + 1", tagList.get(i)));
+						query2.append(String.format("u_%1$s = u_%1$s + 1", tagList.get(i)));
+						occured++;
+					}
+					else {
+						query.append(String.format("\n, %1$s = %1$s + 1", tagList.get(i)));
+						query2.append(String.format("\n, u_%1$s = u_%1$s + 1", tagList.get(i)));
+					}
+				}
+			}
+			if (query.length() != 0) ddao.update_statistic(rv_r_name, rv_address, query.toString());
+			if (query2.length() != 0) ddao.update_ustatic(rv_id, query2.toString());
+			query.setLength(0);
+			query2.setLength(0);
+			occured = 0;
+			for (int i = 0; i < originList.size(); i++) {
+				if (tagList.contains(originList.get(i))) continue;
+				else {
+					if (occured == 0) {
+						query.append(String.format("%1$s = %1$s - 1", originList.get(i)));
+						query2.append(String.format("u_%1$s = u_%1$s - 1", originList.get(i)));
+						occured++;
+					}
+					else {
+						query.append(String.format("\n, %1$s = %1$s - 1", originList.get(i)));
+						query2.append(String.format("\n, u_%1$s = u_%1$s - 1", originList.get(i)));
+					}
+				}
+			}
+			if (query.length() != 0) ddao.update_statistic(rv_r_name, rv_address, query.toString());
+			if (query2.length() != 0) ddao.update_ustatic(rv_id, query2.toString());
+		}
 	}
 }

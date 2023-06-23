@@ -16,6 +16,7 @@ public interface MemberDAO {
 	void update_pw(String id,String name, String phone, String pw);
 	void submit_signup(String id, String pw, String gender, String birth,
 			String name, String phone);
+	void insert_ustatic(String id);
 	int check_phone(String phone);
 
 	ArrayList<MemberDTO> get_signupInfo(String id);

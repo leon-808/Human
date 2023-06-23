@@ -546,7 +546,7 @@ label {
 	position: absolute;
 	top: -200px;
 	left: -150px;
-	height: 200px;
+	height: 170px;
 	background-color: rgb(255, 255, 255);
 	padding: 0;
 	margin: 0;
@@ -901,4 +901,15 @@ label {
 	padding: 5px;
 	font-size: 12px;
 	border-radius: 0px;
+}
+
+#ai_loading {
+    position: absolute;
+    z-index: 9999;
+    width: 300px;
+    height: 300px;
+    background-color: white;
+    left: calc(-150px + 50vw);
+    top: calc(-150px + 50vh);
+    display: none;
 }

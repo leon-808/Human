@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 import project.example.demo.dto.RestaurantDTO;
 import project.example.demo.dto.ReviewDTO;
+import project.example.demo.dto.StatisticDTO;
+import project.example.demo.dto.U_StatisticDTO;
 
 @Mapper
 public interface MainDAO {
@@ -32,4 +34,14 @@ public interface MainDAO {
 	
 	int countMyStoreList(String owner);
 	ArrayList<RestaurantDTO> getMyStoreList(String owner, int start, int end);
+	
+	ArrayList<U_StatisticDTO> get_top3_tags(String u_id);
+	
+	ArrayList<StatisticDTO> prepare_train_keyQuest(String u_id);
+	
+	ArrayList<StatisticDTO> prepare_train_value(String u_id, String tag);
+	
+	ArrayList<StatisticDTO> prepare_challenge(String u_id);
+	
+	ArrayList<RestaurantDTO> ai_display(String u_id);
 }

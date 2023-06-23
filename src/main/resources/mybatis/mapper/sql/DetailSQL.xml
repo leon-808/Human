@@ -124,6 +124,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where s_r_name = #{param1}
 		and s_address = #{param2}
 	</update>
+	<update id="update_ustatic">
+		update u_statistic
+		set
+			${param2}
+		where u_id = #{param1}
+	</update>
 	<select id="count_photoList" resultType="_int">
 		select count(rv_photo)
 		from review
