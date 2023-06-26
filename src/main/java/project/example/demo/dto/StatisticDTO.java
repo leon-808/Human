@@ -11,4 +11,5 @@ public class StatisticDTO {
 	
 	String tags;
 	int tag_count;
+	double answer;
 }

@@ -260,47 +260,67 @@ public class MainController {
 	
 	@PostMapping("/ai/prepare")
 	@ResponseBody
-	public String ai_prepare(HttpServletRequest req) {
+	public String ai_prepare(@RequestParam("activatedFlag") int activatedFlag,
+							 @RequestParam("activatedTag") String activatedTag,
+							 HttpServletRequest req) {
 		HttpSession session = req.getSession();
 		String u_id = String.valueOf(session.getAttribute("id"));
-		ArrayList<U_StatisticDTO> udto = mdao.get_top3_tags(u_id);
-		
-		ArrayList<StatisticDTO> kdto = mdao.prepare_train_keyQuest(u_id);
 		HashMap<String, Double> resultMap = new HashMap<String, Double>();
-		for (StatisticDTO k : kdto) resultMap.put(k.getS_r_name() + "," + k.getS_address(), 0.0);
+		ArrayList<StatisticDTO> kdto = null;
 		
-		for (U_StatisticDTO u : udto) {
-			String utag = u.getTags().replace("U_", "");
-			ArrayList<StatisticDTO> vdto = mdao.prepare_train_value(u_id, utag);
-			for (StatisticDTO v : vdto) {
-				String key = v.getS_r_name() + "," + v.getS_address();
-				if (utag.equals("DELICIOUS")) resultMap.put(key, resultMap.get(key) + v.getTag_count() * 0.001);
-				else resultMap.put(key, resultMap.get(key) + v.getTag_count() * 0.1);
+		if (activatedFlag == 0) {
+			ArrayList<U_StatisticDTO> udto = mdao.get_top3_tags(u_id);
+			kdto = mdao.prepare_train_keyQuest(u_id);
+			for (StatisticDTO k : kdto) resultMap.put(k.getS_r_name() + "," + k.getS_address(), 0.0);
+			
+			for (U_StatisticDTO u : udto) {
+				String utag = u.getTags().replace("U_", "");
+				ArrayList<StatisticDTO> vdto = mdao.prepare_train_value(u_id, utag);
+				for (StatisticDTO v : vdto) {
+					String key = v.getS_r_name() + "," + v.getS_address();
+					if (utag.equals("DELICIOUS")) resultMap.put(key, resultMap.get(key) + v.getTag_count() * 0.001);
+					else resultMap.put(key, resultMap.get(key) + v.getTag_count() * 0.1);
+				}
 			}
+		}
+		else {
+			String query = String.format("""
+					%1$s tag_count, %1$s * 0.1 answer""", activatedTag);
+			kdto = mdao.prepare_train_keyQuest2(u_id, query, activatedTag);
 		}
 		
 		JSONArray ja = new JSONArray();
 		for (StatisticDTO k : kdto) {
 			JSONObject jo = new JSONObject();
 			int[] question = new int[15];
-			question[0] = k.getClean();
-			question[1] = k.getKind();
-			question[2] = k.getParking();
-			question[3] = k.getFast();
-			question[4] = k.getPack();
-			question[5] = k.getAlone();
-			question[6] = k.getTogether();
-			question[7] = k.getFocus();
-			question[8] = k.getTalk();
-			question[9] = k.getPhotoplace();
-			question[10] = k.getDelicious();
-			question[11] = k.getPortion();
-			question[12] = k.getCost();
-			question[13] = k.getLot();
-			question[14] = k.getSatisfy();
+			if (activatedFlag == 0) {
+				question[0] = k.getClean();
+				question[1] = k.getKind();
+				question[2] = k.getParking();
+				question[3] = k.getFast();
+				question[4] = k.getPack();
+				question[5] = k.getAlone();
+				question[6] = k.getTogether();
+				question[7] = k.getFocus();
+				question[8] = k.getTalk();
+				question[9] = k.getPhotoplace();
+				question[10] = k.getDelicious();
+				question[11] = k.getPortion();
+				question[12] = k.getCost();
+				question[13] = k.getLot();
+				question[14] = k.getSatisfy();
+			}
+			else {
+				question = new int[1];
+				question[0] = k.getTag_count();
+			}
 			jo.put("question", question);
-			double answer = resultMap.get(k.getS_r_name() + "," + k.getS_address());
+			
+			double answer = 0;
+			if (activatedFlag == 0) answer = resultMap.get(k.getS_r_name() + "," + k.getS_address());
+			else answer = k.getAnswer();
 			jo.put("answer", answer);
+			
 			ja.put(jo);
 		}
 		return ja.toString();
@@ -308,29 +328,43 @@ public class MainController {
 	
 	@PostMapping("/ai/challenge")
 	@ResponseBody
-	public String ai_challenge(HttpServletRequest req) {
+	public String ai_challenge(@RequestParam("activatedFlag") int activatedFlag,
+			 				   @RequestParam("activatedTag") String activatedTag,
+						       HttpServletRequest req) {
 		HttpSession session = req.getSession();
 		String u_id = String.valueOf(session.getAttribute("id"));
-		ArrayList<StatisticDTO> kdto = mdao.prepare_challenge(u_id);
+		ArrayList<StatisticDTO> kdto = null;
+		if (activatedFlag == 0) {
+			kdto = mdao.prepare_challenge(u_id);
+		}
+		else {
+			kdto = mdao.prepare_challenge2(u_id, activatedTag);
+		}
 		JSONArray ja = new JSONArray();
 		for (StatisticDTO k : kdto) {
 			JSONObject jo = new JSONObject();
 			int[] question = new int[15];
-			question[0] = k.getClean();
-			question[1] = k.getKind();
-			question[2] = k.getParking();
-			question[3] = k.getFast();
-			question[4] = k.getPack();
-			question[5] = k.getAlone();
-			question[6] = k.getTogether();
-			question[7] = k.getFocus();
-			question[8] = k.getTalk();
-			question[9] = k.getPhotoplace();
-			question[10] = k.getDelicious();
-			question[11] = k.getPortion();
-			question[12] = k.getCost();
-			question[13] = k.getLot();
-			question[14] = k.getSatisfy();
+			if (activatedFlag == 0) {
+				question[0] = k.getClean();
+				question[1] = k.getKind();
+				question[2] = k.getParking();
+				question[3] = k.getFast();
+				question[4] = k.getPack();
+				question[5] = k.getAlone();
+				question[6] = k.getTogether();
+				question[7] = k.getFocus();
+				question[8] = k.getTalk();
+				question[9] = k.getPhotoplace();
+				question[10] = k.getDelicious();
+				question[11] = k.getPortion();
+				question[12] = k.getCost();
+				question[13] = k.getLot();
+				question[14] = k.getSatisfy();
+			}
+			else {
+				question = new int[1];
+				question[0] = k.getTag_count();
+			}
 			jo.put("question", question);
 			ja.put(jo);
 		}
@@ -339,10 +373,14 @@ public class MainController {
 	
 	@PostMapping("/ai/display")
 	@ResponseBody
-	public String ai_display(HttpServletRequest req) {
+	public String ai_display(@RequestParam("activatedFlag") int activatedFlag,
+							 @RequestParam("activatedTag") String activatedTag,
+							 HttpServletRequest req) {
 		HttpSession session = req.getSession();
 		String u_id = String.valueOf(session.getAttribute("id"));
-		ArrayList<RestaurantDTO> rdto = mdao.ai_display(u_id);
+		ArrayList<RestaurantDTO> rdto = null;
+		if (activatedFlag == 0 ) rdto = mdao.ai_display(u_id, "", "");
+		else rdto = mdao.ai_display(u_id, ", b." + activatedTag, String.format("and b.%1$s != 0", activatedTag));
 		JSONArray ja = new JSONArray();
 		for (RestaurantDTO r : rdto) {
 			JSONObject jo = new JSONObject();

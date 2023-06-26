@@ -1687,9 +1687,41 @@ let challengeQ = null;
 
 function ai_challenge() {
 	$("#ai_loading").css("display", "block");
+	
+	let activatedFlag = 0;
+	let activatedTagCount = 0;
+	let activatedTag = "";
+	let falseFlag = 0;
+	$("input[name='tags']").each(function() {
+		if (activatedTagCount > 1) {
+			alert("사용자의 태그 기반이 아닌 선택하신 하나의 태그와 관련해서\n" +
+			"AI 의 추천을 받으려면 태그를 하나만 선택하셔야 됩니다\n\n" +
+			"사용자의 태그 기반 추천을 받으시려면 태그 선택을 모두 해제하세요");
+			$("input[name='tags']").each(function() {
+				$(this).prop("checked", false);
+				let val = $(this).val();
+				$(`label[for='${val}']`).removeClass("active");
+			});
+			$("#ai_loading").css("display", "none");
+			falseFlag = 1;
+			return false;
+		}
+		if ($(this).prop("checked")) {
+			activatedTagCount += 1;
+			activatedTag = $(this).val();
+		}
+	})
+	if (falseFlag == 1) return false;
+	
+	if (activatedTagCount == 1) activatedFlag = 1;
+	
 	$.ajax({
 		url: "/ai/challenge",
 		type: "post",
+		data: {
+			activatedFlag: activatedFlag,
+			activatedTag: activatedTag
+		},
 		dataType: "json",
 		success: function(data) {
 			challenge_question = [];
@@ -1700,16 +1732,20 @@ function ai_challenge() {
 					 challenge_question.push(d.question);
 				}
 				challengeQ = tf.tensor(challenge_question);
-				ai_prepare();
+				ai_prepare(activatedFlag, activatedTag);
 			}
 		}
 	})
 }
 
-function ai_prepare() {
+function ai_prepare(activatedFlag, activatedTag) {
 	$.ajax({
 		url: "/ai/prepare",
 		type: "post",
+		data: {
+			activatedFlag: activatedFlag,
+			activatedTag: activatedTag
+		},
 		dataType: "json",
 		success: function(data) {
 			let train_question = [];
@@ -1718,52 +1754,71 @@ function ai_prepare() {
 				for (i = 0; i < data.length; i++) {
 					 let d = data[i];
 					 train_question.push(d.question);
-					 train_answer.push(d.answer);	
+					 train_answer.push(d.answer);
 				}
 				let tensorQ = tf.tensor(train_question);
 				let tensorA = tf.tensor(train_answer);
 				
-				let X = tf.input({ shape : [15] });
-				let H1 = tf.layers.dense({ units: 15, activation: 'relu' }).apply(X);
-				let H2 = tf.layers.dense({ units: 15, activation: 'relu' }).apply(H1);
-				let Y = tf.layers.dense({ units: 1 }).apply(H2);
-				let model = tf.model({ inputs: X, outputs: Y });
-				let compileParam = { optimizer: tf.train.adam(), loss: tf.losses.meanSquaredError }
-				model.compile(compileParam);
+				let model = null;
 				
-				let fitParam = {
-					epochs: 200
+				if (activatedFlag == 0) {
+					let X = tf.input({ shape : [15] });
+					let H1 = tf.layers.dense({ units: 15, activation: 'relu' }).apply(X);
+					let H2 = tf.layers.dense({ units: 15, activation: 'relu' }).apply(H1);
+					let Y = tf.layers.dense({ units: 1 }).apply(H2);
+					model = tf.model({ inputs: X, outputs: Y });
+					let compileParam = { optimizer: tf.train.adam(), loss: tf.losses.meanSquaredError }
+					model.compile(compileParam);
 				}
+				else {
+					let X = tf.input({ shape : [1] });
+					let H1 = tf.layers.dense({ units: 1, activation: 'relu' }).apply(X);
+					let H2 = tf.layers.dense({ units: 1, activation: 'relu' }).apply(H1);
+					let Y = tf.layers.dense({ units: 1 }).apply(H2);
+					model = tf.model({ inputs: X, outputs: Y });
+					let compileParam = { optimizer: tf.train.adam(), loss: tf.losses.meanSquaredError }
+					model.compile(compileParam);
+				}
+				
+				let fitParam = { epochs: 200 };
 				
 				model.fit(tensorQ, tensorA, fitParam).then(function(result) {
 					let prediction = model.predict(challengeQ);
 					let predAry = prediction.dataSync();
+					console.log(challenge_question);
+					console.log(predAry);
 					let dataIndex = new Map();
 					for (i = 0; i < predAry.length; i++) dataIndex.set(predAry[i], i);
 					predAry.sort(function(a, b) {
 						return b - a;
 					});
 					let orderIndex = new Map();
-					for (i = 0; i < predAry.length; i++) orderIndex.set(i, predAry[i]);
-					ai_display(dataIndex, orderIndex);
+					for (i = 0; i < predAry.length; i++) orderIndex.set(i, predAry[i]);					
+					ai_display(dataIndex, orderIndex, activatedFlag, activatedTag);
 				})
 			}
 		}
 	})	
 }
 
-function ai_display(dataIndex, orderIndex) {
+function ai_display(dataIndex, orderIndex, activatedFlag, activatedTag) {
 	$.ajax({
 		url: "/ai/display",
 		type: "post",
+		data: {
+			activatedFlag: activatedFlag,
+			activatedTag: activatedTag
+		},
 		dataType: "json",
 		success: function(data) {
+			detailMarkers = [];
 			if (data.length != 0) {
 				$('#search_list').empty();
 				$(".sf_filter").css("display", "none"); 
 				$("#search_list_wrapper").css("display", "block");
 				let bounds = new kakao.maps.LatLngBounds();
-				for (i = 0; i < 10; i++) {
+				for (i = 0; i < data.length; i++) {
+					if (i == 10) break;
 					let targetPred = orderIndex.get(i);
 					let targetIndex = dataIndex.get(targetPred);
 					displayAiMarker(data[targetIndex]);
