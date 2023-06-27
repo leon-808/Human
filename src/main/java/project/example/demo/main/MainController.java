@@ -305,7 +305,7 @@ public class MainController {
 		}
 		return ja.toString();
 	}
-	
+
 	@PostMapping("/ai/challenge")
 	@ResponseBody
 	public String ai_challenge(HttpServletRequest req) {
