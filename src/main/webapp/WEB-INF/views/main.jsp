@@ -258,8 +258,8 @@
 <jsp:include page="/WEB-INF/views/script.jsp" />
 <script type="text/javascript"
 	src="//dapi.kakao.com/v2/maps/sdk.js?appkey=329e5620a47418538719e0a8fbdae4ce&libraries=services"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.4.0/dist/tf.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"> </script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script>
 <script src="/js/main/main.js"></script>
 <script src="/js/main/dd.min.js"></script>
 </body>

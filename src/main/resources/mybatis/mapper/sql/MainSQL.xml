@@ -123,6 +123,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		order by a.s_r_name
 	</select>
 	
+	<select id="prepare_train_keyQuest2" resultType="project.example.demo.dto.StatisticDTO">
+		select s_r_name, s_address, ${param2}
+		from statistic a, review b
+		where a.s_r_name = b.rv_r_name
+		and a.s_address = b.rv_address
+		and b.rv_id = #{param1}
+		and a.${param3} != 0
+		order by a.s_r_name
+	</select>
+	
 	<select id="prepare_train_value" resultType="project.example.demo.dto.StatisticDTO">
 		select s_r_name, s_address, tag_count
 		from (
@@ -161,10 +171,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		order by a.s_r_name
 	</select>
 	
+	<select id="prepare_challenge2" resultType="project.example.demo.dto.StatisticDTO">
+		select a.s_r_name, a.s_address, b.${param2} tag_count
+		from (
+		    select s_r_name, s_address
+		    from statistic 
+		    minus
+		    select rv_r_name, rv_address
+		    from review 
+		    where rv_id = #{param1}
+		) a, statistic b
+		where a.s_r_name = b.s_r_name
+		and b.${param2} != 0
+		order by a.s_r_name
+	</select>
+	
 	<select id="ai_display" resultType="project.example.demo.dto.RestaurantDTO">
 		select lat, lng, r_name, address, category, r_phone
 		from (
-		    select a.s_r_name, a.s_address
+		    select a.s_r_name, a.s_address ${param2}
 		    from (
 		        select s_r_name, s_address
 		        from statistic 
@@ -174,6 +199,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		        where rv_id = #{param1}
 		    ) a, statistic b
 		    where a.s_r_name = b.s_r_name
+		    ${param3}
 		    order by a.s_r_name
 		) c, restaurant d
 		where c.s_r_name = d.r_name

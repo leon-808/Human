@@ -43,5 +43,9 @@ public interface MainDAO {
 	
 	ArrayList<StatisticDTO> prepare_challenge(String u_id);
 	
-	ArrayList<RestaurantDTO> ai_display(String u_id);
+	ArrayList<RestaurantDTO> ai_display(String u_id, String activatedTag, String query);
+	
+	ArrayList<StatisticDTO> prepare_train_keyQuest2(String u_id, String query, String activatedTag);
+	
+	ArrayList<StatisticDTO> prepare_challenge2(String u_id, String activatedTag);
 }
