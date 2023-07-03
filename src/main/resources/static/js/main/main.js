@@ -1126,6 +1126,8 @@ function displayDetailMarker(data, index, flag) {
 		address = data.address,
 		r_phone = data.r_phone;
 		close = data.close;
+		eval = data.eval;
+		
 	if (r_phone == undefined) r_phone = "미등록";
 
 	let imageSrc = null, hoverSrc = null;
@@ -1155,13 +1157,17 @@ function displayDetailMarker(data, index, flag) {
 		infowindow = new kakao.maps.InfoWindow({
 			content: `<div class="iw_placename">${r_name}</div>`
 		});
-		
-	
+
+	if (close>0){
 	if (Number(close) >= 1000) close = (close / 1000).toFixed(2) + "km";
 	else close += "m";
-		
+	} else {
+		close = "리뷰 "+eval;
+	} 		
+	
 	let showSearchInfo = `
 		 	<div class="showSearchInfo">
+		 	<img src="${imageSrc}" style="width:25px">
 			 	<span style="font-weight: bold;">${r_name}</span>
 			 	&emsp;<span style="font-weight: bold; color: #f24c3d;">${close}</span><br>
 		 			<span class="r_address">주소: ${address}</span><br>
